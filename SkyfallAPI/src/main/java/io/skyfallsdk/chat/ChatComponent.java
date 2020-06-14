@@ -1,0 +1,237 @@
+package io.skyfallsdk.chat;
+
+import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import io.skyfallsdk.chat.event.ClickEvent;
+import io.skyfallsdk.chat.event.HoverEvent;
+
+import java.util.List;
+
+public class ChatComponent {
+
+    private final String text;
+
+    private volatile boolean[] formats = new boolean[6];
+    private ChatColour colour;
+    private String translate;
+
+    private String insertion;
+    private String selector;
+
+    private ClickEvent clickEvent;
+    private HoverEvent hoverEvent;
+
+    private final List<ChatComponent> extra;
+
+    public ChatComponent(String text) {
+        this.text = text;
+        this.extra = Lists.newArrayList();
+    }
+
+    public ChatComponent(ChatComponent component) {
+        this.text = component.getText();
+
+        this.formats = component.getFormats();
+        this.colour = component.getColour();
+        this.translate = component.getTranslate();
+
+        this.insertion = component.getInsertion();
+        this.selector = component.getSelector();
+
+        this.clickEvent = component.getClickEvent();
+        this.hoverEvent = component.getHoverEvent();
+
+        this.extra = component.getExtra();
+    }
+
+    private boolean[] getFormats() {
+        return this.formats;
+    }
+
+    public String getText() {
+        return this.text;
+    }
+
+    public boolean isBold() {
+        return this.formats[0];
+    }
+
+    public boolean isItalic() {
+        return this.formats[1];
+    }
+
+    public boolean isUnderlined() {
+        return this.formats[2];
+    }
+
+    public boolean isStruckthrough() {
+        return this.formats[3];
+    }
+
+    public boolean isObfuscated() {
+        return this.formats[4];
+    }
+
+    public boolean isReset() {
+        return this.formats[5];
+    }
+
+    public void addFormat(ChatFormat format) {
+        this.formats[format.ordinal()] = true;
+    }
+
+    public ChatColour getColour() {
+        return this.colour;
+    }
+
+    public void setColour(ChatColour colour) {
+        this.colour = colour;
+    }
+
+    public String getInsertion() {
+        return this.insertion;
+    }
+
+    public void setInsertion(String insertion) {
+        this.insertion = insertion;
+    }
+
+    public String getSelector() {
+        return this.selector;
+    }
+
+    public void setSelector(String selector) {
+        this.selector = selector;
+    }
+
+    public String getTranslate() {
+        return this.translate;
+    }
+
+    public void setTranslate(String translate) {
+        this.translate = translate;
+    }
+
+    public ClickEvent getClickEvent() {
+        return this.clickEvent;
+    }
+
+    public void setClickEvent(ClickEvent clickEvent) {
+        this.clickEvent = clickEvent;
+    }
+
+    public HoverEvent getHoverEvent() {
+        return this.hoverEvent;
+    }
+
+    public void setHoverEvent(HoverEvent hoverEvent) {
+        this.hoverEvent = hoverEvent;
+    }
+
+    public void addExtra(ChatComponent component) {
+        this.extra.add(component);
+    }
+
+    public List<ChatComponent> getExtra() {
+        return this.extra;
+    }
+
+    public JsonObject toJson() {
+        JsonObject json = new JsonObject();
+
+        String text = this.text;
+
+        // This basically keeps unicode working
+        if (text != null) {
+            StringBuilder builder = new StringBuilder();
+            for (char c : text.toCharArray()) {
+                if (Character.UnicodeBlock.of(c) != Character.UnicodeBlock.BASIC_LATIN) {
+                    StringBuilder hex = new StringBuilder(Integer.toHexString(c));
+                    while (hex.length() < 4) {
+                        hex.insert(0, "0");
+                    }
+
+                    hex.insert(0, "\\u");
+                    builder.append(hex);
+                    continue;
+                }
+                builder.append(c);
+            }
+
+            json.addProperty("text", builder.toString());
+        }
+
+        json.addProperty("bold", this.isBold());
+        json.addProperty("italic", this.isItalic());
+        json.addProperty("underlined", this.isUnderlined());
+        json.addProperty("strikethrough", this.isStruckthrough());
+        json.addProperty("obfuscated", this.isObfuscated());
+        json.addProperty("reset", this.isReset());
+
+        ChatColour colour = this.getColour();
+        if (colour != null) {
+            json.addProperty("color", colour.name().toLowerCase());
+        }
+
+        String translate  = this.getTranslate();
+        if (translate != null) {
+            json.addProperty("translate", translate);
+        }
+
+        String insertion = this.getInsertion();
+        if (insertion != null) {
+            json.addProperty("insertion", insertion);
+        }
+
+        String selector = this.getSelector();
+        if (selector != null) {
+            json.addProperty("selector", selector);
+        }
+
+        if (this.extra.size() > 0) {
+            JsonArray array = new JsonArray();
+
+            this.extra.forEach(c -> array.add(c.toJson()));
+            json.add("extra", array);
+        }
+
+        HoverEvent hoverEvent = this.getHoverEvent();
+        if (hoverEvent != null) {
+            json.add("hoverEvent", hoverEvent.toJson());
+        }
+
+        ClickEvent clickEvent = this.getClickEvent();
+        if (clickEvent != null) {
+            json.add("clickEvent", clickEvent.toJson());
+        }
+
+        return json;
+    }
+
+    @Override
+    public String toString() {
+        return this.toJson().toString().replace("\\\\", "\\");
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || object == this || object.getClass() != this.getClass()) {
+            return object == this;
+        }
+
+        return this.toJson().equals(((ChatComponent) object).toJson());
+    }
+
+    public static ChatComponent from(String text) {
+        return new ChatComponent(text);
+    }
+
+    public static ChatComponent fromJson(String json) {
+        return new ChatComponent(GSON.fromJson(json, ChatComponent.class));
+    }
+
+    public static ChatComponent empty() {
+        return new ChatComponent("");
+    }
+}
