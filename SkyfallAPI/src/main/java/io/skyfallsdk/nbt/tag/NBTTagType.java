@@ -65,17 +65,17 @@ public enum NBTTagType {
             case END:
                 return (T) new TagEnd();
             case BYTE:
-                return (T) new TagByte(name, (byte) value);
+                return (T) new TagByte(name, (Byte) value);
             case SHORT:
-                return (T) new TagShort(name, (short) value);
+                return (T) new TagShort(name, (Short) value);
             case INT:
-                return (T) new TagInt(name, (int) value);
+                return (T) new TagInt(name, (Integer) value);
             case LONG:
-                return (T) new TagLong(name, (long) value);
+                return (T) new TagLong(name, (Long) value);
             case FLOAT:
-                return (T) new TagFloat(name, (float) value);
+                return (T) new TagFloat(name, (Float) value);
             case DOUBLE:
-                return (T) new TagDouble(name, (double) value);
+                return (T) new TagDouble(name, (Double) value);
             case BYTE_ARRAY:
                 return (T) new TagByteArray(name, (byte[]) value);
             case STRING:

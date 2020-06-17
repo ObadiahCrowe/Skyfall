@@ -228,7 +228,9 @@ public class ChatComponent {
     }
 
     public static ChatComponent fromJson(String json) {
-        return new ChatComponent(GSON.fromJson(json, ChatComponent.class));
+        return null;
+
+        //return new ChatComponent(GSON.fromJson(json, ChatComponent.class));
     }
 
     public static ChatComponent empty() {
