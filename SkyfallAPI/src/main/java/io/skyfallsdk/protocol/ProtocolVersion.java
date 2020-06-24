@@ -43,7 +43,9 @@ public enum ProtocolVersion {
     v1_9("1.9", 107),
 
     v1_8_9("1.8.9", 47),
-    v1_8_8("1.8.8", 47);
+    v1_8_8("1.8.8", 47),
+
+    UNKNOWN("Unknown", 999);
 
     private static final Short2IntMap PROTOCOL_TO_VERSION = new Short2IntOpenHashMap(ProtocolVersion.values().length);
 
