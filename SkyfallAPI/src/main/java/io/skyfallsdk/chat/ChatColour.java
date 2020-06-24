@@ -40,6 +40,11 @@ public enum ChatColour {
         return this.code;
     }
 
+    @Override
+    public String toString() {
+        return String.valueOf('§' + this.code);
+    }
+
     public static ChatColour getByCode(char code) {
         int index = CHAR_TO_COLOUR.getOrDefault(code, -1);
 
