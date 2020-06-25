@@ -2,7 +2,9 @@ package io.skyfallsdk;
 
 public class SkyfallMain {
 
-    public static void main(String[] args) {
+    private static SkyfallServer server;
 
+    public static void main(String[] args) {
+        server = new SkyfallServer();
     }
 }

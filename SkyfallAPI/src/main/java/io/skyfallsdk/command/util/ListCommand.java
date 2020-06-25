@@ -1,12 +1,10 @@
-package net.treasurewars.core.command.util;
+package io.skyfallsdk.command.util;
 
 import com.google.common.collect.Lists;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.treasurewars.core.modules.chat.ChatColour;
-import net.treasurewars.core.util.UtilMath;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.ChatFormat;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +32,7 @@ public abstract class ListCommand<T> {
             Collections.addAll(componentList, this.getComponents(player, value));
         }
 
-        String header = title + ChatColour.RESET + " " + ChatColour.DARK_GRAY + "(" + ChatColour.GRAY + page + "/" + totalPages + ChatColour.DARK_GRAY + ")";
+        String header = title + ChatFormat.RESET + " " + ChatColour.DARK_GRAY + "(" + ChatColour.GRAY + page + "/" + totalPages + ChatColour.DARK_GRAY + ")";
         player.sendMessage(header);
 
         for (BaseComponent[] components : componentList) {

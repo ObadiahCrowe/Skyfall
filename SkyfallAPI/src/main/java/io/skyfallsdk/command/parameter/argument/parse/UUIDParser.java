@@ -1,10 +1,8 @@
-package net.treasurewars.core.command.parameter.argument.parse;
+package io.skyfallsdk.command.parameter.argument.parse;
 
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.server.CommandSender;
 
 import java.util.Collection;
 import java.util.UUID;

@@ -1,10 +1,13 @@
 package io.skyfallsdk.command.parameter.argument.parse;
 
+import io.skyfallsdk.Server;
+import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.CoreCommandMap;
+import io.skyfallsdk.command.options.Command;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.server.CommandSender;
-import net.treasurewars.core.command.CoreCommand;
 import net.treasurewars.core.command.CoreCommandAdapter;
-import net.treasurewars.core.command.CoreCommandMap;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -13,7 +16,7 @@ public class CommandParser implements ArgumentParser<CoreCommand> {
 
     @Override
     public Collection<String> complete(CommandSender sender, CommandArgument<CoreCommand> argument, String value) {
-        CoreCommandMap map = TreasureCore.getInstance().getCommandMap();
+        CoreCommandMap map = Server.get().getCommandMap();
         return map.getCommands().stream()
                 .filter(command -> command instanceof CoreCommandAdapter)
                 .map(Command::getName)
@@ -27,7 +30,7 @@ public class CommandParser implements ArgumentParser<CoreCommand> {
 
     @Override
     public CoreCommand parse(CommandSender sender, Class type, String value) throws ArgumentParseException {
-        CoreCommandMap map = TreasureCore.getInstance().getCommandMap();
+        CoreCommandMap map = Server.get().getCommandMap();
         CoreCommand command = map.getCoreCommand(value);
         if (command == null) {
             throw new ArgumentParseException("Unknown command \"" + value + "\"!");

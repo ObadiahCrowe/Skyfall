@@ -1,6 +1,4 @@
-package net.treasurewars.core.command;
-
-import org.apache.commons.lang3.Validate;
+package io.skyfallsdk.command;
 
 public class CoreCommandBuilder {
 

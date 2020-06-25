@@ -1,8 +1,9 @@
 package io.skyfallsdk.command;
 
 import com.google.common.collect.Lists;
-import net.treasurewars.core.command.exception.CommandException;
-import net.treasurewars.core.command.options.TabCompleter;
+import io.skyfallsdk.command.exception.CommandException;
+import io.skyfallsdk.command.options.TabCompleter;
+import io.skyfallsdk.server.CommandSender;
 import net.treasurewars.core.command.parameter.CommandParameter;
 
 import java.lang.reflect.InvocationTargetException;

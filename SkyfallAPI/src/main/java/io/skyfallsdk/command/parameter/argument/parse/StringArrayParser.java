@@ -1,7 +1,7 @@
-package net.treasurewars.core.command.parameter.argument.parse;
+package io.skyfallsdk.command.parameter.argument.parse;
 
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import org.bukkit.command.CommandSender;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.server.CommandSender;
 
 public class StringArrayParser implements ArgumentParser<String[]> {
 

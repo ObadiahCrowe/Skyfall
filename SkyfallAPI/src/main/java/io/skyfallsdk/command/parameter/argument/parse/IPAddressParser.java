@@ -1,9 +1,9 @@
-package net.treasurewars.core.command.parameter.argument.parse;
+package io.skyfallsdk.command.parameter.argument.parse;
 
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import net.treasurewars.core.command.util.CommandCompletion;
-import org.bukkit.command.CommandSender;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.command.util.CommandCompletion;
+import io.skyfallsdk.server.CommandSender;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

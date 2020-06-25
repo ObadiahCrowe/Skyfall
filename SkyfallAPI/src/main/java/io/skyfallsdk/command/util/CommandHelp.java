@@ -1,13 +1,13 @@
 package io.skyfallsdk.command.util;
 
 import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.command.CoreCommand;
 import io.skyfallsdk.server.CommandSender;
-import net.treasurewars.core.command.CoreCommand;
-import net.treasurewars.core.command.parameter.argument.signature.CommandSignature;
 
 public class CommandHelp {
 
-    public static BaseComponent[] getHelpMessage(CommandSender sender, CoreCommand command) {
+    public static ChatComponent getHelpMessage(CommandSender sender, CoreCommand command) {
         String name = command.getMergedSignature().toString();
 
         BaseComponent[] message = TextComponent.fromLegacyText(TreasureCore.getRealmInfo().getPrimaryColour() + name + ChatColour.DARK_GRAY + " - " +

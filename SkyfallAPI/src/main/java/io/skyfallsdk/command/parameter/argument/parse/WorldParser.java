@@ -1,11 +1,11 @@
-package net.treasurewars.core.command.parameter.argument.parse;
+package io.skyfallsdk.command.parameter.argument.parse;
 
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.world.World;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -14,7 +14,7 @@ public class WorldParser implements ArgumentParser<World> {
 
     @Override
     public Collection<String> complete(CommandSender sender, CommandArgument<World> argument, String value) {
-        return Bukkit.getWorlds().stream().map(World::getName).collect(Collectors.toList());
+        return Server.get().getWorlds().stream().map(World::getName).collect(Collectors.toList());
     }
 
     @Override
@@ -34,7 +34,7 @@ public class WorldParser implements ArgumentParser<World> {
                 return ((Player) sender).getWorld();
         }
 
-        World world = Bukkit.getWorld(value);
+        World world = Server.get().getWorld(value);
         if (world == null) {
             throw new ArgumentParseException("Unknown world \"" + value + "\"!");
         }

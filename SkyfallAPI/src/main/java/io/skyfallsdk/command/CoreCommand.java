@@ -1,23 +1,9 @@
-package net.treasurewars.core.command;
+package io.skyfallsdk.command;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.treasurewars.core.command.defaults.HelpSubCommand;
-import net.treasurewars.core.command.exception.CommandException;
-import net.treasurewars.core.command.options.*;
 import net.treasurewars.core.command.parameter.CommandParameter;
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import net.treasurewars.core.command.parameter.argument.signature.CommandSignature;
-import net.treasurewars.core.message.MessageTemplate;
-import net.treasurewars.core.modules.chat.ChatColour;
-import net.treasurewars.core.util.UtilConcurrency;
-import org.apache.commons.lang3.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

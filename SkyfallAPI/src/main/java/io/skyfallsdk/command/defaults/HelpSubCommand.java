@@ -2,16 +2,16 @@ package io.skyfallsdk.command.defaults;
 
 import io.skyfallsdk.chat.ChatColour;
 import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.options.Command;
+import io.skyfallsdk.command.options.CommandExecutor;
+import io.skyfallsdk.command.options.Sender;
+import io.skyfallsdk.command.options.TabCompleter;
+import io.skyfallsdk.command.parameter.argument.Arg;
+import io.skyfallsdk.command.util.CommandCompletion;
+import io.skyfallsdk.command.util.CommandHelp;
+import io.skyfallsdk.command.util.ListCommand;
 import io.skyfallsdk.server.CommandSender;
-import net.treasurewars.core.command.CoreCommand;
-import net.treasurewars.core.command.options.Command;
-import net.treasurewars.core.command.options.CommandExecutor;
-import net.treasurewars.core.command.options.Sender;
-import net.treasurewars.core.command.options.TabCompleter;
-import net.treasurewars.core.command.parameter.argument.Arg;
-import net.treasurewars.core.command.util.CommandCompletion;
-import net.treasurewars.core.command.util.CommandHelp;
-import net.treasurewars.core.command.util.ListCommand;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,7 +36,7 @@ public class HelpSubCommand extends ListCommand<CoreCommand> {
                 .sorted(Comparator.comparing(CoreCommand::getName))
                 .collect(Collectors.toList());
 
-        String header = ChatColour.BLUE + StringUtils.capitalize(this.command.getName());
+        String header = ChatColour.BLUE + this.command.getName().substring(0, 1).toUpperCase() + this.command.getName().substring(1).toLowerCase();
         this.printPage(player, page, commands, header, COMMANDS_PER_PAGE);
     }
 

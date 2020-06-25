@@ -1,4 +1,4 @@
-package net.treasurewars.core.command;
+package io.skyfallsdk.command;
 
 import com.google.common.collect.Lists;
 import net.treasurewars.core.command.management.ToggleCommand;

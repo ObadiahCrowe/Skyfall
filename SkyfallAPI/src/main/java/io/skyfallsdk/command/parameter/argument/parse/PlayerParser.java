@@ -1,13 +1,9 @@
-package net.treasurewars.core.command.parameter.argument.parse;
+package io.skyfallsdk.command.parameter.argument.parse;
 
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import net.treasurewars.core.module.ModuleManager;
-import net.treasurewars.core.modules.player.rank.Rank;
-import net.treasurewars.core.modules.player.rank.RankModule;
-import net.treasurewars.core.modules.player.rank.type.AbstractRank;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
 
 public class PlayerParser implements ArgumentParser<Player> {
 
@@ -28,21 +24,11 @@ public class PlayerParser implements ArgumentParser<Player> {
                 return (Player) sender;
         }
 
-        Player player = Bukkit.getPlayer(value);
+        Player player = Server.get().getPlayer(value);
         if (player == null) {
             throw new ArgumentParseException("Couldn't find player \"" + value + "\"!");
         }
 
-        if (sender instanceof Player && !((Player) sender).canSee(player) && !this.getRank((Player) sender).isAtLeast(this.getRank(player))) {
-            throw new ArgumentParseException("Couldn't find player \"" + value + "\"!");
-        }
-
         return player;
-    }
-
-    public Rank getRank(Player player) {
-        RankModule module = ModuleManager.getModule(RankModule.class);
-        AbstractRank rank = module.getProvider().getRank((player).getUniqueId());
-        return rank.getRank();
     }
 }
