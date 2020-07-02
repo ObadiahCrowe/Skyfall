@@ -3,7 +3,6 @@ package io.skyfallsdk.command;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import net.treasurewars.core.command.parameter.CommandParameter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

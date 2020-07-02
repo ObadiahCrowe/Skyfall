@@ -25,18 +25,7 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
             return ((ScheduledExecutorService) this.service).schedule(command, delay, unit);
         }
 
-        if (command == null || unit == null) {
-            throw new NullPointerException();
-        }
-
-        if (delay <= 0) {
-            throw new IllegalArgumentException();
-        }
-
-
-
-        // TODO: 17/06/2020
-        return null;
+        return Executors.newSingleThreadScheduledExecutor().schedule(command, delay, unit);
     }
 
     @Override
