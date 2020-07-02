@@ -1,6 +1,7 @@
 package io.skyfallsdk.packet.version;
 
 import io.skyfallsdk.protocol.ProtocolVersion;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 
 public abstract class NetPacketMapper {
 
@@ -11,4 +12,8 @@ public abstract class NetPacketMapper {
         this.from = from;
         this.to = to;
     }
+
+    public abstract Int2IntMap getSubstanceMappings();
+
+    public abstract Int2IntMap getEntityIdMappings();
 }

@@ -32,9 +32,19 @@ public interface Server extends CommandSender {
 
     Player getPlayer(UUID uuid);
 
+    List<Player> getPlayers();
+
     List<World> getWorlds();
 
     World getWorld(String name);
+
+    String getMotd();
+
+    void setMotd(String motd);
+
+    int getMaxPlayers();
+
+    void setMaxPlayers(int maxPlayers);
 
     static class Impl {
         static AtomicReference<Server> IMPL = new AtomicReference<>(null);

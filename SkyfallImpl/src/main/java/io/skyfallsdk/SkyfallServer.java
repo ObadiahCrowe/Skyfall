@@ -84,6 +84,11 @@ public class SkyfallServer implements Server {
     }
 
     @Override
+    public List<Player> getPlayers() {
+        return null;
+    }
+
+    @Override
     public List<World> getWorlds() {
         return null;
     }
@@ -91,6 +96,26 @@ public class SkyfallServer implements Server {
     @Override
     public World getWorld(String name) {
         return null;
+    }
+
+    @Override
+    public String getMotd() {
+        return null;
+    }
+
+    @Override
+    public void setMotd(String motd) {
+
+    }
+
+    @Override
+    public int getMaxPlayers() {
+        return this.config.getMaxPlayers();
+    }
+
+    @Override
+    public void setMaxPlayers(int maxPlayers) {
+        this.config.setMaxPlayers(maxPlayers);
     }
 
     @Override
