@@ -1,4 +1,4 @@
-package net.treasurewars.core.command.parameter;
+package io.skyfallsdk.command.parameter;
 
 public interface ParsingListener<T> {
 

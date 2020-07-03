@@ -1,8 +1,11 @@
 package io.skyfallsdk.command.parameter.argument;
 
 import com.google.common.collect.ImmutableList;
-import net.treasurewars.core.command.CoreCommand;
-import net.treasurewars.core.command.parameter.CommandParameter;
+import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.TabCompleterMethod;
+import io.skyfallsdk.command.parameter.CommandParameter;
+import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
+import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

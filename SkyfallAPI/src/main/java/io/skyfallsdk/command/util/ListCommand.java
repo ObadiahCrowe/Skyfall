@@ -2,6 +2,7 @@ package io.skyfallsdk.command.util;
 
 import com.google.common.collect.Lists;
 import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.ChatFormat;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
@@ -55,7 +56,7 @@ public abstract class ListCommand<T> {
 
     public abstract void onNoElements(CommandSender sender);
 
-    public abstract BaseComponent[] getComponents(CommandSender player, T value);
+    public abstract ChatComponent getComponents(CommandSender player, T value);
 
     public abstract String getCommandFormat();
 }

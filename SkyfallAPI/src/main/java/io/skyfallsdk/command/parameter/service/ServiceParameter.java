@@ -1,8 +1,8 @@
-package net.treasurewars.core.command.parameter.service;
+package io.skyfallsdk.command.parameter.service;
 
-import net.treasurewars.core.command.CoreCommand;
-import net.treasurewars.core.command.parameter.CommandParameter;
-import org.bukkit.command.CommandSender;
+import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.parameter.CommandParameter;
+import io.skyfallsdk.server.CommandSender;
 
 public class ServiceParameter<T> implements CommandParameter<T> {
 

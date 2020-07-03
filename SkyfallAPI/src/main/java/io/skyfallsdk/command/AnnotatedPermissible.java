@@ -1,74 +1,48 @@
-package net.treasurewars.core.command;
+package io.skyfallsdk.command;
 
-import net.treasurewars.core.TreasureCore;
-import net.treasurewars.core.command.options.Permission;
-import net.treasurewars.core.module.ModuleManager;
-import net.treasurewars.core.modules.player.rank.Rank;
-import net.treasurewars.core.modules.player.rank.RankModule;
-import net.treasurewars.core.modules.player.rank.type.AbstractRank;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
+import io.skyfallsdk.command.options.Permission;
+import io.skyfallsdk.permission.Permissible;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.server.ServerCommandSender;
 
 import java.lang.reflect.Method;
 
 public abstract class AnnotatedPermissible {
 
-    private final Rank requiredRank;
-    private final boolean betaUnlocked;
-    private final boolean betaTestersAllowed;
+    private final Class<? extends Permissible> permissionHandler;
 
     public AnnotatedPermissible(Method method) {
-        this.betaUnlocked = method.isAnnotationPresent(BetaUnlocked.class);
-        this.betaTestersAllowed = !method.isAnnotationPresent(NoBetaTesters.class);
-
         Permission permission = method.getAnnotation(Permission.class);
         if (permission != null) {
-            this.requiredRank = permission.value();
+            this.permissionHandler = permission.permission();
         } else {
-            this.requiredRank = Rank.DEFAULT;
+            this.permissionHandler = Rank.DEFAULT;
         }
     }
 
     public AnnotatedPermissible(Class<?> targetClass) {
-        this.betaUnlocked = targetClass.isAnnotationPresent(BetaUnlocked.class);
-        this.betaTestersAllowed = !targetClass.isAnnotationPresent(NoBetaTesters.class);
-
         Permission permission = targetClass.getAnnotation(Permission.class);
         if (permission != null) {
-            this.requiredRank = permission.value();
+            this.permissionHandler = permission.value();
         } else {
-            this.requiredRank = Rank.DEFAULT;
+            this.permissionHandler = Rank.DEFAULT;
         }
     }
 
-    public AnnotatedPermissible(Rank requiredRank, boolean betaUnlocked) {
-        this.requiredRank = requiredRank;
-        this.betaUnlocked = betaUnlocked;
-        this.betaTestersAllowed = true;
+    public AnnotatedPermissible(Class<? extends Permissible> permissionHandler, boolean betaUnlocked) {
+        this.permissionHandler = permissionHandler;
     }
 
-    public Rank getRequiredRank() {
-        return requiredRank;
-    }
-
-    public boolean isBetaUnlocked() {
-        return betaUnlocked;
-    }
-
-    public boolean isBetaTestersAllowed() {
-        return betaTestersAllowed;
+    public Rank getPermissionHandler() {
+        return permissionHandler;
     }
 
     public abstract boolean isPlayerOnly();
 
     public boolean hasAccess(CommandSender sender) {
-        if (sender instanceof ConsoleCommandSender) {
+        if (sender instanceof ServerCommandSender) {
             return !this.isPlayerOnly();
-        }
-
-        if (TreasureCore.getInstance().isBeta() && this.isBetaUnlocked()) {
-            return true;
         }
 
         // We don't really want anything but console/player running our commands
@@ -76,22 +50,14 @@ public abstract class AnnotatedPermissible {
             return false;
         }
 
-        if (CoreCommand.NO_COMMANDS.contains(((Player) sender).getUniqueId())) {
+        if (CoreCommand.NO_COMMANDS.contains(((Player) sender).getUuid())) {
             return false;
         }
-        if (this.getRequiredRank() == null || this.getRequiredRank() == Rank.DEFAULT) {
+
+        if (this.getPermissionHandler() == null || this.getPermissionHandler() == Rank.DEFAULT) {
             return true;
         }
 
-        RankModule module = ModuleManager.getModule(RankModule.class);
-        AbstractRank rank = module.getProvider().getRank(((Player) sender).getUniqueId());
-
-        if (TreasureCore.getInstance().isBeta()) {
-            if (!this.isBetaTestersAllowed() && rank.getRank() == Rank.BETA_TESTER) {
-                return false;
-            }
-        }
-
-        return rank.getRank().isAtLeast(this.requiredRank);
+        return rank.getRank().isAtLeast(this.permissionHandler);
     }
 }

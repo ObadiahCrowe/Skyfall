@@ -9,6 +9,7 @@ import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.net.NetServer;
+import io.skyfallsdk.permission.defaults.PlayerPermission;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.world.World;
 
@@ -38,6 +39,12 @@ public class SkyfallServer implements Server {
         NetServer.init("localhost", 25565);
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+
+        Player player = this.getPlayer("obadiahio");
+
+        if (player.hasPermission(PlayerPermission.COMMAND_HELP)) {
+            // do stuff
+        }
     }
 
     @Override

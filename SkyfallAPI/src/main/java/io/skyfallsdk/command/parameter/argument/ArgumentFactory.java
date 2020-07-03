@@ -2,6 +2,12 @@ package io.skyfallsdk.command.parameter.argument;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
+import io.skyfallsdk.command.parameter.argument.parse.BooleanParser;
+import io.skyfallsdk.command.parameter.argument.parse.IntegerParser;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class ArgumentFactory {
 

@@ -1,4 +1,4 @@
-package net.treasurewars.core.command.parameter.service;
+package io.skyfallsdk.command.parameter.service;
 
 import com.google.common.collect.Lists;
 
@@ -13,9 +13,7 @@ public class ServiceFactory {
     }
 
     static {
-        INSTANCE.registerProvider(new ModuleServiceProvider());
-        INSTANCE.registerProvider(new PluginServiceProvider());
-        INSTANCE.registerProvider(new DataLoaderServiceProvider());
+        INSTANCE.registerProvider(new ExpansionServiceProvider());
     }
 
     private final List<ServiceProvider> providers;

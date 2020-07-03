@@ -1,18 +1,15 @@
-package net.treasurewars.core.command;
+package io.skyfallsdk.command;
 
 import com.google.common.collect.ImmutableList;
-import net.treasurewars.core.command.exception.CommandException;
-import net.treasurewars.core.command.options.CommandExecutor;
-import net.treasurewars.core.command.options.ThreadUnsafe;
-import net.treasurewars.core.command.parameter.CommandParameter;
-import net.treasurewars.core.command.parameter.ParameterParsingTask;
-import net.treasurewars.core.command.parameter.ParsingListener;
-import net.treasurewars.core.command.parameter.argument.ArgumentParseException;
-import net.treasurewars.core.command.parameter.argument.ArgumentSpecification;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import net.treasurewars.core.command.parameter.argument.signature.CommandSignature;
-import net.treasurewars.core.util.UtilConcurrency;
-import org.bukkit.command.CommandSender;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.command.options.CommandExecutor;
+import io.skyfallsdk.command.parameter.CommandParameter;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.command.parameter.argument.ArgumentSpecification;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
+import io.skyfallsdk.concurrent.Scheduler;
+import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -29,23 +26,21 @@ public class CommandExecutorMethod extends CommandMethodWrapper {
             throw new IllegalArgumentException("Method is not command executor!");
         }
 
-        Executor executor = annotation.async() ? UtilConcurrency.ASYNC_EXECUTOR : UtilConcurrency.SYNC_EXECUTOR;
+        Scheduler scheduler = Server.get().getScheduler();
 
         CommandParameter[] parameters = CommandParameter.getParameters(method);
-        ThreadUnsafe threadUnsafeAnnot = method.getAnnotation(ThreadUnsafe.class);
-        Class threadUnsafe = threadUnsafeAnnot == null ? null : threadUnsafeAnnot.value();
-        return new CommandExecutorMethod(command, commandInstance, method, parameters, executor, threadUnsafe);
+        return new CommandExecutorMethod(command, commandInstance, method, parameters, scheduler);
     }
 
-    private final Executor executor;
+    private final Scheduler scheduler;
     private final int minArgs;
     private final int maxArgs;
     private final Class threadUnsafe;
     private final AtomicBoolean running;
 
-    public CommandExecutorMethod(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters, Executor executor, Class threadUnsafe) {
+    public CommandExecutorMethod(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters, Scheduler scheduler) {
         super(command, commandInstance, method, parameters);
-        this.executor = executor;
+        this.scheduler = scheduler;
         this.threadUnsafe = threadUnsafe;
         this.running = this.threadUnsafe != null ? new AtomicBoolean(false) : null;
 

@@ -1,6 +1,6 @@
-package net.treasurewars.core.command.parameter.sender;
+package io.skyfallsdk.command.parameter.sender;
 
-import net.treasurewars.core.command.parameter.CommandParameter;
+import io.skyfallsdk.command.parameter.CommandParameter;
 
 public interface SenderParameter<T> extends CommandParameter<T> {
 

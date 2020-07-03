@@ -1,7 +1,9 @@
 package io.skyfallsdk.command.parameter.argument.parse;
 
+import io.skyfallsdk.Server;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
 
 import java.util.Collection;
@@ -12,7 +14,7 @@ public class UUIDParser implements ArgumentParser<UUID> {
 
     @Override
     public Collection<String> complete(CommandSender sender, CommandArgument<UUID> argument, String value) {
-        return Bukkit.getOnlinePlayers().stream().map(Entity::getUniqueId).map(UUID::toString).collect(Collectors.toList());
+        return Server.get().getPlayers().stream().map(Player::getUuid).map(UUID::toString).collect(Collectors.toList());
     }
 
     @Override

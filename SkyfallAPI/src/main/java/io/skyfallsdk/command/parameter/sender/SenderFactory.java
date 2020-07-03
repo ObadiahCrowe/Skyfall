@@ -1,4 +1,4 @@
-package net.treasurewars.core.command.parameter.sender;
+package io.skyfallsdk.command.parameter.sender;
 
 import com.google.common.collect.Maps;
 

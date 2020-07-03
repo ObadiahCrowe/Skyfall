@@ -2,6 +2,8 @@ package io.skyfallsdk;
 
 import io.skyfallsdk.command.CoreCommandMap;
 import io.skyfallsdk.concurrent.Scheduler;
+import io.skyfallsdk.expansion.Expansion;
+import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.world.World;
@@ -12,7 +14,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
-public interface Server extends CommandSender {
+public interface Server extends CommandSender, PermissionHolder {
 
     static Server get() {
         return Impl.IMPL.get();
@@ -45,6 +47,8 @@ public interface Server extends CommandSender {
     int getMaxPlayers();
 
     void setMaxPlayers(int maxPlayers);
+
+    <T extends Expansion> T getExpansion(Class<T> expansionClass);
 
     static class Impl {
         static AtomicReference<Server> IMPL = new AtomicReference<>(null);

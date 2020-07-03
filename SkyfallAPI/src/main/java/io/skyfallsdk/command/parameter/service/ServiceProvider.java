@@ -1,4 +1,4 @@
-package net.treasurewars.core.command.parameter.service;
+package io.skyfallsdk.command.parameter.service;
 
 public interface ServiceProvider {
 

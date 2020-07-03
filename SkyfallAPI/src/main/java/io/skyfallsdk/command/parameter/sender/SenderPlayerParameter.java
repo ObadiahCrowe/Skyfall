@@ -1,8 +1,8 @@
-package net.treasurewars.core.command.parameter.sender;
+package io.skyfallsdk.command.parameter.sender;
 
-import net.treasurewars.core.command.CoreCommand;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
 
 public class SenderPlayerParameter implements SenderParameter<Player> {
 

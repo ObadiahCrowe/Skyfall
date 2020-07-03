@@ -3,6 +3,17 @@ package io.skyfallsdk.command;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.command.defaults.HelpSubCommand;
+import io.skyfallsdk.command.exception.CommandException;
+import io.skyfallsdk.command.options.*;
+import io.skyfallsdk.command.parameter.CommandParameter;
+import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -355,7 +366,7 @@ public class CoreCommand extends AnnotatedPermissible {
             }
         }
 
-        UtilConcurrency.ASYNC_EXECUTOR.execute(() -> {
+        Server.get().getScheduler().execute(() -> {
             CommandExecutorMethod method = null;
             CommandException firstException = null;
             for (CommandExecutorMethod executorMethod : this.getExecutorMethods()) {
@@ -409,7 +420,7 @@ public class CoreCommand extends AnnotatedPermissible {
 
     public void printError(CommandSender sender, String message) {
         if (sender instanceof Player) {
-            sender.sendMessage(MessageTemplate.ERROR.apply(message));
+            sender.sendMessage(ChatColour.RED + "An error occurred whilst executing this command: " + message);
             return;
         }
 
@@ -450,7 +461,7 @@ public class CoreCommand extends AnnotatedPermissible {
                 }
 
                 Player target = sender instanceof Player ? (Player) sender : null;
-                Bukkit.getOnlinePlayers().stream()
+                Server.get().getPlayers().stream()
                   .filter(player -> target == null || target.canSee(player))
                   .map(HumanEntity::getName)
                   .filter(str -> !tabComplete.contains(str))

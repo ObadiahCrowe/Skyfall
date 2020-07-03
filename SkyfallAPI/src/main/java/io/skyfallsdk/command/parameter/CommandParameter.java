@@ -1,15 +1,17 @@
-package net.treasurewars.core.command.parameter;
+package io.skyfallsdk.command.parameter;
 
-import net.treasurewars.core.command.CoreCommand;
-import net.treasurewars.core.command.options.Sender;
-import net.treasurewars.core.command.parameter.argument.Arg;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import net.treasurewars.core.command.parameter.sender.*;
-import net.treasurewars.core.command.parameter.service.Service;
-import net.treasurewars.core.command.parameter.service.ServiceParameter;
-import net.treasurewars.core.modules.player.data.CorePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.options.Sender;
+import io.skyfallsdk.command.parameter.argument.Arg;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.command.parameter.sender.SenderCommandSenderParameter;
+import io.skyfallsdk.command.parameter.sender.SenderFactory;
+import io.skyfallsdk.command.parameter.sender.SenderParameter;
+import io.skyfallsdk.command.parameter.sender.SenderPlayerParameter;
+import io.skyfallsdk.command.parameter.service.Service;
+import io.skyfallsdk.command.parameter.service.ServiceParameter;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -51,10 +53,6 @@ public interface CommandParameter<T> {
 
             if (type.isAssignableFrom(Player.class)) {
                 return (CommandParameter<T>) new SenderPlayerParameter(senderAnnot.allowNull());
-            }
-
-            if (type.isAssignableFrom(CorePlayer.class)) {
-                return (CommandParameter<T>) new SenderCorePlayerParameter();
             }
 
             throw new IllegalArgumentException("Parameter is annotated \"Sender\" but type doesn't implement CommandSender!");
