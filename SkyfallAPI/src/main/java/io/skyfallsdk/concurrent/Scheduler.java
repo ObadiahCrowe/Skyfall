@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * A wrapper around the Skyfall plugin thread pool. All tasks are run asynchronously.
+ * A wrapper around the Skyfall extension thread pool. All tasks are run asynchronously.
  */
 @ThreadSafe
 public interface Scheduler {

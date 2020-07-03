@@ -1,10 +1,11 @@
 package io.skyfallsdk.command;
 
 import com.google.common.collect.Lists;
+import io.skyfallsdk.chat.ChatColour;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.TabCompleter;
+import io.skyfallsdk.command.parameter.CommandParameter;
 import io.skyfallsdk.server.CommandSender;
-import net.treasurewars.core.command.parameter.CommandParameter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -54,7 +55,7 @@ public class TabCompleterMethod extends CommandMethodWrapper {
                     return Lists.newArrayList();
                 }
 
-                sender.sendMessage(MessageTemplate.UNEXPECTED_ERROR);
+                sender.sendMessage(ChatColour.RED + "An unexpected error occurred whilst executing this command.");
                 t.printStackTrace();
                 return Lists.newArrayList();
             }

@@ -1,8 +1,8 @@
 package io.skyfallsdk.command;
 
-import net.treasurewars.core.command.parameter.CommandParameter;
-import net.treasurewars.core.command.parameter.argument.CommandArgument;
-import net.treasurewars.core.command.parameter.sender.SenderParameter;
+import io.skyfallsdk.command.parameter.CommandParameter;
+import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.command.parameter.sender.SenderParameter;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;

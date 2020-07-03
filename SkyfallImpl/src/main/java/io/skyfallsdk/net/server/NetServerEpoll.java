@@ -1,6 +1,7 @@
 package io.skyfallsdk.net.server;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -14,6 +15,8 @@ public class NetServerEpoll extends NetServer {
 
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
+
+    private ChannelFuture future;
 
     public NetServerEpoll(String address, int port) {
         super(address, port);
@@ -35,11 +38,13 @@ public class NetServerEpoll extends NetServer {
           .option(ChannelOption.TCP_NODELAY, true)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-        bootstrap.bind(this.getAddress(), this.getPort());
+        this.future = bootstrap.bind(this.getAddress(), this.getPort());
     }
 
     @Override
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
+        this.future.channel().closeFuture();
+
         this.bossGroup.shutdownGracefully();
         this.workerGroup.shutdownGracefully();
     }
