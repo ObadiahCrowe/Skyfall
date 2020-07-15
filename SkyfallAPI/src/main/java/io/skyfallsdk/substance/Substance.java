@@ -989,19 +989,19 @@ public enum Substance {
     }
 
     private final int protocolId;
-    private final String minecrafId;
+    private final String minecraftId;
 
-    Substance(int protocolId, String minecrafId) {
+    Substance(int protocolId, String minecraftId) {
         this.protocolId = protocolId;
-        this.minecrafId = minecrafId;
+        this.minecraftId = minecraftId;
     }
 
     public int getProtocolId() {
         return this.protocolId;
     }
 
-    public String getMinecrafId() {
-        return this.minecrafId;
+    public String getMinecraftId() {
+        return this.minecraftId;
     }
 
     public static Substance getById(int protocolId) {

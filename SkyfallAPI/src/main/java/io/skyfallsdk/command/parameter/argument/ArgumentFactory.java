@@ -2,9 +2,8 @@ package io.skyfallsdk.command.parameter.argument;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
-import io.skyfallsdk.command.parameter.argument.parse.BooleanParser;
-import io.skyfallsdk.command.parameter.argument.parse.IntegerParser;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.command.parameter.argument.parse.*;
 
 import java.util.Collection;
 import java.util.Map;
@@ -36,8 +35,7 @@ public class ArgumentFactory {
         this.registerParser(new IPAddressParser());
         this.registerParser(new StringArrayParser());
         this.registerParser(new WorldParser());
-        this.registerParser(new DurationParser());
-        this.registerParser(new ItemStackParser());
+        this.registerParser(new SubstanceParser());
         this.registerParser(new CommandParser());
     }
 
@@ -46,7 +44,7 @@ public class ArgumentFactory {
 
         for (Class type : parser.getTypes()) {
             if (type.isEnum() && !(parser instanceof EnumParser)) {
-                Bukkit.getLogger().warning("Registered parser " + parser.getClass().getSimpleName() + " which " +
+                Server.get().getLogger().warn("Registered parser " + parser.getClass().getSimpleName() + " which " +
                         "supports parsing enum of type " + type + "! This is not recommended due to default support for " +
                         " enums which also has tab completion.");
             }

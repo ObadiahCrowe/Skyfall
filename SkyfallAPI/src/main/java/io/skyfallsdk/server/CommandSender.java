@@ -10,4 +10,6 @@ public interface CommandSender extends PermissionHolder {
     default void sendMessage(String message) {
         this.sendMessage(ChatComponent.from(message));
     }
+
+    void executeCommand(String command);
 }

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.config.ConfigType;
 import io.skyfallsdk.config.LoadableConfig;
+import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -13,7 +14,6 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig<T> {
 
@@ -56,7 +56,7 @@ public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig
             return (T) this.backingYaml.load(new FileInputStream(this.getPath().toFile()));
         } catch (Exception e) {
             if (e instanceof FileNotFoundException) {
-                this.logger.warning("Could not find, " + this.getPath().toFile().getName() + ", creating one now..");
+                this.logger.warn("Could not find, " + this.getPath().toFile().getName() + ", creating one now..");
             } else {
                 e.printStackTrace();
             }

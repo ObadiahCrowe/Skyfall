@@ -1,8 +1,8 @@
-package io.skyfallsdk.command.event;
+package io.skyfallsdk.event.command;
 
+import io.skyfallsdk.command.CoreCommand;
 import io.skyfallsdk.event.player.PlayerEvent;
 import io.skyfallsdk.player.Player;
-import net.treasurewars.core.command.CoreCommand;
 
 import java.util.List;
 

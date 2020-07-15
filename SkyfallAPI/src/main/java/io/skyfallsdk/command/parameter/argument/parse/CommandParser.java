@@ -2,12 +2,12 @@ package io.skyfallsdk.command.parameter.argument.parse;
 
 import io.skyfallsdk.Server;
 import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.CoreCommandAdapter;
 import io.skyfallsdk.command.CoreCommandMap;
 import io.skyfallsdk.command.options.Command;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.server.CommandSender;
-import net.treasurewars.core.command.CoreCommandAdapter;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

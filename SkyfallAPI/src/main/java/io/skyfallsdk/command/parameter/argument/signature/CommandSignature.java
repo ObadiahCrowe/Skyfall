@@ -1,12 +1,12 @@
 package io.skyfallsdk.command.parameter.argument.signature;
 
-import net.treasurewars.core.command.CoreCommand;
+import io.skyfallsdk.command.CoreCommand;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static net.treasurewars.core.command.CoreCommand.WRAPPER_OPTIONAL_ARGUMENT;
-import static net.treasurewars.core.command.CoreCommand.WRAPPER_REQUIRED_ARGUMENT;
+import static io.skyfallsdk.command.CoreCommand.WRAPPER_OPTIONAL_ARGUMENT;
+import static io.skyfallsdk.command.CoreCommand.WRAPPER_REQUIRED_ARGUMENT;
 
 public class CommandSignature {
 

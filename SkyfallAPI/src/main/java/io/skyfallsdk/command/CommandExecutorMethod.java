@@ -2,8 +2,11 @@ package io.skyfallsdk.command;
 
 import com.google.common.collect.ImmutableList;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.CommandExecutor;
 import io.skyfallsdk.command.parameter.CommandParameter;
+import io.skyfallsdk.command.parameter.ParameterParsingTask;
+import io.skyfallsdk.command.parameter.ParsingListener;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.ArgumentSpecification;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
@@ -14,7 +17,6 @@ import io.skyfallsdk.server.CommandSender;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -104,7 +106,7 @@ public class CommandExecutorMethod extends CommandMethodWrapper {
         if (this.getParameters().length == 0) {
             this.waitForExecute();
 
-            this.executor.execute(() -> {
+            this.scheduler.execute(() -> {
                 // Don't really see any case where this would be useful, but let's handle it anyway
                 try {
                     getMethod().invoke(getCommandInstance());
@@ -144,7 +146,7 @@ public class CommandExecutorMethod extends CommandMethodWrapper {
         new MethodParsingListenerImpl(sender, args, new ParsingListener<Object[]>() {
             @Override
             public void onSuccess(CommandParameter parameter, Object[] value) {
-                executor.execute(() -> {
+                scheduler.execute(() -> {
                     try {
                         getMethod().invoke(getCommandInstance(), value);
                         future.complete(null);

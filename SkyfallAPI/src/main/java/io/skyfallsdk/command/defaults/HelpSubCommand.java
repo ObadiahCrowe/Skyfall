@@ -8,6 +8,8 @@ import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.util.CommandCompletion;
 import io.skyfallsdk.command.util.CommandHelp;
 import io.skyfallsdk.command.util.ListCommand;
+import io.skyfallsdk.permission.defaults.PlayerPermission;
+import io.skyfallsdk.permission.permissible.PlayerPermissible;
 import io.skyfallsdk.server.CommandSender;
 
 import java.util.Arrays;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Command(name = "help", desc = "View helpful information about this command")
+@Permission(value = PlayerPermission.class, name = "COMMAND_HELP", permission = @PermissionRequirement(value = PlayerPermissible.class))
 public class HelpSubCommand extends ListCommand<CoreCommand> {
 
     private static final int COMMANDS_PER_PAGE = 10;

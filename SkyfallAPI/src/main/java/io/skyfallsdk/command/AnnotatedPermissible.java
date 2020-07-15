@@ -2,6 +2,10 @@ package io.skyfallsdk.command;
 
 import io.skyfallsdk.command.options.Permission;
 import io.skyfallsdk.permission.Permissible;
+import io.skyfallsdk.permission.PermissibleFactory;
+import io.skyfallsdk.permission.defaults.PlayerPermission;
+import io.skyfallsdk.permission.permissible.PlayerPermissible;
+import io.skyfallsdk.permission.permissible.ServerPermissible;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.server.ServerCommandSender;
@@ -15,18 +19,18 @@ public abstract class AnnotatedPermissible {
     public AnnotatedPermissible(Method method) {
         Permission permission = method.getAnnotation(Permission.class);
         if (permission != null) {
-            this.permissionHandler = permission.permission();
+            this.permissionHandler = permission.permission().value();
         } else {
-            this.permissionHandler = Rank.DEFAULT;
+            this.permissionHandler = PlayerPermissible.class;
         }
     }
 
     public AnnotatedPermissible(Class<?> targetClass) {
         Permission permission = targetClass.getAnnotation(Permission.class);
         if (permission != null) {
-            this.permissionHandler = permission.value();
+            this.permissionHandler = permission.permission().value();
         } else {
-            this.permissionHandler = Rank.DEFAULT;
+            this.permissionHandler = PlayerPermissible.class;
         }
     }
 
@@ -34,8 +38,12 @@ public abstract class AnnotatedPermissible {
         this.permissionHandler = permissionHandler;
     }
 
-    public Rank getPermissionHandler() {
-        return permissionHandler;
+    public Class<? extends Permissible> getPermissionHandler() {
+        return this.permissionHandler;
+    }
+
+    public Permissible<?> getPermissionHandlerInstance() {
+        return PermissibleFactory.getByClass(this.permissionHandler);
     }
 
     public abstract boolean isPlayerOnly();
@@ -54,10 +62,10 @@ public abstract class AnnotatedPermissible {
             return false;
         }
 
-        if (this.getPermissionHandler() == null || this.getPermissionHandler() == Rank.DEFAULT) {
+        if (this.getPermissionHandler() == null || this.getPermissionHandler() == ServerPermissible.class) {
             return true;
         }
 
-        return rank.getRank().isAtLeast(this.permissionHandler);
+        return this.getPermissionHandlerInstance().hasPermission(sender, PlayerPermission.COMMAND_HELP);
     }
 }

@@ -186,7 +186,7 @@ public class CommandArgument<T> implements CommandParameter<T> {
     }
 
     public String getDescription() {
-        if (!StringUtils.isBlank(this.data.desc())) {
+        if (!this.data.desc().isEmpty()) {
             return this.data.desc();
         }
 

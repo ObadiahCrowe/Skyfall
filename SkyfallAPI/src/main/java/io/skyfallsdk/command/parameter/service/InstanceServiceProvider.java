@@ -1,6 +1,6 @@
-package net.treasurewars.core.command.util;
+package io.skyfallsdk.command.parameter.service;
 
-import net.treasurewars.core.command.parameter.service.ServiceProvider;
+import io.skyfallsdk.command.parameter.service.ServiceProvider;
 
 public class InstanceServiceProvider implements ServiceProvider {
 

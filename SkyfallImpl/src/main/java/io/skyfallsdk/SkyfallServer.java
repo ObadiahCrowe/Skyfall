@@ -5,21 +5,23 @@ import io.skyfallsdk.command.CoreCommandMap;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
+import io.skyfallsdk.concurrent.thread.ConsoleThread;
+import io.skyfallsdk.concurrent.thread.ServerTickThread;
 import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.permission.PermissibleAction;
-import io.skyfallsdk.permission.defaults.PlayerPermission;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.world.World;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class SkyfallServer implements Server {
 
@@ -31,14 +33,20 @@ public class SkyfallServer implements Server {
 
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
-        logger = Logger.getLogger(SkyfallMain.class.getName());
+        logger = LogManager.getLogger(SkyfallServer.class);
 
+        logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
 
+        logger.info("Loading default configs..");
         this.config = LoadableConfig.getByClass(ServerConfig.class).load();
         this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
 
+        logger.info("Starting server..");
         NetServer.init("localhost", 25565);
+
+        new ConsoleThread(this).start();
+        new ServerTickThread().start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
@@ -128,6 +136,11 @@ public class SkyfallServer implements Server {
 
     @Override
     public void sendMessage(ChatComponent component) {
+
+    }
+
+    @Override
+    public void executeCommand(String command) {
 
     }
 
