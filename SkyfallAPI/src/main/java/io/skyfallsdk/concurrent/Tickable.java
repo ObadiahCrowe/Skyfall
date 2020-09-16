@@ -5,6 +5,14 @@ package io.skyfallsdk.concurrent;
  */
 public interface Tickable {
 
+    default void register() {
+        //
+    }
+
+    default void deregister() {
+        //
+    }
+
     /**
      * Logic to run every tick.
      */

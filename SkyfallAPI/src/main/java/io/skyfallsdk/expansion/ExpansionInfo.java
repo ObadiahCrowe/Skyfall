@@ -9,11 +9,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExpansionInfo {
 
-    String getName();
+    String name();
 
-    String getVersion();
+    String version();
 
-    String[] getAuthors();
+    String[] authors();
 
-    String[] getDependencies();
+    String[] dependencies();
+
+    long expansionId() default -1L;
 }

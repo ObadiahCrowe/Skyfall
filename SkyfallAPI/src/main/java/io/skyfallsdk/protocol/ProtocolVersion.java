@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public enum ProtocolVersion {
 
+    v1_16_3("1.16.3", 753),
     v1_16_2("1.16.2", 738),
     v1_16_1("1.16.1", 736),
     v1_16("1.16", 735),
@@ -45,13 +46,13 @@ public enum ProtocolVersion {
 
     v1_8_9("1.8.9", 47),
 
-    UNKNOWN("Unknown", 999);
+    UNKNOWN("Unknown", 0);
 
     private static final Short2IntMap PROTOCOL_TO_VERSION = new Short2IntOpenHashMap(ProtocolVersion.values().length);
 
     static {
         for (ProtocolVersion version : ProtocolVersion.values()) {
-            PROTOCOL_TO_VERSION.put(version.getVer(), version.ordinal());
+            PROTOCOL_TO_VERSION.put(version.getVersion(), version.ordinal());
         }
     }
 
@@ -67,7 +68,7 @@ public enum ProtocolVersion {
         return this.name;
     }
 
-    public short getVer() {
+    public short getVersion() {
         return this.ver;
     }
 
@@ -75,7 +76,7 @@ public enum ProtocolVersion {
         return Arrays.stream(ProtocolVersion.values())
           .filter(version -> version.getName().equalsIgnoreCase(name))
           .findFirst()
-          .orElse(ProtocolVersion.values()[0]);
+          .orElse(ProtocolVersion.UNKNOWN);
     }
 
     public static ProtocolVersion getByVersion(short protocolVersion) {

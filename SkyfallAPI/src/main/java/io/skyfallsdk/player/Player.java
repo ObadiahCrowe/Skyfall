@@ -5,4 +5,5 @@ import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.server.CommandSender;
 
 public interface Player extends LivingEntity, CommandSender, PermissionHolder {
+
 }

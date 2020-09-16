@@ -44,7 +44,7 @@ public class ConsoleThread extends Thread {
         }
 
         while (isRunning) {
-            String input = reader.readLine("λ ");
+            String input = reader.readLine("→ ");
             if (input.isEmpty()) {
                 continue;
             }

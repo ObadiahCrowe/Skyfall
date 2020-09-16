@@ -1,27 +1,30 @@
 package io.skyfallsdk.concurrent;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
+import io.skyfallsdk.Server;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.*;
 
 @ThreadSafe
 public class ThreadPool implements ScheduledExecutorService, Scheduler {
 
+    private static final Map<PoolSpec, ThreadPool> THREAD_POOLS = Maps.newHashMap();
+
     private final ExecutorService service;
-    private final Set<Thread> scheduledThreads;
+    private final boolean isScheduledService;
 
     protected ThreadPool(ExecutorService service) {
         this.service = service;
-        this.scheduledThreads = service instanceof ScheduledExecutorService ? null : Sets.newConcurrentHashSet();
+        this.isScheduledService = service instanceof ScheduledExecutorService;
     }
 
     @Override
     public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-        if (this.scheduledThreads == null) {
+        if (this.isScheduledService) {
             return ((ScheduledExecutorService) this.service).schedule(command, delay, unit);
         }
 
@@ -30,32 +33,29 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
 
     @Override
     public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
-        if (this.scheduledThreads == null) {
+        if (this.isScheduledService) {
             return ((ScheduledExecutorService) this.service).schedule(callable, delay, unit);
         }
 
-        // TODO: 17/06/2020
-        return null;
+        return Executors.newSingleThreadScheduledExecutor().schedule(callable, delay, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        if (this.scheduledThreads == null) {
+        if (this.isScheduledService) {
             return ((ScheduledExecutorService) this.service).scheduleAtFixedRate(command, initialDelay, period, unit);
         }
 
-        // TODO: 17/06/2020
-        return null;
+        return Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(command, initialDelay, period, unit);
     }
 
     @Override
     public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        if (this.scheduledThreads == null) {
+        if (this.isScheduledService) {
             return ((ScheduledExecutorService) this.service).scheduleWithFixedDelay(command, initialDelay, delay, unit);
         }
 
-        // TODO: 17/06/2020
-        return null;
+        return Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(command, initialDelay, delay, unit);
     }
 
     @Override
@@ -124,6 +124,28 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
     }
 
     public static ThreadPool createForSpec(PoolSpec spec) {
-        return null;
+        return THREAD_POOLS.computeIfAbsent(spec, func -> {
+            int maxThreads = spec.getMaxThreads();
+
+            if (spec.isStealing()) {
+                return new ThreadPool(new ForkJoinPool(maxThreads, spec, spec, true));
+            }
+
+            return new ThreadPool(new ScheduledThreadPoolExecutor(1, spec, (r, executor) -> Server.get().getLogger().fatal("Could not add new thread to " + spec.getName() + " pool!")));
+        });
+    }
+
+    public static void initDefaultPools() {
+        createForSpec(PoolSpec.CHUNKS);
+        createForSpec(PoolSpec.ENTITIES);
+        createForSpec(PoolSpec.PLAYERS);
+        createForSpec(PoolSpec.SCHEDULER);
+        createForSpec(PoolSpec.WORLD);
+    }
+
+    public static void shutdownAll() {
+        for (ThreadPool pool : THREAD_POOLS.values()) {
+            pool.shutdown();
+        }
     }
 }

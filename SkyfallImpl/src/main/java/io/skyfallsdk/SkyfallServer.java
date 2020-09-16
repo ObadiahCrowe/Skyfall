@@ -42,6 +42,9 @@ public class SkyfallServer implements Server {
         this.config = LoadableConfig.getByClass(ServerConfig.class).load();
         this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
 
+        logger.info("Initialising thread pools..");
+        ThreadPool.initDefaultPools();
+
         logger.info("Starting server..");
         NetServer.init("localhost", 25565);
 
@@ -53,7 +56,11 @@ public class SkyfallServer implements Server {
 
     @Override
     public void shutdown() {
+        logger.info("Saving configs..");
         this.config.save();
+
+        logger.info("Shutting down thread pools..");
+        ThreadPool.shutdownAll();
     }
 
     public ServerConfig getConfig() {

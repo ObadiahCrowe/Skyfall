@@ -2,10 +2,14 @@ package io.skyfallsdk.config;
 
 import io.skyfallsdk.Server;
 import io.skyfallsdk.config.type.YamlConfig;
+import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.Difficulty;
 import io.skyfallsdk.server.Gamemode;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ServerConfig extends YamlConfig<ServerConfig> {
 
@@ -18,6 +22,8 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     private Gamemode gamemode;
     private Difficulty difficulty;
+
+    private List<String> supportedVersions;
 
     /**
      * Represents a configuration file.
@@ -36,6 +42,10 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
         this.gamemode = gamemode;
         this.difficulty = difficulty;
+
+        this.supportedVersions = Arrays.stream(ProtocolVersion.values())
+          .map(ProtocolVersion::getName)
+          .collect(Collectors.toList());
     }
 
     public int getMaxPlayers() {
@@ -68,6 +78,10 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public List<ProtocolVersion> getSupportedVersions() {
+        return this.supportedVersions.stream().map(ProtocolVersion::getByName).collect(Collectors.toList());
     }
 
     @Override

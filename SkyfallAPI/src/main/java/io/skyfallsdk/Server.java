@@ -5,6 +5,7 @@ import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
+import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.world.World;
 import org.apache.logging.log4j.Logger;
@@ -49,6 +50,10 @@ public interface Server extends CommandSender, PermissionHolder {
     void setMaxPlayers(int maxPlayers);
 
     <T extends Expansion> T getExpansion(Class<T> expansionClass);
+
+    List<ProtocolVersion> getSupportedVersions();
+
+    ProtocolVersion getBaseVersion();
 
     static class Impl {
         static AtomicReference<Server> IMPL = new AtomicReference<>(null);
