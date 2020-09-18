@@ -3,7 +3,13 @@ package io.skyfallsdk.command;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.command.defaults.HelpCommand;
+import io.skyfallsdk.command.defaults.VersionCommand;
+import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.expansion.Expansion;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.util.Validator;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +27,13 @@ public class ServerCommandMap implements CommandMap {
     public ServerCommandMap() {
         this.knownCommands = Maps.newConcurrentMap();
         this.logger = Server.get().getLogger();
+
+        this.registerDefaultCommands();
+    }
+
+    private void registerDefaultCommands() {
+        this.registerCommand(HelpCommand.class);
+        this.registerCommand(VersionCommand.class);
     }
 
     @Override
@@ -28,7 +41,7 @@ public class ServerCommandMap implements CommandMap {
         return this.registerCommand(expansion, Command.fromClass(commandClass));
     }
 
-    public Command registerCommand(Class<?> commandClass) {
+    private Command registerCommand(Class<?> commandClass) {
         return this.registerCommand(Command.fromClass(commandClass));
     }
 
@@ -42,7 +55,8 @@ public class ServerCommandMap implements CommandMap {
         return command;
     }
 
-    public Command registerCommand(Command command) {
+
+    private Command registerCommand(Command command) {
         Validator.notNull(command, "Command can't be null!");
 
         this.register("skyfall", command);
@@ -64,19 +78,14 @@ public class ServerCommandMap implements CommandMap {
         }
     }
 
+    @Override
     public <T> Command getCommand(Class<T> commandClass) {
         for (Command command : this.getCommands()) {
-            if (!(command instanceof CoreCommandAdapter)) {
+            if (command.getCommandClass() != commandClass) {
                 continue;
             }
 
-            CoreCommandAdapter adapter = (CoreCommandAdapter) command;
-            Command coreCommand = adapter.getCommand();
-            if (coreCommand.getCommandClass() != commandClass) {
-                continue;
-            }
-
-            return coreCommand;
+            return command;
         }
 
         return null;
@@ -93,71 +102,93 @@ public class ServerCommandMap implements CommandMap {
     }
 
     public boolean register(String fallbackPrefix, Command command) {
-        if (this.removedCommands != null && this.removedCommands.contains(fallbackPrefix + ":" + command.getName())) {
-            return true;
+        this.knownCommands.remove(command.getName());
+        for (String alias : command.getAliases()) {
+            this.knownCommands.remove(alias);
         }
 
-        if (command instanceof CoreCommandAdapter) {
-            this.knownCommands.remove(command.getName());
-            command.getAliases().forEach(this.knownCommands::remove);
-        }
+        return true;
 
-        return super.register(fallbackPrefix, command);
+        //return super.register(fallbackPrefix, command);
     }
+
+    /*
+    public boolean register(String label, String fallbackPrefix, Command command) {
+        label = label.toLowerCase().trim();
+        fallbackPrefix = fallbackPrefix.toLowerCase().trim();
+        boolean registered = this.register(label, command, false, fallbackPrefix);
+        Iterator iterator = command.getAliases().iterator();
+
+        while(iterator.hasNext()) {
+            if (!this.register((String)iterator.next(), command, true, fallbackPrefix)) {
+                iterator.remove();
+            }
+        }
+
+        if (!registered) {
+            command.setLabel(fallbackPrefix + ":" + label);
+        }
+
+        command.register(this);
+        return registered;
+    }
+
+    private synchronized boolean register(String label, Command command, boolean isAlias, String fallbackPrefix) {
+        this.knownCommands.put(fallbackPrefix + ":" + label, command);
+        if ((command instanceof VanillaCommand || isAlias) && this.knownCommands.containsKey(label)) {
+            return false;
+        } else {
+            boolean registered = true;
+            Command conflict = (Command)this.knownCommands.get(label);
+            if (conflict != null && conflict.getLabel().equals(label)) {
+                return false;
+            } else {
+                if (!isAlias) {
+                    command.setLabel(label);
+                }
+
+                this.knownCommands.put(label, command);
+                return registered;
+            }
+        }
+    }*/
 
     public boolean dispatch(CommandSender sender, String commandLine) throws CommandException {
         String[] args = PATTERN_ON_SPACE.split(commandLine);
         if (args.length == 0) {
-            sender.sendMessage(MessageTemplate.COMMAND_ERROR_NON_EXISTANT);
+            sender.sendMessage(ChatColour.RED + "This command doesn't exist!");
             return true;
         }
 
         String sentCommandLabel = args[0].toLowerCase();
         Command target = this.getCommand(sentCommandLabel);
         if (target == null) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(ChatColour.RED + "Command doesn't exist!");
-                return true;
-            }
-
-            sender.sendMessage(MessageTemplate.COMMAND_ERROR_NON_EXISTANT);
-            // Return true anyway, so that another message is not sent
+            sender.sendMessage(ChatColour.RED + "This command doesn't exist!");
             return true;
         }
 
-        if (!target.testPermissionSilent(sender)) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(ChatColour.RED + "No permission!");
-                return true;
-            }
-
-            sender.sendMessage(MessageTemplate.COMMAND_ERROR_NO_PERM);
-            // Return true anyway, so that another message is not sent
+        if (!target.hasAccess(sender)) {
+            sender.sendMessage(ChatColour.RED + "You do not have permission to execute this command.");
             return true;
         }
 
         try {
-            target.timings.startTiming();
-
             String[] arguments = Arrays.copyOfRange(args, 1, args.length);
-            target.execute(sender, sentCommandLabel, arguments);
+
+            target.callExecute(sender, arguments);
         } catch (Throwable throwable) {
-            new CommandException("Unhandled exception executing \'" + commandLine + "\' in " + target, throwable).printStackTrace();
-        } finally {
-            target.timings.stopTiming();
+            new CommandException("Unhandled exception executing \'" + commandLine + "\' in " + target, throwable, false).printStackTrace();
         }
 
         return true;
     }
 
     public List<String> tabComplete(CommandSender sender, String cmdLine) {
-        Validate.notNull(sender, "Sender cannot be null");
-        Validate.notNull(cmdLine, "Command line cannot null");
+        Validator.notNull(sender, "Sender cannot be null");
+        Validator.notNull(cmdLine, "Command line cannot null");
 
         int spaceIndex = cmdLine.indexOf(32);
         String argLine;
-
-        boolean op = !(sender instanceof Player) || sender.isOp();
 
         if (spaceIndex == -1) {
             List<String> commandNames = Lists.newArrayList();
@@ -165,12 +196,12 @@ public class ServerCommandMap implements CommandMap {
 
             for (Entry<String, Command> entry : this.knownCommands.entrySet()) {
                 Command command = entry.getValue();
-                if (!command.testPermissionSilent(sender) || !op && !(command instanceof CoreCommandAdapter)) {
+                if (!command.hasAccess(sender)) {
                     continue;
                 }
 
                 String name = entry.getKey();
-                if (!StringUtil.startsWithIgnoreCase(name, cmdLine)) {
+                if (!name.toLowerCase().startsWith(cmdLine.toLowerCase())) {
                     continue;
                 }
 
@@ -185,7 +216,7 @@ public class ServerCommandMap implements CommandMap {
         Command target = this.getCommand(commandName);
         if (target == null) {
             return null;
-        } else if (!target.testPermissionSilent(sender)) {
+        } else if (!target.hasAccess(sender)) {
             return null;
         }
 
@@ -193,9 +224,9 @@ public class ServerCommandMap implements CommandMap {
         String[] args = PATTERN_ON_SPACE.split(argLine, -1);
 
         try {
-            return target.tabComplete(sender, commandName, args);
+            return target.callTabComplete(sender, args);
         } catch (Throwable otherExc) {
-            new CommandException("Unhandled exception executing tab-completer for \'" + cmdLine + "\' in " + target, otherExc).printStackTrace();
+            new CommandException("Unhandled exception executing tab-completer for \'" + cmdLine + "\' in " + target, otherExc, false).printStackTrace();
             return Lists.newArrayList();
         }
     }

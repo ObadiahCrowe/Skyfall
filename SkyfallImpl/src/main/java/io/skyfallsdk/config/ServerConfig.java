@@ -1,6 +1,7 @@
 package io.skyfallsdk.config;
 
 import io.skyfallsdk.Server;
+import io.skyfallsdk.config.type.JsonConfig;
 import io.skyfallsdk.config.type.YamlConfig;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.Difficulty;
@@ -11,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ServerConfig extends YamlConfig<ServerConfig> {
+public class ServerConfig extends JsonConfig<ServerConfig> {
 
     private static final ServerConfig DEFAULT_CONFIG = new ServerConfig(20, true, Gamemode.SURVIVAL, Difficulty.PEACEFUL);
 
@@ -86,7 +87,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     @Override
     public Path getPath() {
-        return Server.get().getPath().resolve("config.yml");
+        return Server.get().getPath().resolve("config.json");
     }
 
     @Override

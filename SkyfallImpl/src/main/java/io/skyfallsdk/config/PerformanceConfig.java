@@ -1,10 +1,11 @@
 package io.skyfallsdk.config;
 
+import io.skyfallsdk.config.type.JsonConfig;
 import io.skyfallsdk.config.type.YamlConfig;
 
 import java.nio.file.Path;
 
-public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
+public class PerformanceConfig extends JsonConfig<PerformanceConfig> {
 
     private int nettyThreads;
 

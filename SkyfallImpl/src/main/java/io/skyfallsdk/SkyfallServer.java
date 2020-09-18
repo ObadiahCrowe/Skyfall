@@ -8,7 +8,6 @@ import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.thread.ConsoleThread;
 import io.skyfallsdk.concurrent.thread.ServerTickThread;
-import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
@@ -44,8 +43,10 @@ public class SkyfallServer implements Server {
         Impl.IMPL.set(this);
 
         logger.info("Loading default configs..");
-        this.config = LoadableConfig.getByClass(ServerConfig.class).load();
-        this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
+        //this.config = LoadableConfig.getByClass(ServerConfig.class).load();
+        //this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
+        this.config = new ServerConfig().getDefaultConfig();
+        this.perfConfig = new PerformanceConfig().getDefaultConfig();
 
         logger.info("Setting up...");
         this.commandMap = new ServerCommandMap();
@@ -171,7 +172,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public void executeCommand(String command) {
-
+        this.commandMap.dispatch(this, command);
     }
 
     @Override

@@ -7,7 +7,7 @@ import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.server.ServerCommandSender;
 import io.skyfallsdk.world.World;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public interface Server extends CommandSender, PermissionHolder {
+public interface Server extends ServerCommandSender, PermissionHolder {
 
     static Server get() {
         return Impl.IMPL.get();
