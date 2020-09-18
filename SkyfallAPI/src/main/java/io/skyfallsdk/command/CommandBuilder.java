@@ -1,6 +1,8 @@
 package io.skyfallsdk.command;
 
-public class CoreCommandBuilder {
+import io.skyfallsdk.util.Validator;
+
+public class CommandBuilder {
 
     private Class<?> commandClass;
     private Object commandInstance;
@@ -9,7 +11,7 @@ public class CoreCommandBuilder {
     private String[] aliases;
     private CoreCommand[] subCommands;
 
-    public CoreCommandBuilder(Object commandInstance) {
+    public CommandBuilder(Object commandInstance) {
         if (commandInstance == null) {
             throw new IllegalArgumentException("Command class can't be null!");
         }
@@ -21,35 +23,35 @@ public class CoreCommandBuilder {
     }
 
     public CoreCommand build() {
-        Validate.notNull(this.name);
-        Validate.notNull(this.description);
+        Validator.notNull(this.name);
+        Validator.notNull(this.description);
 
         return new CoreCommand(this.commandClass, this.commandInstance, this.name, this.description, this.aliases, this.subCommands);
     }
 
-    public CoreCommandBuilder setName(String name) {
-        Validate.notNull(name);
+    public CommandBuilder setName(String name) {
+        Validator.notNull(name);
 
         this.name = name;
         return this;
     }
 
-    public CoreCommandBuilder setDescription(String description) {
-        Validate.notNull(description);
+    public CommandBuilder setDescription(String description) {
+        Validator.notNull(description);
 
         this.description = description;
         return this;
     }
 
-    public CoreCommandBuilder setAliases(String... aliases) {
-        Validate.notNull(aliases);
+    public CommandBuilder setAliases(String... aliases) {
+        Validator.notNull(aliases);
 
         this.aliases = aliases;
         return this;
     }
 
-    public CoreCommandBuilder setSubCommands(CoreCommand... subCommands) {
-        Validate.notNull(subCommands);
+    public CommandBuilder setSubCommands(CoreCommand... subCommands) {
+        Validator.notNull(subCommands);
 
         this.subCommands = subCommands;
         return this;

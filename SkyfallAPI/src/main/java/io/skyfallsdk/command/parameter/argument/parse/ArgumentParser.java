@@ -47,12 +47,4 @@ public interface ArgumentParser<T> extends ArgumentCompleter<T> {
     default T parse(CommandSender sender, Class type, String... values) throws ArgumentParseException {
         throw new UnsupportedOperationException("Argument parser " + this.getClass().getSimpleName() + " doesn't support multiple parameters!");
     }
-
-    default boolean forceAsync() {
-        return false;
-    }
-
-    default boolean supportsAsync() {
-        return true;
-    }
 }

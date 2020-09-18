@@ -1,7 +1,7 @@
 package io.skyfallsdk;
 
 import io.skyfallsdk.chat.ChatComponent;
-import io.skyfallsdk.command.CoreCommandMap;
+import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
@@ -87,7 +87,7 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public CoreCommandMap getCommandMap() {
+    public ServerCommandMap getCommandMap() {
         return null;
     }
 

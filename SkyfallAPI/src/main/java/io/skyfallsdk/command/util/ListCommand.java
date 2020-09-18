@@ -6,6 +6,7 @@ import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.ChatFormat;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.util.UtilMath;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,9 +17,9 @@ public abstract class ListCommand<T> {
         this.printPage(player, page, list, title, 10);
     }
 
-    public void printPage(CommandSender player, int page, List<T> list, String title, int perPage) {
+    public void printPage(CommandSender sender, int page, List<T> list, String title, int perPage) {
         if (list == null || list.size() == 0) {
-            this.onNoElements(player);
+            this.onNoElements(sender);
             return;
         }
 
@@ -26,23 +27,22 @@ public abstract class ListCommand<T> {
         page = UtilMath.clamp(page, 1, totalPages);
 
         List<T> pageList = list.subList((page - 1) * perPage, Math.min(list.size(), page * perPage));
-
-        List<BaseComponent[]> componentList = Lists.newArrayList();
+        List<ChatComponent> componentList = Lists.newArrayList();
 
         for (T value : pageList) {
-            Collections.addAll(componentList, this.getComponents(player, value));
+            Collections.addAll(componentList, this.getComponents(sender, value));
         }
 
         String header = title + ChatFormat.RESET + " " + ChatColour.DARK_GRAY + "(" + ChatColour.GRAY + page + "/" + totalPages + ChatColour.DARK_GRAY + ")";
-        player.sendMessage(header);
+        sender.sendMessage(header);
 
-        for (BaseComponent[] components : componentList) {
-            if (!(player instanceof Player)) {
-                player.sendMessage(TextComponent.toLegacyText(components));
+        for (ChatComponent component : componentList) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(component.toString());
                 continue;
             }
 
-            ((Player) player).spigot().sendMessage(components);
+            sender.sendMessage(component);
         }
     }
 

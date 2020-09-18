@@ -14,6 +14,7 @@ import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.util.Validator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -72,7 +73,7 @@ public class CoreCommand extends AnnotatedPermissible {
     }
 
     public static CoreCommand fromClass(Class<?> commandClass) {
-        Validate.notNull(commandClass);
+        Validator.notNull(commandClass);
 
         Object commandInstance;
 
@@ -87,7 +88,7 @@ public class CoreCommand extends AnnotatedPermissible {
     }
 
     public static CoreCommand fromInstance(Object commandInstance) {
-        Validate.notNull(commandInstance);
+        Validator.notNull(commandInstance);
 
         Class<?> commandClass = commandInstance.getClass();
         Command commandAnnot = commandClass.getAnnotation(Command.class);
@@ -462,8 +463,7 @@ public class CoreCommand extends AnnotatedPermissible {
 
                 Player target = sender instanceof Player ? (Player) sender : null;
                 Server.get().getPlayers().stream()
-                  .filter(player -> target == null || target.canSee(player))
-                  .map(HumanEntity::getName)
+                  .map(Player::getName)
                   .filter(str -> !tabComplete.contains(str))
                   .forEach(tabComplete::add);
             } catch (ArgumentParseException e) {

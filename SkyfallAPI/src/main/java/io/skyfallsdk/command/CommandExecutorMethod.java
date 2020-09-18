@@ -12,6 +12,7 @@ import io.skyfallsdk.command.parameter.argument.ArgumentSpecification;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
 import io.skyfallsdk.concurrent.Scheduler;
+import io.skyfallsdk.concurrent.ThreadUnsafe;
 import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.Method;
@@ -28,10 +29,10 @@ public class CommandExecutorMethod extends CommandMethodWrapper {
             throw new IllegalArgumentException("Method is not command executor!");
         }
 
-        Scheduler scheduler = Server.get().getScheduler();
-
         CommandParameter[] parameters = CommandParameter.getParameters(method);
-        return new CommandExecutorMethod(command, commandInstance, method, parameters, scheduler);
+        ThreadUnsafe threadUnsafeAnnot = method.getAnnotation(ThreadUnsafe.class);
+        Class threadUnsafe = threadUnsafeAnnot == null ? null : threadUnsafeAnnot.value();
+        return new CommandExecutorMethod(command, commandInstance, method, parameters, Server.get().getScheduler(), threadUnsafe);
     }
 
     private final Scheduler scheduler;
@@ -40,7 +41,7 @@ public class CommandExecutorMethod extends CommandMethodWrapper {
     private final Class threadUnsafe;
     private final AtomicBoolean running;
 
-    public CommandExecutorMethod(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters, Scheduler scheduler) {
+    public CommandExecutorMethod(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters, Scheduler scheduler, Class threadUnsafe) {
         super(command, commandInstance, method, parameters);
         this.scheduler = scheduler;
         this.threadUnsafe = threadUnsafe;

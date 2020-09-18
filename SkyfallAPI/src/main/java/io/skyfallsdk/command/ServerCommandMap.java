@@ -1,118 +1,49 @@
 package io.skyfallsdk.command;
 
 import com.google.common.collect.Lists;
-import net.treasurewars.core.command.management.ToggleCommand;
-import net.treasurewars.core.message.MessageTemplate;
-import net.treasurewars.core.modules.chat.ChatColour;
-import org.apache.commons.lang.Validate;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandException;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.expansion.Expansion;
+import io.skyfallsdk.util.Validator;
+import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-public class CoreCommandMap extends SimpleCommandMap {
-
-    public static CoreCommandMap injectCommandMap(Logger logger) {
-        logger.info("Attempting to inject custom command map...");
-        Class<? extends Server> serverClass = Bukkit.getServer().getClass();
-
-        try {
-            Field field = serverClass.getDeclaredField("commandMap");
-            if (!field.getType().getPackage().equals(SimpleCommandMap.class.getPackage())) {
-                return null;
-            }
-
-            field.setAccessible(true);
-            SimpleCommandMap previousMap = (SimpleCommandMap) field.get(Bukkit.getServer());
-            CoreCommandMap map = new CoreCommandMap(previousMap, logger);
-            field.set(Bukkit.getServer(), map);
-
-            logger.info("Successfully injected custom command map to CraftServer!");
-
-            return map;
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Failed to inject custom command map to CraftServer!", e);
-            return null;
-        }
-    }
+public class ServerCommandMap {
 
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile("\\s+");
-    private static final List<String> DEFAULT_REMOVED_COMMANDS = Lists.newArrayList("minecraft:say", "minecraft:tell",
-            "minecraft:me", "worldedit:/calc", "bukkit:about", "bukkit:pl", "bukkit:?", "bukkit:help", "bukkit:reload",
-            "bukkit:rl", "bukkit:timings", "minecraft:achievement", "minecraft:ban", "minecraft:ban-ip", "minecraft:banlist", "minecraft:clear",
-            "minecraft:blockdata", "minecraft:clear", "minecraft:debug", "minecraft:defaultgamemode", "minecraft:difficulty",
-            "minecraft:effect", "minecraft:enchant", "minecraft:entitydata", "minecraft:execute", "minecraft:fill", "minecraft:gamemode",
-            "minecraft:give", "minecraft:help", "minecraft:kick", "minecraft:kill", "minecraft:list",
-            "minecraft:pardon", "minecraft:pardon-ip", "minecraft:particle", "minecraft:playsound", "minecraft:replaceitem", "minecraft:save-all",
-            "minecraft:save-off", "minecraft:save-on", "minecraft:scoreboard", "minecraft:seed", "minecraft:setblock", "minecraft:setidletimeout",
-            "minecraft:setworldspawn", "minecraft:spawnpoint", "minecraft:spreadplayers", "minecraft:stats", "minecraft:stop", "minecraft:summon",
-            "minecraft:testfor", "minecraft:testforblock", "minecraft:testforblocks", "minecraft:title", "minecraft:toggledownfall", "minecraft:tp",
-            "minecraft:trigger", "minecraft:weather", "minecraft:worldborder", "minecraft:xp", "minecraft:clone", "spigot:restart",
-            "spigot:tps", "minecraft:time", "protocollib:filter", "protocollib:packet", "protocollib:packet_filter", "protocollib:packetlog", "worldedit:calc"
-    );
 
     private final Logger logger;
-    private final List<String> removedCommands;
 
-    private CoreCommandMap(SimpleCommandMap previousMap, Logger logger) {
-        super(Bukkit.getServer());
+    private ServerCommandMap() {
+        this.logger = Server.get().getLogger();
+    }
 
-        this.logger = logger;
-        this.removedCommands = Lists.newArrayList();
-
-        // Initial set up
-        this.logger.info("Cloning fields from previous command map into this instance...");
-        for (Field field : previousMap.getClass().getDeclaredFields()) {
-            this.logger.info("Cloning field \"" + field.getName() + "\"...");
-
-            try {
-                Field modifiers = Field.class.getDeclaredField("modifiers");
-                modifiers.setAccessible(true);
-
-                Field oldField = previousMap.getClass().getDeclaredField(field.getName());
-                oldField.setAccessible(true);
-
-                modifiers.setInt(oldField, oldField.getModifiers() & ~Modifier.FINAL);
-                Object oldObject = oldField.get(previousMap);
-
-                Field newField = this.getClass().getSuperclass().getDeclaredField(field.getName());
-                newField.setAccessible(true);
-
-                modifiers.setInt(newField, newField.getModifiers() & ~Modifier.FINAL);
-                newField.set(this, oldObject);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                this.logger.log(Level.SEVERE, "An exception occurred when cloning fields from previous command map!", e);
-                return;
-            }
-        }
-
-        this.logger.info("Successfully cloned fields from previous instance.");
-        this.blockCommands(DEFAULT_REMOVED_COMMANDS);
-
-        this.registerCommand(ToggleCommand.class);
+    public CoreCommand registerCommand(Expansion expansion, Class<?> commandClass) {
+        return this.registerCommand(expansion, CoreCommand.fromClass(commandClass));
     }
 
     public CoreCommand registerCommand(Class<?> commandClass) {
         return this.registerCommand(CoreCommand.fromClass(commandClass));
     }
 
+    public CoreCommand registerCommand(Expansion expansion, CoreCommand command) {
+        Validator.notNull(expansion, "Expansion can't be null!");
+        Validator.notNull(command, "Command can't be null!");
+
+        this.register(Server.get().getExpansionInfo(expansion).name(), new CoreCommandAdapter(command));
+
+        return command;
+    }
+
     public CoreCommand registerCommand(CoreCommand command) {
-        Validate.notNull(command, "Command can't be null!");
-        this.register("treasurewars", new CoreCommandAdapter(command));
+        Validator.notNull(command, "Command can't be null!");
+
+        this.register("skyfall", new CoreCommandAdapter(command));
+
         return command;
     }
 
@@ -259,7 +190,6 @@ public class CoreCommandMap extends SimpleCommandMap {
         return true;
     }
 
-    @Override
     public List<String> tabComplete(CommandSender sender, String cmdLine) {
         Validate.notNull(sender, "Sender cannot be null");
         Validate.notNull(cmdLine, "Command line cannot null");

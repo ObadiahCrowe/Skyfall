@@ -77,60 +77,76 @@ public class ChatComponent {
         return this.formats[5];
     }
 
-    public void addFormat(ChatFormat format) {
+    public ChatComponent addFormat(ChatFormat format) {
         this.formats[format.ordinal()] = true;
+
+        return this;
     }
 
     public ChatColour getColour() {
         return this.colour;
     }
 
-    public void setColour(ChatColour colour) {
+    public ChatComponent setColour(ChatColour colour) {
         this.colour = colour;
+
+        return this;
     }
 
     public String getInsertion() {
         return this.insertion;
     }
 
-    public void setInsertion(String insertion) {
+    public ChatComponent setInsertion(String insertion) {
         this.insertion = insertion;
+
+        return this;
     }
 
     public String getSelector() {
         return this.selector;
     }
 
-    public void setSelector(String selector) {
+    public ChatComponent setSelector(String selector) {
         this.selector = selector;
+
+        return this;
     }
 
     public String getTranslate() {
         return this.translate;
     }
 
-    public void setTranslate(String translate) {
+    public ChatComponent setTranslate(String translate) {
         this.translate = translate;
+
+        return this;
     }
 
     public ClickEvent getClickEvent() {
         return this.clickEvent;
     }
 
-    public void setClickEvent(ClickEvent clickEvent) {
+    public ChatComponent setClickEvent(ClickEvent clickEvent) {
         this.clickEvent = clickEvent;
+
+        return this;
     }
 
     public HoverEvent getHoverEvent() {
         return this.hoverEvent;
     }
 
-    public void setHoverEvent(HoverEvent hoverEvent) {
+    public ChatComponent setHoverEvent(HoverEvent hoverEvent) {
         this.hoverEvent = hoverEvent;
+
+        return this;
     }
 
-    public void addExtra(ChatComponent component) {
+    public ChatComponent addExtra(ChatComponent component) {
         this.extra.add(component);
+
+        return this;
     }
 
     public List<ChatComponent> getExtra() {

@@ -1,7 +1,5 @@
 package io.skyfallsdk.command.parameter.service;
 
-import io.skyfallsdk.command.parameter.service.ServiceProvider;
-
 public class InstanceServiceProvider implements ServiceProvider {
 
     private final Object service;

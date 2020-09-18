@@ -13,16 +13,6 @@ public class ServiceParameter<T> implements CommandParameter<T> {
     }
 
     @Override
-    public boolean forceAsync() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsAsync() {
-        return true;
-    }
-
-    @Override
     public T parse(CommandSender sender, CoreCommand command, String[] args) throws Exception {
         return ServiceFactory.getInstance().getService(this.serviceClass);
     }

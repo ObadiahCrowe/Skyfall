@@ -68,9 +68,5 @@ public interface CommandParameter<T> {
         return new CommandArgument<T>(index, argAnnot, (Class<T>) type, parameter.getName());
     }
 
-    boolean forceAsync();
-
-    boolean supportsAsync();
-
     T parse(CommandSender sender, CoreCommand command, String[] args) throws Exception;
 }

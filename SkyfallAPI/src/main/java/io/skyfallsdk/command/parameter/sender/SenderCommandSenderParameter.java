@@ -11,16 +11,6 @@ public class SenderCommandSenderParameter implements SenderParameter<CommandSend
     }
 
     @Override
-    public boolean forceAsync() {
-        return false;
-    }
-
-    @Override
-    public boolean supportsAsync() {
-        return true;
-    }
-
-    @Override
     public CommandSender parse(CommandSender sender, CoreCommand command, String[] args) throws Exception {
         return sender;
     }

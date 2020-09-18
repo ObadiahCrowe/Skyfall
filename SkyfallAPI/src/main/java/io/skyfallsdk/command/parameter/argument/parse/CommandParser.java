@@ -2,8 +2,7 @@ package io.skyfallsdk.command.parameter.argument.parse;
 
 import io.skyfallsdk.Server;
 import io.skyfallsdk.command.CoreCommand;
-import io.skyfallsdk.command.CoreCommandAdapter;
-import io.skyfallsdk.command.CoreCommandMap;
+import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.command.options.Command;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
@@ -16,10 +15,9 @@ public class CommandParser implements ArgumentParser<CoreCommand> {
 
     @Override
     public Collection<String> complete(CommandSender sender, CommandArgument<CoreCommand> argument, String value) {
-        CoreCommandMap map = Server.get().getCommandMap();
+        ServerCommandMap map = Server.get().getCommandMap();
         return map.getCommands().stream()
-                .filter(command -> command instanceof CoreCommandAdapter)
-                .map(Command::getName)
+                .map(Command::name)
                 .collect(Collectors.toList());
     }
 
@@ -30,7 +28,7 @@ public class CommandParser implements ArgumentParser<CoreCommand> {
 
     @Override
     public CoreCommand parse(CommandSender sender, Class type, String value) throws ArgumentParseException {
-        CoreCommandMap map = Server.get().getCommandMap();
+        ServerCommandMap map = Server.get().getCommandMap();
         CoreCommand command = map.getCoreCommand(value);
         if (command == null) {
             throw new ArgumentParseException("Unknown command \"" + value + "\"!");

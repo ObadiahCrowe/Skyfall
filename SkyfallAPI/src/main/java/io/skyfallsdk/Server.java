@@ -1,8 +1,9 @@
 package io.skyfallsdk;
 
-import io.skyfallsdk.command.CoreCommandMap;
+import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.expansion.Expansion;
+import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
@@ -29,7 +30,7 @@ public interface Server extends CommandSender, PermissionHolder {
 
     Scheduler getScheduler();
 
-    CoreCommandMap getCommandMap();
+    ServerCommandMap getCommandMap();
 
     Player getPlayer(String username);
 
@@ -50,6 +51,12 @@ public interface Server extends CommandSender, PermissionHolder {
     void setMaxPlayers(int maxPlayers);
 
     <T extends Expansion> T getExpansion(Class<T> expansionClass);
+
+    default ExpansionInfo getExpansionInfo(Expansion expansion) {
+        return this.getExpansionInfo(expansion.getClass());
+    }
+
+    ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass);
 
     List<ProtocolVersion> getSupportedVersions();
 

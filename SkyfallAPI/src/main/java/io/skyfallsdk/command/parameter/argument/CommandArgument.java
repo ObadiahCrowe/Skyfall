@@ -82,16 +82,6 @@ public class CommandArgument<T> implements CommandParameter<T> {
         specification.setState(index, state);
     }
 
-    @Override
-    public boolean forceAsync() {
-        return this.getParser().forceAsync();
-    }
-
-    @Override
-    public boolean supportsAsync() {
-        return this.getParser().supportsAsync();
-    }
-
     public Collection<String> complete(CommandSender sender, String[] args) throws ArgumentParseException {
         if (this.completerMethod != null) {
             if (!this.completerMethod.hasAccess(sender)) {

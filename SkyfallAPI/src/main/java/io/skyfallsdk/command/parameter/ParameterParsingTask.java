@@ -1,13 +1,10 @@
 package io.skyfallsdk.command.parameter;
 
-import com.google.common.util.concurrent.MoreExecutors;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.command.CoreCommand;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.server.CommandSender;
-
-import java.util.concurrent.Executor;
 
 public class ParameterParsingTask<T> implements Runnable {
 
