@@ -58,7 +58,7 @@ public abstract class AnnotatedPermissible {
             return false;
         }
 
-        if (CoreCommand.NO_COMMANDS.contains(((Player) sender).getUuid())) {
+        if (Command.NO_COMMANDS.contains(((Player) sender).getUuid())) {
             return false;
         }
 

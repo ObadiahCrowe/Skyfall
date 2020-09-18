@@ -13,7 +13,7 @@ import java.util.Collection;
 
 public class TabCompleterMethod extends CommandMethodWrapper {
 
-    public static TabCompleterMethod fromMethod(CoreCommand command, Object commandInstance, Method method) {
+    public static TabCompleterMethod fromMethod(Command command, Object commandInstance, Method method) {
         TabCompleter annotation = method.getAnnotation(TabCompleter.class);
         if (annotation == null) {
             throw new IllegalArgumentException("Method is not tab completer!");
@@ -26,7 +26,7 @@ public class TabCompleterMethod extends CommandMethodWrapper {
     private final int targetArgument;
     private final String targetMethod;
 
-    public TabCompleterMethod(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters, int argument, String targetMethod) {
+    public TabCompleterMethod(Command command, Object commandInstance, Method method, CommandParameter[] parameters, int argument, String targetMethod) {
         super(command, commandInstance, method, parameters);
         this.targetArgument = argument;
         this.targetMethod = targetMethod;

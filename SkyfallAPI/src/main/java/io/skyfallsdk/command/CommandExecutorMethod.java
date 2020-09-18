@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CommandExecutorMethod extends CommandMethodWrapper {
 
-    public static CommandExecutorMethod fromMethod(CoreCommand command, Object commandInstance, Method method) {
+    public static CommandExecutorMethod fromMethod(Command command, Object commandInstance, Method method) {
         CommandExecutor annotation = method.getAnnotation(CommandExecutor.class);
         if (annotation == null) {
             throw new IllegalArgumentException("Method is not command executor!");
@@ -41,7 +41,7 @@ public class CommandExecutorMethod extends CommandMethodWrapper {
     private final Class threadUnsafe;
     private final AtomicBoolean running;
 
-    public CommandExecutorMethod(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters, Scheduler scheduler, Class threadUnsafe) {
+    public CommandExecutorMethod(Command command, Object commandInstance, Method method, CommandParameter[] parameters, Scheduler scheduler, Class threadUnsafe) {
         super(command, commandInstance, method, parameters);
         this.scheduler = scheduler;
         this.threadUnsafe = threadUnsafe;

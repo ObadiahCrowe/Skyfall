@@ -1,7 +1,7 @@
 package io.skyfallsdk.command.parameter;
 
 import io.skyfallsdk.Server;
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.server.CommandSender;
@@ -9,13 +9,13 @@ import io.skyfallsdk.server.CommandSender;
 public class ParameterParsingTask<T> implements Runnable {
 
     private final CommandSender sender;
-    private final CoreCommand command;
+    private final Command command;
     private final String[] args;
     private final CommandParameter<T> parameter;
     private final Scheduler scheduler;
     private final ParsingListener listener;
 
-    public ParameterParsingTask(CommandSender sender, CoreCommand command, String[] args, CommandParameter<T> parameter, ParsingListener<T> listener, boolean first) {
+    public ParameterParsingTask(CommandSender sender, Command command, String[] args, CommandParameter<T> parameter, ParsingListener<T> listener, boolean first) {
         this.sender = sender;
         this.command = command;
         this.args = args;

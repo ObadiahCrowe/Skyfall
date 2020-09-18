@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.parameter.sender;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
 
@@ -18,7 +18,7 @@ public class SenderPlayerParameter implements SenderParameter<Player> {
     }
 
     @Override
-    public Player parse(CommandSender sender, CoreCommand command, String[] args) throws Exception {
+    public Player parse(CommandSender sender, Command command, String[] args) throws Exception {
         return (!this.allowNull || (sender instanceof Player)) ? (Player) sender : null;
     }
 }

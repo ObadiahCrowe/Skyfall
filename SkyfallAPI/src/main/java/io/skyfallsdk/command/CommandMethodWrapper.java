@@ -9,12 +9,12 @@ import java.util.Arrays;
 
 public abstract class CommandMethodWrapper extends AnnotatedPermissible {
 
-    private final CoreCommand command;
+    private final Command command;
     private final Object commandInstance;
     private final Method method;
     private final CommandParameter[] parameters;
 
-    public CommandMethodWrapper(CoreCommand command, Object commandInstance, Method method, CommandParameter[] parameters) {
+    public CommandMethodWrapper(Command command, Object commandInstance, Method method, CommandParameter[] parameters) {
         super(method);
 
         this.command = command;
@@ -23,7 +23,7 @@ public abstract class CommandMethodWrapper extends AnnotatedPermissible {
         this.parameters = parameters;
     }
 
-    public CoreCommand getCommand() {
+    public Command getCommand() {
         return command;
     }
 

@@ -1,6 +1,7 @@
 package io.skyfallsdk;
 
 import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.Scheduler;
@@ -11,9 +12,11 @@ import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
+import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.permission.PermissibleAction;
 import io.skyfallsdk.player.Player;
+import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +34,8 @@ public class SkyfallServer implements Server {
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
 
+    private final ServerCommandMap commandMap;
+
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
         logger = LogManager.getLogger(SkyfallServer.class);
@@ -41,6 +46,9 @@ public class SkyfallServer implements Server {
         logger.info("Loading default configs..");
         this.config = LoadableConfig.getByClass(ServerConfig.class).load();
         this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
+
+        logger.info("Setting up...");
+        this.commandMap = new ServerCommandMap();
 
         logger.info("Initialising thread pools..");
         ThreadPool.initDefaultPools();
@@ -87,8 +95,8 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public ServerCommandMap getCommandMap() {
-        return null;
+    public CommandMap getCommandMap() {
+        return this.commandMap;
     }
 
     @Override
@@ -138,6 +146,21 @@ public class SkyfallServer implements Server {
 
     @Override
     public <T extends Expansion> T getExpansion(Class<T> expansionClass) {
+        return null;
+    }
+
+    @Override
+    public ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass) {
+        return null;
+    }
+
+    @Override
+    public List<ProtocolVersion> getSupportedVersions() {
+        return null;
+    }
+
+    @Override
+    public ProtocolVersion getBaseVersion() {
         return null;
     }
 

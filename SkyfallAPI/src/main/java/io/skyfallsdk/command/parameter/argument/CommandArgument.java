@@ -1,7 +1,7 @@
 package io.skyfallsdk.command.parameter.argument;
 
 import com.google.common.collect.ImmutableList;
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.TabCompleterMethod;
 import io.skyfallsdk.command.parameter.CommandParameter;
 import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
@@ -130,7 +130,7 @@ public class CommandArgument<T> implements CommandParameter<T> {
     }
 
     @Override
-    public T parse(CommandSender sender, CoreCommand command, String[] args) throws ArgumentParseException {
+    public T parse(CommandSender sender, Command command, String[] args) throws ArgumentParseException {
         if (this.data.indexStart() != -1) {
             int endIndex = this.data.indexEnd();
             if (endIndex == -1) {

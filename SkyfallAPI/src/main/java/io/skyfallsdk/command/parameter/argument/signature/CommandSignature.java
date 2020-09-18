@@ -1,24 +1,24 @@
 package io.skyfallsdk.command.parameter.argument.signature;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static io.skyfallsdk.command.CoreCommand.WRAPPER_OPTIONAL_ARGUMENT;
-import static io.skyfallsdk.command.CoreCommand.WRAPPER_REQUIRED_ARGUMENT;
+import static io.skyfallsdk.command.Command.WRAPPER_OPTIONAL_ARGUMENT;
+import static io.skyfallsdk.command.Command.WRAPPER_REQUIRED_ARGUMENT;
 
 public class CommandSignature {
 
-    private final CoreCommand command;
+    private final Command command;
     private UsageParameter[] parameters;
 
-    public CommandSignature(CoreCommand command) {
+    public CommandSignature(Command command) {
         this.command = command;
         this.parameters = new UsageParameter[0];
     }
 
-    public CoreCommand getCommand() {
+    public Command getCommand() {
         return command;
     }
 

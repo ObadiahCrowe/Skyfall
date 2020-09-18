@@ -1,6 +1,6 @@
 package io.skyfallsdk;
 
-import io.skyfallsdk.command.ServerCommandMap;
+import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
@@ -30,7 +30,7 @@ public interface Server extends CommandSender, PermissionHolder {
 
     Scheduler getScheduler();
 
-    ServerCommandMap getCommandMap();
+    CommandMap getCommandMap();
 
     Player getPlayer(String username);
 

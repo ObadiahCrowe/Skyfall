@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.parameter.sender;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.server.CommandSender;
 
 public class SenderCommandSenderParameter implements SenderParameter<CommandSender> {
@@ -11,7 +11,7 @@ public class SenderCommandSenderParameter implements SenderParameter<CommandSend
     }
 
     @Override
-    public CommandSender parse(CommandSender sender, CoreCommand command, String[] args) throws Exception {
+    public CommandSender parse(CommandSender sender, Command command, String[] args) throws Exception {
         return sender;
     }
 }

@@ -1,16 +1,16 @@
 package io.skyfallsdk.event.server;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.player.Player;
 
 import java.util.List;
 
-public class PlayerCommandTabCompleteEvent extends CommandEvent {
+public class CommandTabCompleteEvent extends CommandEvent {
 
     private final Player player;
     private final List<String> result;
 
-    public PlayerCommandTabCompleteEvent(Player player, CoreCommand command, List<String> result) {
+    public CommandTabCompleteEvent(Player player, Command command, List<String> result) {
         super(command);
 
         this.player = player;

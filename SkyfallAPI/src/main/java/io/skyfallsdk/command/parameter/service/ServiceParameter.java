@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.parameter.service;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.parameter.CommandParameter;
 import io.skyfallsdk.server.CommandSender;
 
@@ -13,7 +13,7 @@ public class ServiceParameter<T> implements CommandParameter<T> {
     }
 
     @Override
-    public T parse(CommandSender sender, CoreCommand command, String[] args) throws Exception {
+    public T parse(CommandSender sender, Command command, String[] args) throws Exception {
         return ServiceFactory.getInstance().getService(this.serviceClass);
     }
 }

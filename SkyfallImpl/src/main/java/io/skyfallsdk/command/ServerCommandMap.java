@@ -1,58 +1,56 @@
 package io.skyfallsdk.command;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.util.Validator;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-public class ServerCommandMap {
+public class ServerCommandMap implements CommandMap {
 
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile("\\s+");
 
+    private final Map<String, Command> knownCommands;
     private final Logger logger;
 
-    private ServerCommandMap() {
+    public ServerCommandMap() {
+        this.knownCommands = Maps.newConcurrentMap();
         this.logger = Server.get().getLogger();
     }
 
-    public CoreCommand registerCommand(Expansion expansion, Class<?> commandClass) {
-        return this.registerCommand(expansion, CoreCommand.fromClass(commandClass));
+    @Override
+    public Command registerCommand(Expansion expansion, Class<?> commandClass) {
+        return this.registerCommand(expansion, Command.fromClass(commandClass));
     }
 
-    public CoreCommand registerCommand(Class<?> commandClass) {
-        return this.registerCommand(CoreCommand.fromClass(commandClass));
+    public Command registerCommand(Class<?> commandClass) {
+        return this.registerCommand(Command.fromClass(commandClass));
     }
 
-    public CoreCommand registerCommand(Expansion expansion, CoreCommand command) {
+    @Override
+    public Command registerCommand(Expansion expansion, Command command) {
         Validator.notNull(expansion, "Expansion can't be null!");
         Validator.notNull(command, "Command can't be null!");
 
-        this.register(Server.get().getExpansionInfo(expansion).name(), new CoreCommandAdapter(command));
+        this.register(Server.get().getExpansionInfo(expansion).name(), command);
 
         return command;
     }
 
-    public CoreCommand registerCommand(CoreCommand command) {
+    public Command registerCommand(Command command) {
         Validator.notNull(command, "Command can't be null!");
 
-        this.register("skyfall", new CoreCommandAdapter(command));
+        this.register("skyfall", command);
 
         return command;
     }
 
-    public void removeCommands(Class<?>... commandClasses) {
-        for (Class<?> commandClass : commandClasses) {
-            this.removeCommand(commandClass);
-        }
-    }
-
+    @Override
     public void removeCommand(Class<?> commandClass) {
         Iterator<Command> commandIterator = this.knownCommands.values().iterator();
 
@@ -66,56 +64,15 @@ public class ServerCommandMap {
         }
     }
 
-    public void blockCommands(List<String> commands) {
-        commands.forEach(this::blockCommand);
-    }
-
-    public void blockCommand(String removedCommand) {
-        if (!removedCommand.contains(":")) {
-            this.removedCommands.add(removedCommand);
-            Command command = this.knownCommands.remove(removedCommand);
-            List<String> toRemove = Lists.newArrayList();
-            for (Entry<String, Command> entry : this.knownCommands.entrySet()) {
-                if (!entry.getValue().equals(command)) {
-                    continue;
-                }
-
-                toRemove.add(entry.getKey());
-            }
-
-            toRemove.forEach(this.knownCommands::remove);
-        } else {
-            String baseCommand = removedCommand.split(":")[1];
-            Command command = this.knownCommands.remove(removedCommand);
-            this.knownCommands.remove(baseCommand);
-
-            this.removedCommands.add(removedCommand);
-            this.removedCommands.add(baseCommand);
-
-            List<String> toRemove = Lists.newArrayList();
-            for (Entry<String, Command> entry : this.knownCommands.entrySet()) {
-                if (!entry.getValue().equals(command)) {
-                    continue;
-                }
-
-                toRemove.add(entry.getKey());
-            }
-
-            toRemove.forEach(this.knownCommands::remove);
-        }
-
-        this.debug("Removed command \"" + removedCommand + "\".");
-    }
-
-    public <T> CoreCommand getCommand(Class<T> tClass) {
+    public <T> Command getCommand(Class<T> commandClass) {
         for (Command command : this.getCommands()) {
             if (!(command instanceof CoreCommandAdapter)) {
                 continue;
             }
 
             CoreCommandAdapter adapter = (CoreCommandAdapter) command;
-            CoreCommand coreCommand = adapter.getCommand();
-            if (coreCommand.getCommandClass() != tClass) {
+            Command coreCommand = adapter.getCommand();
+            if (coreCommand.getCommandClass() != commandClass) {
                 continue;
             }
 
@@ -125,12 +82,16 @@ public class ServerCommandMap {
         return null;
     }
 
-    public <T> CoreCommand getCoreCommand(String name) {
-        Command command = this.getCommand(name);
-        return command instanceof CoreCommandAdapter ? ((CoreCommandAdapter) command).getCommand() : null;
+    @Override
+    public Command getCommand(String name) {
+        return this.knownCommands.getOrDefault(name.toLowerCase(), null);
     }
 
     @Override
+    public Collection<Command> getCommands() {
+        return this.knownCommands.values();
+    }
+
     public boolean register(String fallbackPrefix, Command command) {
         if (this.removedCommands != null && this.removedCommands.contains(fallbackPrefix + ":" + command.getName())) {
             return true;
@@ -144,7 +105,6 @@ public class ServerCommandMap {
         return super.register(fallbackPrefix, command);
     }
 
-    @Override
     public boolean dispatch(CommandSender sender, String commandLine) throws CommandException {
         String[] args = PATTERN_ON_SPACE.split(commandLine);
         if (args.length == 0) {

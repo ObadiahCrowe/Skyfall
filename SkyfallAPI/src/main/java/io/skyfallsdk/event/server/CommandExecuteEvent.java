@@ -1,6 +1,6 @@
 package io.skyfallsdk.event.server;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.event.Cancellable;
 import io.skyfallsdk.server.CommandSender;
 
@@ -11,7 +11,7 @@ public class CommandExecuteEvent extends CommandEvent implements Cancellable {
 
     private boolean cancelled;
 
-    public CommandExecuteEvent(CommandSender sender, CoreCommand command, String[] args) {
+    public CommandExecuteEvent(CommandSender sender, Command command, String[] args) {
         super(command);
 
         this.sender = sender;

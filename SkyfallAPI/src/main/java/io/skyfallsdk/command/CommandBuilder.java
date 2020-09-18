@@ -9,7 +9,7 @@ public class CommandBuilder {
     private String name;
     private String description;
     private String[] aliases;
-    private CoreCommand[] subCommands;
+    private Command[] subCommands;
 
     public CommandBuilder(Object commandInstance) {
         if (commandInstance == null) {
@@ -19,14 +19,14 @@ public class CommandBuilder {
         this.commandInstance = commandInstance;
         this.commandClass = commandInstance.getClass();
         this.aliases = new String[0];
-        this.subCommands = new CoreCommand[0];
+        this.subCommands = new Command[0];
     }
 
-    public CoreCommand build() {
+    public Command build() {
         Validator.notNull(this.name);
         Validator.notNull(this.description);
 
-        return new CoreCommand(this.commandClass, this.commandInstance, this.name, this.description, this.aliases, this.subCommands);
+        return new Command(this.commandClass, this.commandInstance, this.name, this.description, this.aliases, this.subCommands);
     }
 
     public CommandBuilder setName(String name) {
@@ -50,7 +50,7 @@ public class CommandBuilder {
         return this;
     }
 
-    public CommandBuilder setSubCommands(CoreCommand... subCommands) {
+    public CommandBuilder setSubCommands(Command... subCommands) {
         Validator.notNull(subCommands);
 
         this.subCommands = subCommands;

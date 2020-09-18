@@ -1,24 +1,24 @@
 package io.skyfallsdk.event.command;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.event.Cancellable;
 import io.skyfallsdk.event.player.PlayerEvent;
 import io.skyfallsdk.player.Player;
 
 public class PlayerCallCommandEvent extends PlayerEvent implements Cancellable {
 
-    private final CoreCommand command;
+    private final Command command;
     private final String[] args;
     private boolean cancelled;
 
-    public PlayerCallCommandEvent(Player who, CoreCommand command, String[] args) {
+    public PlayerCallCommandEvent(Player who, Command command, String[] args) {
         super(who);
 
         this.command = command;
         this.args = args;
     }
 
-    public CoreCommand getCommand() {
+    public Command getCommand() {
         return this.command;
     }
 

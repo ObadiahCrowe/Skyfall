@@ -2,7 +2,7 @@ package io.skyfallsdk.command.defaults;
 
 import io.skyfallsdk.chat.ChatColour;
 import io.skyfallsdk.chat.ChatComponent;
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.util.CommandCompletion;
@@ -17,23 +17,23 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Command(name = "help", desc = "View helpful information about this command")
+@io.skyfallsdk.command.options.Command(name = "help", desc = "View helpful information about this command")
 @Permission(value = PlayerPermission.class, name = "COMMAND_HELP", permission = @PermissionRequirement(value = PlayerPermissible.class))
-public class HelpSubCommand extends ListCommand<CoreCommand> {
+public class HelpSubCommand extends ListCommand<Command> {
 
     private static final int COMMANDS_PER_PAGE = 10;
 
-    private final CoreCommand command;
+    private final Command command;
 
-    public HelpSubCommand(CoreCommand command) {
+    public HelpSubCommand(Command command) {
         this.command = command;
     }
 
     @CommandExecutor
     public void execute(@Sender CommandSender player, @Arg(defaultValue = "1") int page) {
-        List<CoreCommand> commands = Arrays.stream(this.command.getSubCommands())
+        List<Command> commands = Arrays.stream(this.command.getSubCommands())
                 .filter(cmd -> cmd.hasAccess(player))
-                .sorted(Comparator.comparing(CoreCommand::getName))
+                .sorted(Comparator.comparing(Command::getName))
                 .collect(Collectors.toList());
 
         String header = ChatColour.BLUE + this.command.getName().substring(0, 1).toUpperCase() + this.command.getName().substring(1).toLowerCase();
@@ -55,7 +55,7 @@ public class HelpSubCommand extends ListCommand<CoreCommand> {
     }
 
     @Override
-    public ChatComponent getComponents(CommandSender player, CoreCommand command) {
+    public ChatComponent getComponents(CommandSender player, Command command) {
         return CommandHelp.getHelpMessage(player, command);
     }
 

@@ -1,17 +1,17 @@
 package io.skyfallsdk.event.server;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.event.Event;
 
 public abstract class CommandEvent implements Event {
 
-    private final CoreCommand command;
+    private final Command command;
 
-    public CommandEvent(CoreCommand command) {
+    public CommandEvent(Command command) {
         this.command = command;
     }
 
-    public CoreCommand getCommand() {
+    public Command getCommand() {
         return this.command;
     }
 }

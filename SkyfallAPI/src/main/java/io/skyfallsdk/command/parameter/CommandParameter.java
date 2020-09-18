@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.parameter;
 
-import io.skyfallsdk.command.CoreCommand;
+import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.options.Sender;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
@@ -68,5 +68,5 @@ public interface CommandParameter<T> {
         return new CommandArgument<T>(index, argAnnot, (Class<T>) type, parameter.getName());
     }
 
-    T parse(CommandSender sender, CoreCommand command, String[] args) throws Exception;
+    T parse(CommandSender sender, Command command, String[] args) throws Exception;
 }

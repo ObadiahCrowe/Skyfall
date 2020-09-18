@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
-public class CoreCommand extends AnnotatedPermissible {
+public class Command extends AnnotatedPermissible {
     public static final Set<UUID> NO_COMMANDS = Sets.newConcurrentHashSet();
 
     private static final Comparator<CommandExecutorMethod> EXECUTOR_METHOD_COMPARATOR =
@@ -31,7 +31,7 @@ public class CoreCommand extends AnnotatedPermissible {
     public static final String WRAPPER_REQUIRED_ARGUMENT = "<%s>";
     public static final String WRAPPER_OPTIONAL_ARGUMENT = "[%s]";
 
-    private static List<CommandExecutorMethod> getExecutorMethods(CoreCommand command, Class<?> commandClass, Object commandInstance) {
+    private static List<CommandExecutorMethod> getExecutorMethods(Command command, Class<?> commandClass, Object commandInstance) {
         List<CommandExecutorMethod> executorMethods = Lists.newArrayList();
         List<TabCompleterMethod> tabCompleterMethods = Lists.newArrayList();
         for (Method method : commandClass.getMethods()) {
@@ -72,7 +72,7 @@ public class CoreCommand extends AnnotatedPermissible {
         return executorMethods;
     }
 
-    public static CoreCommand fromClass(Class<?> commandClass) {
+    public static Command fromClass(Class<?> commandClass) {
         Validator.notNull(commandClass);
 
         Object commandInstance;
@@ -87,11 +87,11 @@ public class CoreCommand extends AnnotatedPermissible {
         return fromInstance(commandInstance);
     }
 
-    public static CoreCommand fromInstance(Object commandInstance) {
+    public static Command fromInstance(Object commandInstance) {
         Validator.notNull(commandInstance);
 
         Class<?> commandClass = commandInstance.getClass();
-        Command commandAnnot = commandClass.getAnnotation(Command.class);
+        io.skyfallsdk.command.options.Command commandAnnot = commandClass.getAnnotation(io.skyfallsdk.command.options.Command.class);
         if (commandAnnot == null) {
             throw new IllegalArgumentException("\"" + commandClass.getName() + "\" is not a command!");
         }
@@ -105,13 +105,13 @@ public class CoreCommand extends AnnotatedPermissible {
             aliases = aliasAnnot.value();
         }
 
-        List<CoreCommand> subCommandList = Lists.newArrayList();
+        List<Command> subCommandList = Lists.newArrayList();
         for (Class<?> innerClass : commandClass.getDeclaredClasses()) {
             if (innerClass.isInterface()) {
                 continue;
             }
 
-            if (!innerClass.isAnnotationPresent(Command.class)) {
+            if (!innerClass.isAnnotationPresent(io.skyfallsdk.command.options.Command.class)) {
                 continue;
             }
 
@@ -121,7 +121,7 @@ public class CoreCommand extends AnnotatedPermissible {
         SubCommand subCommandAnnot = commandClass.getAnnotation(SubCommand.class);
         if (subCommandAnnot != null) {
             for (Class subCommandClass : subCommandAnnot.value()) {
-                if (!subCommandClass.isAnnotationPresent(Command.class)) {
+                if (!subCommandClass.isAnnotationPresent(io.skyfallsdk.command.options.Command.class)) {
                     throw new IllegalArgumentException("Invalid sub command " + subCommandClass.getName() + "!");
                 }
 
@@ -129,8 +129,8 @@ public class CoreCommand extends AnnotatedPermissible {
             }
         }
 
-        CoreCommand[] subCommands = subCommandList.toArray(new CoreCommand[0]);
-        return new CoreCommand(commandClass, commandInstance, name, desc, aliases, subCommands);
+        Command[] subCommands = subCommandList.toArray(new Command[0]);
+        return new Command(commandClass, commandInstance, name, desc, aliases, subCommands);
     }
 
     private final Class<?> commandClass;
@@ -139,11 +139,11 @@ public class CoreCommand extends AnnotatedPermissible {
     private final String[] aliases;
     private final CommandExecutorMethod[] executorMethods;
     private final Object commandInstance;
-    private CoreCommand superCommand;
-    private CoreCommand[] subCommands;
+    private Command superCommand;
+    private Command[] subCommands;
     private boolean disabled;
 
-    CoreCommand(Class<?> commandClass, Object commandInstance, String name, String description, String[] aliases, CoreCommand[] subCommands) {
+    Command(Class<?> commandClass, Object commandInstance, String name, String description, String[] aliases, Command[] subCommands) {
         super(commandClass);
 
         this.commandClass = commandClass;
@@ -153,7 +153,7 @@ public class CoreCommand extends AnnotatedPermissible {
         this.subCommands = subCommands;
         this.commandInstance = commandInstance;
 
-        for (CoreCommand command : this.subCommands) {
+        for (Command command : this.subCommands) {
             command.superCommand = this;
         }
 
@@ -190,7 +190,7 @@ public class CoreCommand extends AnnotatedPermissible {
         return this.commandInstance;
     }
 
-    public CoreCommand getSuperCommand() {
+    public Command getSuperCommand() {
         return this.superCommand;
     }
 
@@ -223,7 +223,7 @@ public class CoreCommand extends AnnotatedPermissible {
             signatures.add(method.createSignature());
         }
 
-        for (CoreCommand subCommand : this.getSubCommands()) {
+        for (Command subCommand : this.getSubCommands()) {
             signatures.add(subCommand.getMergedSignature());
         }
 
@@ -241,7 +241,7 @@ public class CoreCommand extends AnnotatedPermissible {
             signatures.add(method.createSignature());
         }
 
-        for (CoreCommand subCommand : this.getSubCommands()) {
+        for (Command subCommand : this.getSubCommands()) {
             if (!subCommand.hasAccess(sender)) {
                 continue;
             }
@@ -256,13 +256,13 @@ public class CoreCommand extends AnnotatedPermissible {
         return this.commandClass;
     }
 
-    public CoreCommand getSubCommand(String name) {
+    public Command getSubCommand(String name) {
         return Arrays.stream(this.subCommands)
           .filter(subCmd -> subCmd.matchesLabel(name))
           .findFirst().orElse(null);
     }
 
-    public CoreCommand getSubCommand(Class<?> commandClass) {
+    public Command getSubCommand(Class<?> commandClass) {
         return Arrays.stream(this.subCommands)
           .filter(subCmd -> subCmd.getCommandClass() == commandClass)
           .findFirst().orElse(null);
@@ -272,7 +272,7 @@ public class CoreCommand extends AnnotatedPermissible {
         this.addSubcommand(fromClass(commandClass));
     }
 
-    public void addSubcommand(CoreCommand command) {
+    public void addSubcommand(Command command) {
         boolean needsHelp = this.getSubCommand(HelpSubCommand.class) == null && command.getCommandClass() != HelpSubCommand.class;
 
         this.subCommands = Arrays.copyOf(this.subCommands, this.subCommands.length + (needsHelp ? 2 : 1));
@@ -283,7 +283,7 @@ public class CoreCommand extends AnnotatedPermissible {
             return;
         }
 
-        CoreCommand helpCommand = fromInstance(new HelpSubCommand(this));
+        Command helpCommand = fromInstance(new HelpSubCommand(this));
         this.subCommands[this.subCommands.length - 1] = helpCommand;
         helpCommand.superCommand = this;
     }
@@ -305,7 +305,7 @@ public class CoreCommand extends AnnotatedPermissible {
         return this.description;
     }
 
-    public CoreCommand[] getSubCommands() {
+    public Command[] getSubCommands() {
         return this.subCommands;
     }
 
@@ -337,7 +337,7 @@ public class CoreCommand extends AnnotatedPermissible {
             return false;
         }
 
-        return Arrays.stream(this.getSubCommands()).allMatch(CoreCommand::isPlayerOnly);
+        return Arrays.stream(this.getSubCommands()).allMatch(Command::isPlayerOnly);
     }
 
     public void callExecute(CommandSender sender, String[] args) {
@@ -353,7 +353,7 @@ public class CoreCommand extends AnnotatedPermissible {
 
         if (this.getSubCommands().length > 0) {
             if (args.length > 0) {
-                CoreCommand subCommand = this.getSubCommand(args[0]);
+                Command subCommand = this.getSubCommand(args[0]);
 
                 if (subCommand != null) {
                     subCommand.callExecute(sender, Arrays.copyOfRange(args, 1, args.length));
@@ -434,7 +434,7 @@ public class CoreCommand extends AnnotatedPermissible {
         }
 
         if (args.length > 0 && this.getSubCommands().length > 0) {
-            CoreCommand subCommand = this.getSubCommand(args[0]);
+            Command subCommand = this.getSubCommand(args[0]);
             if (subCommand != null) {
                 return subCommand.callTabComplete(sender, Arrays.copyOfRange(args, 1, args.length));
             }
@@ -443,7 +443,7 @@ public class CoreCommand extends AnnotatedPermissible {
         ArgumentParseException exception = null;
         List<String> tabComplete = Lists.newArrayList();
         if (args.length == 1) {
-            Arrays.stream(this.getSubCommands()).map(CoreCommand::getName).forEach(tabComplete::add);
+            Arrays.stream(this.getSubCommands()).map(Command::getName).forEach(tabComplete::add);
         }
 
         for (CommandExecutorMethod method : this.getExecutorMethods()) {
