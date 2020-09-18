@@ -131,7 +131,7 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
                 return new ThreadPool(new ForkJoinPool(maxThreads, spec, spec, true));
             }
 
-            return new ThreadPool(new ScheduledThreadPoolExecutor(1, spec, (r, executor) -> Server.get().getLogger().fatal("Could not add new thread to " + spec.getName() + " pool!")));
+            return new ThreadPool(new ScheduledThreadPoolExecutor(1, spec, (r, executor) -> Server.get().getLogger().severe("Could not add new thread to " + spec.getName() + " pool!")));
         });
     }
 

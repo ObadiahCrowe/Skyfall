@@ -17,13 +17,12 @@ import io.skyfallsdk.permission.PermissibleAction;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.world.World;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 public class SkyfallServer implements Server {
 
@@ -35,9 +34,12 @@ public class SkyfallServer implements Server {
 
     private final ServerCommandMap commandMap;
 
+    private final ConsoleThread consoleThread;
+    private final ServerTickThread tickThread;
+
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
-        logger = LogManager.getLogger(SkyfallServer.class);
+        logger = Logger.getLogger("Skyfall");
 
         logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
@@ -57,8 +59,11 @@ public class SkyfallServer implements Server {
         logger.info("Starting server..");
         NetServer.init("localhost", 25565);
 
-        new ConsoleThread(this).start();
-        new ServerTickThread().start();
+        this.consoleThread = new ConsoleThread(this);
+        this.tickThread = new ServerTickThread(this);
+
+        this.consoleThread.start();
+        this.tickThread.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
@@ -70,6 +75,9 @@ public class SkyfallServer implements Server {
 
         logger.info("Shutting down thread pools..");
         ThreadPool.shutdownAll();
+
+        this.consoleThread.interrupt();
+        this.tickThread.interrupt();
     }
 
     public ServerConfig getConfig() {
@@ -157,7 +165,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public List<ProtocolVersion> getSupportedVersions() {
-        return null;
+        return this.config.getSupportedVersions();
     }
 
     @Override
@@ -167,7 +175,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public void sendMessage(ChatComponent component) {
-
+        logger.info(component.getText());
     }
 
     @Override

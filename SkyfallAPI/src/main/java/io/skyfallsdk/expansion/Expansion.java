@@ -5,9 +5,9 @@ import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.command.parameter.argument.ArgumentFactory;
 import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 public interface Expansion {
 

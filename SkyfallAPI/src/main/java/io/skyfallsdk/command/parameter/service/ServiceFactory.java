@@ -14,6 +14,7 @@ public class ServiceFactory {
 
     static {
         INSTANCE.registerProvider(new ExpansionServiceProvider());
+        INSTANCE.registerProvider(new ServerServiceProvider());
     }
 
     private final List<ServiceProvider> providers;

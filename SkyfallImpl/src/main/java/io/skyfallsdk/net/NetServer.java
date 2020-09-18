@@ -34,6 +34,7 @@ public abstract class NetServer {
         }
 
         instance = Epoll.isAvailable() ? new NetServerEpoll(address, port) : new NetServerNio(address, port);
+        instance.init();
 
         return instance;
     }

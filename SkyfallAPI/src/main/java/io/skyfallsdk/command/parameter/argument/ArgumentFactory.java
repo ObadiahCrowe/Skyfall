@@ -44,7 +44,7 @@ public class ArgumentFactory {
 
         for (Class type : parser.getTypes()) {
             if (type.isEnum() && !(parser instanceof EnumParser)) {
-                Server.get().getLogger().warn("Registered parser " + parser.getClass().getSimpleName() + " which " +
+                Server.get().getLogger().warning("Registered parser " + parser.getClass().getSimpleName() + " which " +
                         "supports parsing enum of type " + type + "! This is not recommended due to default support for " +
                         " enums which also has tab completion.");
             }

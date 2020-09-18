@@ -45,7 +45,7 @@ public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThrea
         e.printStackTrace(new PrintStream(System.out) {
             @Override
             public void println(Object o) {
-                Server.get().getLogger().error(String.valueOf(o));
+                Server.get().getLogger().severe(String.valueOf(o));
             }
         });
     }

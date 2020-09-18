@@ -9,12 +9,12 @@ import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.ServerCommandSender;
 import io.skyfallsdk.world.World;
-import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 public interface Server extends ServerCommandSender, PermissionHolder {
 
