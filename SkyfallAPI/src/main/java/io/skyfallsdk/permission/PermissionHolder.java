@@ -2,9 +2,9 @@ package io.skyfallsdk.permission;
 
 public interface PermissionHolder {
 
-    void addPermission(PermissibleAction permission);
+    void addPermission(String permission);
 
-    void removePermission(PermissibleAction permission);
+    void removePermission(String permission);
 
-    boolean hasPermission(PermissibleAction permission);
+    boolean hasPermission(String permission);
 }

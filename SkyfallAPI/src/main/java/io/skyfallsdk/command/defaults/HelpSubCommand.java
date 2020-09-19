@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @io.skyfallsdk.command.options.Command(name = "help", desc = "View helpful information about this command")
-@Permission(value = PlayerPermission.class, name = "COMMAND_HELP", permission = @PermissionRequirement(value = PlayerPermissible.class))
 public class HelpSubCommand extends ListCommand<Command> {
 
     private static final int COMMANDS_PER_PAGE = 10;

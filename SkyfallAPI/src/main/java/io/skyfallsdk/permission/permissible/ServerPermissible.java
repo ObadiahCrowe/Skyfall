@@ -13,6 +13,6 @@ public class ServerPermissible extends Permissible<CommandSender> {
 
     @Override
     public boolean hasPermission(PermissionHolder requester, PermissibleAction action) {
-        return false;
+        return true;
     }
 }

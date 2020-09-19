@@ -184,13 +184,13 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public void addPermission(PermissibleAction permission) {}
+    public void addPermission(String permission) {}
 
     @Override
-    public void removePermission(PermissibleAction permission) {}
+    public void removePermission(String permission) {}
 
     @Override
-    public boolean hasPermission(PermissibleAction permission) {
+    public boolean hasPermission(String permission) {
         return true;
     }
 }
