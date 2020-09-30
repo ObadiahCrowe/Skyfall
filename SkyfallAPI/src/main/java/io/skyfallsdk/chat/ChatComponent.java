@@ -13,7 +13,7 @@ public class ChatComponent {
     private final String text;
 
     private volatile boolean[] formats = new boolean[6];
-    private ChatColour colour;
+    private Colour colour;
     private String translate;
 
     private String insertion;
@@ -83,11 +83,11 @@ public class ChatComponent {
         return this;
     }
 
-    public ChatColour getColour() {
+    public Colour getColour() {
         return this.colour;
     }
 
-    public ChatComponent setColour(ChatColour colour) {
+    public ChatComponent setColour(Colour colour) {
         this.colour = colour;
 
         return this;
@@ -185,9 +185,9 @@ public class ChatComponent {
         json.addProperty("obfuscated", this.isObfuscated());
         json.addProperty("reset", this.isReset());
 
-        ChatColour colour = this.getColour();
+        Colour colour = this.getColour();
         if (colour != null) {
-            json.addProperty("color", colour.name().toLowerCase());
+            json.addProperty("color", colour.toParsable().toLowerCase());
         }
 
         String translate  = this.getTranslate();
