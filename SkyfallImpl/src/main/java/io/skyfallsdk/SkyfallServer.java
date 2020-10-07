@@ -7,13 +7,11 @@ import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.thread.ConsoleThread;
-import io.skyfallsdk.concurrent.thread.ServerTickThread;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.net.NetServer;
-import io.skyfallsdk.permission.PermissibleAction;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.world.World;
@@ -35,7 +33,6 @@ public class SkyfallServer implements Server {
     private final ServerCommandMap commandMap;
 
     private final ConsoleThread consoleThread;
-    private final ServerTickThread tickThread;
 
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
@@ -60,10 +57,7 @@ public class SkyfallServer implements Server {
         NetServer.init("localhost", 25565);
 
         this.consoleThread = new ConsoleThread(this);
-        this.tickThread = new ServerTickThread(this);
-
         this.consoleThread.start();
-        this.tickThread.start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
     }
@@ -77,7 +71,6 @@ public class SkyfallServer implements Server {
         ThreadPool.shutdownAll();
 
         this.consoleThread.interrupt();
-        this.tickThread.interrupt();
     }
 
     public ServerConfig getConfig() {

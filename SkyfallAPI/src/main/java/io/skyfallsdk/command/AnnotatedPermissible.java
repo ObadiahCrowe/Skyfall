@@ -1,11 +1,6 @@
 package io.skyfallsdk.command;
 
 import io.skyfallsdk.command.options.Permission;
-import io.skyfallsdk.permission.Permissible;
-import io.skyfallsdk.permission.PermissibleFactory;
-import io.skyfallsdk.permission.defaults.PlayerPermission;
-import io.skyfallsdk.permission.permissible.PlayerPermissible;
-import io.skyfallsdk.permission.permissible.ServerPermissible;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.server.ServerCommandSender;
@@ -14,36 +9,28 @@ import java.lang.reflect.Method;
 
 public abstract class AnnotatedPermissible {
 
-    private final Class<? extends Permissible> permissionHandler;
+    private final String permission;
 
     public AnnotatedPermissible(Method method) {
         Permission permission = method.getAnnotation(Permission.class);
         if (permission != null) {
-            this.permissionHandler = permission.permission().value();
+            this.permission = permission.value();
         } else {
-            this.permissionHandler = PlayerPermissible.class;
+            this.permission = "";
         }
     }
 
     public AnnotatedPermissible(Class<?> targetClass) {
         Permission permission = targetClass.getAnnotation(Permission.class);
         if (permission != null) {
-            this.permissionHandler = permission.permission().value();
+            this.permission = permission.value();
         } else {
-            this.permissionHandler = PlayerPermissible.class;
+            this.permission = "";
         }
     }
 
-    public AnnotatedPermissible(Class<? extends Permissible> permissionHandler, boolean betaUnlocked) {
-        this.permissionHandler = permissionHandler;
-    }
-
-    public Class<? extends Permissible> getPermissionHandler() {
-        return this.permissionHandler;
-    }
-
-    public Permissible<?> getPermissionHandlerInstance() {
-        return PermissibleFactory.getByClass(this.permissionHandler);
+    public String getPermission() {
+        return this.permission;
     }
 
     public abstract boolean isPlayerOnly();
@@ -62,10 +49,10 @@ public abstract class AnnotatedPermissible {
             return false;
         }
 
-        if (this.getPermissionHandler() == null || this.getPermissionHandler() == ServerPermissible.class) {
+        if (this.getPermission() == null || this.getPermission().isEmpty()) {
             return true;
         }
 
-        return this.getPermissionHandlerInstance().hasPermission(sender, PlayerPermission.COMMAND_HELP);
+        return sender.hasPermission(this.permission);
     }
 }

@@ -111,9 +111,11 @@ public class ServerCommandMap implements CommandMap {
         fallbackPrefix = fallbackPrefix.toLowerCase();
         this.knownCommands.put(fallbackPrefix + ":" + command.getName().toLowerCase(), command);
 
-        return true;
+        if (!this.knownCommands.containsKey(command.getName().toLowerCase())) {
+            this.knownCommands.put(command.getName().toLowerCase(), command);
+        }
 
-        // TODO: 19/09/2020  
+        return true;
     }
 
     public boolean dispatch(CommandSender sender, String commandLine) throws CommandException {

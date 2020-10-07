@@ -6,8 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark a command executor method as unsafe. Synchronizes the entire execution, including argument
- * parsing.
+ * Used to mark a method as unsafe. Synchronizes the entire execution.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
