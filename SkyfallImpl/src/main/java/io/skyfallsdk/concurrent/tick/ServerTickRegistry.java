@@ -1,19 +1,18 @@
 package io.skyfallsdk.concurrent.tick;
 
-import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.longs.Long2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-import java.util.EnumMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
 
 public class ServerTickRegistry<T extends TickSpec> implements TickRegistry<T> {
 
-    private static final EnumMap<TickSpec, ServerTickRegistry<?>> TICK_REGISTRIES = Maps.newEnumMap(TickSpec.class);
+    private static final Object2ObjectOpenHashMap<Enum<? extends TickSpec>, ServerTickRegistry<?>> TICK_REGISTRIES = new Object2ObjectOpenHashMap<>();
 
     static {
-        for (TickSpec tickSpec : TickSpec.values()) {
+        for (DefaultTickSpec tickSpec : DefaultTickSpec.values()) {
             TICK_REGISTRIES.put(tickSpec, new ServerTickRegistry<>(tickSpec));
         }
     }

@@ -9,7 +9,7 @@ public interface TickRegistry<T extends TickSpec> {
     }
 
     default long getTickLength() {
-        return 50L;
+        return this.getSpec().getTickLength();
     }
 
     Optional<Tickable<T>> getById(long id);
