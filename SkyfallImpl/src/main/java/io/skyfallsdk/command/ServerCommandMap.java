@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.command.defaults.HelpCommand;
 import io.skyfallsdk.command.defaults.StopCommand;
 import io.skyfallsdk.command.defaults.VersionCommand;
 import io.skyfallsdk.command.exception.CommandException;
@@ -32,7 +33,7 @@ public class ServerCommandMap implements CommandMap {
     }
 
     private void registerDefaultCommands() {
-        //this.registerCommand(HelpCommand.class);
+        this.registerCommand(HelpCommand.class);
         this.registerCommand(VersionCommand.class);
         this.registerCommand(StopCommand.class);
     }
@@ -196,9 +197,5 @@ public class ServerCommandMap implements CommandMap {
             new CommandException("Unhandled exception executing tab-completer for \'" + cmdLine + "\' in " + target, otherExc, false).printStackTrace();
             return Lists.newArrayList();
         }
-    }
-
-    private void debug(String msg) {
-        this.logger.info(msg);
     }
 }

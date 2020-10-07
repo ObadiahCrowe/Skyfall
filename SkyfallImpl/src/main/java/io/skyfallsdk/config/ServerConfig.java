@@ -24,6 +24,7 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
     private Gamemode gamemode;
     private Difficulty difficulty;
 
+    private String baseVersion;
     private List<String> supportedVersions;
 
     /**
@@ -44,6 +45,7 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
         this.gamemode = gamemode;
         this.difficulty = difficulty;
 
+        this.baseVersion = ProtocolVersion.values()[0].getName();
         this.supportedVersions = Arrays.stream(ProtocolVersion.values())
           .map(ProtocolVersion::getName)
           .collect(Collectors.toList());
@@ -79,6 +81,14 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public ProtocolVersion getBaseVersion() {
+        return ProtocolVersion.getByName(this.baseVersion);
+    }
+
+    public void setBaseVersion(ProtocolVersion version) {
+        this.baseVersion = version.getName();
     }
 
     public List<ProtocolVersion> getSupportedVersions() {
