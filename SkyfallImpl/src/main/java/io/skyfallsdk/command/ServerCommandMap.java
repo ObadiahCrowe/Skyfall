@@ -110,9 +110,11 @@ public class ServerCommandMap implements CommandMap {
 
         fallbackPrefix = fallbackPrefix.toLowerCase();
         this.knownCommands.put(fallbackPrefix + ":" + command.getName().toLowerCase(), command);
+        this.knownCommands.putIfAbsent(command.getName().toLowerCase(), command);
 
-        if (!this.knownCommands.containsKey(command.getName().toLowerCase())) {
-            this.knownCommands.put(command.getName().toLowerCase(), command);
+        for (String alias : command.getAliases()) {
+            this.knownCommands.put(fallbackPrefix + ":" + alias.toLowerCase(), command);
+            this.knownCommands.putIfAbsent(alias.toLowerCase(), command);
         }
 
         return true;
