@@ -1,4 +1,4 @@
-package io.skyfallsdk.net.channel;
+package io.skyfallsdk.net.channel.in;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -8,7 +8,7 @@ import io.skyfallsdk.net.NetData;
 
 import java.util.List;
 
-public class InDecoder extends ByteToMessageDecoder {
+public class PacketSplitter extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> list) throws Exception {
@@ -20,22 +20,18 @@ public class InDecoder extends ByteToMessageDecoder {
                 return;
             }
 
-            try {
-                byte b = buf.readByte();
+            byte b = buf.readByte();
 
-                if (b >= 0) {
-                    int packetSize = NetData.readVarInt(buf);
+            if (b >= 0) {
+                int packetSize = NetData.readVarInt(buf);
 
-                    if (buf.readableBytes() < packetSize) {
-                        buf.resetReaderIndex();
-                        return;
-                    }
-
-                    list.add(buf.readBytes(packetSize));
+                if (buf.readableBytes() < packetSize) {
+                    buf.resetReaderIndex();
                     return;
                 }
-            } finally {
-                buf.release();
+
+                list.add(buf.readBytes(packetSize));
+                return;
             }
         }
 

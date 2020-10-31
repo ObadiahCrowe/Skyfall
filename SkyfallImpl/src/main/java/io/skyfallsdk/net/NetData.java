@@ -12,6 +12,11 @@ public class NetData {
         return new UUID(buf.readLong(), buf.readLong());
     }
 
+    public static void writeUuid(ByteBuf buf, UUID uuid) {
+        buf.writeLong(uuid.getMostSignificantBits());
+        buf.writeLong(uuid.getLeastSignificantBits());
+    }
+
     public static int readVarInt(ByteBuf buf) {
         int numRead = 0;
         int result = 0;
@@ -20,13 +25,58 @@ public class NetData {
         do {
             read = buf.readByte();
 
-            numRead |= (read & 127) << result++ * 7;
-            if (result > 5) {
-                throw new RuntimeException("VarInt is too big. ");
-            }
-        } while ((read & 128) == 128);
+            result |= (read & 0x7F) << numRead++ * 7;
 
-        return numRead;
+            if (numRead > 5) {
+                throw new RuntimeException("VarInt is too big.");
+            }
+        } while ((read & 0x80) == 0x80);
+
+        return result;
+    }
+
+    public static void writeVarInt(ByteBuf buf, int value) {
+        do {
+            byte temp = (byte) (value & 0x7F);
+            value >>>= 7;
+
+            if (value != 0) {
+                temp |= 0x80;
+            }
+
+            buf.writeByte(temp);
+        } while (value != 0);
+    }
+
+    public static long readVarLong(ByteBuf buf) {
+        int numRead = 0;
+        int result = 0;
+
+        byte read;
+        do {
+            read = buf.readByte();
+
+            result |= (read & 0x7F) << numRead++ * 7;
+
+            if (numRead > 10) {
+                throw new RuntimeException("VarInt is too big.");
+            }
+        } while ((read & 0x80) == 0x80);
+
+        return result;
+    }
+
+    public static void writeVarLong(ByteBuf buf, long value) {
+        do {
+            byte temp = (byte) (value & 0x7F);
+            value >>>= 7;
+
+            if (value != 0) {
+                temp |= 0x80;
+            }
+
+            buf.writeByte(temp);
+        } while (value != 0);
     }
 
     public static byte[] readByteArray(ByteBuf buf, int length) {
@@ -47,7 +97,8 @@ public class NetData {
         return new String(data, StandardCharsets.UTF_8);
     }
 
-    public static Date readDate(ByteBuf buf) {
-        return new Date(buf.readLong());
+    public static void writeString(ByteBuf buf, String value) {
+        writeVarInt(buf, value.length());
+        buf.writeBytes(value.getBytes(StandardCharsets.UTF_8));
     }
 }

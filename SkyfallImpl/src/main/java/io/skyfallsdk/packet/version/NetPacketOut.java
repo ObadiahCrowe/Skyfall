@@ -1,13 +1,16 @@
-package io.skyfallsdk.packet;
+package io.skyfallsdk.packet.version;
 
 import io.netty.buffer.ByteBuf;
+import io.skyfallsdk.packet.Packet;
+import io.skyfallsdk.packet.PacketDestination;
+import io.skyfallsdk.packet.PacketState;
 
-public abstract class PacketOut implements Packet {
+public abstract class NetPacketOut implements Packet {
 
     private final int id;
     private final PacketState state;
 
-    public PacketOut(Class<? extends Packet> packet) {
+    public NetPacketOut(Class<? extends Packet> packet) {
         this.id = 0x00;
         this.state = PacketState.PLAY;
     }

@@ -1,5 +1,7 @@
 package io.skyfallsdk.packet;
 
+import io.skyfallsdk.packet.version.NetPacketOut;
+
 public enum PacketDestination {
 
     /**
@@ -13,6 +15,6 @@ public enum PacketDestination {
     IN;
 
     public static PacketDestination of(Class<? extends Packet> packetClass) {
-        return PacketOut.class.isAssignableFrom(packetClass) ? PacketDestination.OUT : PacketDestination.IN;
+        return NetPacketOut.class.isAssignableFrom(packetClass) ? PacketDestination.OUT : PacketDestination.IN;
     }
 }
