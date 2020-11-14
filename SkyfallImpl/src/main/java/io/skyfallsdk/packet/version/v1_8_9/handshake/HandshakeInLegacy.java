@@ -1,7 +1,7 @@
 package io.skyfallsdk.packet.version.v1_8_9.handshake;
 
 import io.netty.buffer.ByteBuf;
-import io.skyfallsdk.net.NetConnection;
+import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.packet.version.NetPacketIn;
 
 public class HandshakeInLegacy extends NetPacketIn implements io.skyfallsdk.packet.handshake.HandshakeInLegacy {
@@ -13,7 +13,7 @@ public class HandshakeInLegacy extends NetPacketIn implements io.skyfallsdk.pack
     }
 
     @Override
-    public void read(ByteBuf buf, NetConnection connection) {}
+    public void read(ByteBuf buf, NetClient connection) {}
 
     @Override
     public byte getPayload() {

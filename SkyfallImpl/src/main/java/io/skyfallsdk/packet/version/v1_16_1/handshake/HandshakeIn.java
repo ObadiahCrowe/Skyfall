@@ -1,9 +1,8 @@
 package io.skyfallsdk.packet.version.v1_16_1.handshake;
 
 import io.netty.buffer.ByteBuf;
-import io.skyfallsdk.net.NetConnection;
+import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
-import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.packet.version.NetPacketIn;
 import io.skyfallsdk.protocol.ProtocolVersion;
@@ -20,16 +19,11 @@ public class HandshakeIn extends NetPacketIn implements io.skyfallsdk.packet.han
     }
 
     @Override
-    public void read(ByteBuf buf, NetConnection connection) {
+    public void read(ByteBuf buf, NetClient connection) {
         this.protocolVersion = NetData.readVarInt(buf);
         this.serverAddress = NetData.readString(buf);
         this.port = buf.readShort();
         this.nextState = PacketState.values()[NetData.readVarInt(buf)];
-    }
-
-    @Override
-    public int getProtocolVersionRaw() {
-        return this.protocolVersion;
     }
 
     @Override

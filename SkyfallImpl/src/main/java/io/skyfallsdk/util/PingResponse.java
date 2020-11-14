@@ -3,7 +3,7 @@ package io.skyfallsdk.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.net.NetConnection;
+import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.protocol.ProtocolVersion;
 
 public class PingResponse {
@@ -41,7 +41,7 @@ public class PingResponse {
         return object.toString();
     }
 
-    public static PingResponse createResponse(NetConnection connection) {
+    public static PingResponse createResponse(NetClient connection) {
         return new PingResponse(connection.getVersion());
     }
 }

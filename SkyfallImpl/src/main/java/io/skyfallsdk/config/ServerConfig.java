@@ -1,7 +1,6 @@
 package io.skyfallsdk.config;
 
 import io.skyfallsdk.Server;
-import io.skyfallsdk.config.type.JsonConfig;
 import io.skyfallsdk.config.type.YamlConfig;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.Difficulty;
@@ -12,11 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ServerConfig extends JsonConfig<ServerConfig> {
+public class ServerConfig extends YamlConfig<ServerConfig> {
 
     private static final ServerConfig DEFAULT_CONFIG = new ServerConfig(20, true, Gamemode.SURVIVAL, Difficulty.PEACEFUL);
 
     private ServerNetConfig server;
+    private boolean debugEnabled;
 
     private int maxPlayers;
     private boolean onlineMode;
@@ -37,7 +37,8 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
     private ServerConfig(int maxPlayers, boolean onlineMode, Gamemode gamemode, Difficulty difficulty) {
         super(ServerConfig.class);
 
-        this.server = new ServerNetConfig("localhost", 25565);
+        this.server = new ServerNetConfig("Powered by Skyfall.", "localhost", 25565);
+        this.debugEnabled = false;
 
         this.maxPlayers = maxPlayers;
         this.onlineMode = onlineMode;
@@ -49,6 +50,18 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
         this.supportedVersions = Arrays.stream(ProtocolVersion.values())
           .map(ProtocolVersion::getName)
           .collect(Collectors.toList());
+    }
+
+    public ServerNetConfig getNetworkConfig() {
+        return this.server;
+    }
+
+    public boolean isDebugEnabled() {
+        return this.debugEnabled;
+    }
+
+    public void setDebugEnabled(boolean debugEnabled) {
+        this.debugEnabled = debugEnabled;
     }
 
     public int getMaxPlayers() {
@@ -97,7 +110,7 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
 
     @Override
     public Path getPath() {
-        return Server.get().getPath().resolve("config.json");
+        return Server.get().getPath().resolve("config.yml");
     }
 
     @Override
@@ -105,16 +118,40 @@ public class ServerConfig extends JsonConfig<ServerConfig> {
         return DEFAULT_CONFIG;
     }
 
-    private static final class ServerNetConfig {
+    @Override
+    public String toString() {
+        return "ServerConfig{" +
+          "server=" + server +
+          ", debugEnabled=" + debugEnabled +
+          ", maxPlayers=" + maxPlayers +
+          ", onlineMode=" + onlineMode +
+          ", gamemode=" + gamemode +
+          ", difficulty=" + difficulty +
+          ", baseVersion='" + baseVersion + '\'' +
+          ", supportedVersions=" + supportedVersions +
+          '}';
+    }
 
+    public static final class ServerNetConfig {
+
+        private String motd;
         private String address;
         private int port;
 
         public ServerNetConfig() {}
 
-        public ServerNetConfig(String address, int port) {
+        public ServerNetConfig(String motd, String address, int port) {
+            this.motd = motd;
             this.address = address;
             this.port = port;
+        }
+
+        public String getMotd() {
+            return this.motd;
+        }
+
+        public void setMotd(String motd) {
+            this.motd = motd;
         }
 
         public String getAddress() {

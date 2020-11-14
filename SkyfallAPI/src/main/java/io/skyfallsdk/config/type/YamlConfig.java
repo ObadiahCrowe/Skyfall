@@ -4,18 +4,35 @@ import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.config.ConfigType;
 import io.skyfallsdk.config.LoadableConfig;
+import io.skyfallsdk.config.representer.YamlObjectRepresenter;
+import org.apache.logging.log4j.Logger;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 
-import java.io.*;
+import javax.annotation.concurrent.NotThreadSafe;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.logging.Logger;
 
+@NotThreadSafe
 public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig<T> {
+
+    private static transient final YamlObjectRepresenter REPRESENTER = new YamlObjectRepresenter();
+    private static transient final DumperOptions DUMPER_OPTIONS = new DumperOptions();
+
+    static {
+        DUMPER_OPTIONS.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        DUMPER_OPTIONS.setPrettyFlow(true);
+    }
 
     /**
      * Class of the configuration (for serialisation).
@@ -40,7 +57,23 @@ public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig
     public YamlConfig(Class<T> clazz) {
         this.clazz = clazz;
         this.logger = Server.get().getLogger();
-        this.backingYaml = new Yaml(new Constructor(this.clazz));
+
+        this.backingYaml = new Yaml(new Constructor(this.clazz), REPRESENTER, DUMPER_OPTIONS);
+        this.backingYaml.setBeanAccess(BeanAccess.FIELD);
+
+        for (Field field : this.clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
+            if (!field.getType().isEnum()) {
+                continue;
+            }
+
+            this.backingYaml.addTypeDescription(new TypeDescription(field.getType(), field.getName()));
+        }
     }
 
     /**
@@ -53,10 +86,10 @@ public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig
     public T load() {
         try {
             this.logger.info("Attempting to load config, " + this.getClass().getSimpleName() + "..");
-            return (T) this.backingYaml.load(new FileInputStream(this.getPath().toFile()));
+            return this.backingYaml.loadAs(new FileInputStream(this.getPath().toFile()), this.clazz);
         } catch (Exception e) {
             if (e instanceof FileNotFoundException) {
-                this.logger.warning("Could not find, " + this.getPath().toFile().getName() + ", creating one now..");
+                this.logger.warn("Could not find, " + this.getPath().toFile().getName() + ", creating one now..");
             } else {
                 e.printStackTrace();
             }

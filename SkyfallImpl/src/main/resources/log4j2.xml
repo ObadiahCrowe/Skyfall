@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{[%d{MMM dd HH:mm:ss} %level] [%t] %msg%n}{FATAL=red blink, ERROR=red, WARN=yellow bold}" />
+        </Console>
+        <File name="File" fileName="logs/latest.log">
+            <PatternLayout pattern="[%d{MMM dd HH:mm:ss} %level] [%t] %msg%n" />
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="io.skyfallsdk.SkyfallServer" level="DEBUG">
+            <AppenderRef ref="File" />
+        </Logger>
+        <Root level="DEBUG">
+            <AppenderRef ref="Console" />
+        </Root>
+    </Loggers>
+</Configuration>

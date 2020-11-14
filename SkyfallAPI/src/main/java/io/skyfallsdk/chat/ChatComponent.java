@@ -3,6 +3,7 @@ package io.skyfallsdk.chat;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import io.skyfallsdk.chat.colour.Colour;
 import io.skyfallsdk.chat.event.ClickEvent;
 import io.skyfallsdk.chat.event.HoverEvent;
 

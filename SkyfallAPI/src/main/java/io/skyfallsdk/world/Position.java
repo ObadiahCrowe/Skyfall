@@ -1,6 +1,6 @@
 package io.skyfallsdk.world;
 
-import io.skyfallsdk.util.AbstractVector;
+import io.skyfallsdk.world.vector.AbstractVector;
 
 public class Position extends AbstractVector<Position> {
 

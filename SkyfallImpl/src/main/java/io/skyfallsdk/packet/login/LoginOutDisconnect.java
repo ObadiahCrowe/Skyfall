@@ -6,8 +6,8 @@ import io.skyfallsdk.packet.version.NetPacketOut;
 
 public abstract class LoginOutDisconnect extends NetPacketOut {
 
-    public LoginOutDisconnect(Class<? extends Packet> packet) {
-        super(packet);
+    public LoginOutDisconnect() {
+        super(LoginOutDisconnect.class);
     }
 
     public abstract ChatComponent getReason();

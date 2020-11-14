@@ -1,7 +1,7 @@
 package io.skyfallsdk.packet.version.v1_16_1.handshake;
 
 import io.netty.buffer.ByteBuf;
-import io.skyfallsdk.net.NetConnection;
+import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketIn;
 
@@ -12,7 +12,7 @@ public class HandshakeInLegacy extends NetPacketIn implements io.skyfallsdk.pack
     }
 
     @Override
-    public void read(ByteBuf buf, NetConnection connection) {
+    public void read(ByteBuf buf, NetClient connection) {
         if (buf.readUnsignedByte() != 1) {
             throw new PacketException(this, "Using wrong packet schema!");
         }

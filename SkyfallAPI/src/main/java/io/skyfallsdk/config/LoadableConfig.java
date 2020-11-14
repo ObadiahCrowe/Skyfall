@@ -48,7 +48,7 @@ public interface LoadableConfig<T extends LoadableConfig> {
         }
 
         try {
-            return (T) configClass.getConstructor().newInstance().load();
+            return configClass.getConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }

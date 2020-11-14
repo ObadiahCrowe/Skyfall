@@ -1,4 +1,4 @@
-package io.skyfallsdk.util;
+package io.skyfallsdk.world.vector;
 
 import javax.annotation.concurrent.Immutable;
 import java.io.Serializable;

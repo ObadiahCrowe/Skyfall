@@ -1,4 +1,4 @@
-package io.skyfallsdk.chat;
+package io.skyfallsdk.chat.colour;
 
 public class HexColour implements Colour {
 

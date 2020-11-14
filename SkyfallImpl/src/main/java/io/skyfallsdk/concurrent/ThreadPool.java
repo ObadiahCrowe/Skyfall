@@ -2,6 +2,8 @@ package io.skyfallsdk.concurrent;
 
 import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
@@ -14,11 +16,13 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
 
     private static final Map<PoolSpec, ThreadPool> THREAD_POOLS = Maps.newHashMap();
 
+    private final PoolSpec spec;
     private final ExecutorService service;
     private final boolean isScheduledService;
 
-    protected ThreadPool(ExecutorService service) {
+    protected ThreadPool(ExecutorService service, PoolSpec spec) {
         this.service = service;
+        this.spec = spec;
         this.isScheduledService = service instanceof ScheduledExecutorService;
     }
 
@@ -128,10 +132,10 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
             int maxThreads = spec.getMaxThreads();
 
             if (spec.isStealing()) {
-                return new ThreadPool(new ForkJoinPool(maxThreads, spec, spec, true));
+                return new ThreadPool(new ForkJoinPool(maxThreads, spec, spec, true), spec);
             }
 
-            return new ThreadPool(new ScheduledThreadPoolExecutor(1, spec, (r, executor) -> Server.get().getLogger().severe("Could not add new thread to " + spec.getName() + " pool!")));
+            return new ThreadPool(new ScheduledThreadPoolExecutor(1, spec, (r, executor) -> Server.get().getLogger().error("Could not add new thread to " + spec.getName() + " pool!")), spec);
         });
     }
 
@@ -145,6 +149,7 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
 
     public static void shutdownAll() {
         for (ThreadPool pool : THREAD_POOLS.values()) {
+            Server.get().getLogger().info("Shutting down ThreadPool: " + pool.spec.getName());
             pool.shutdown();
         }
     }

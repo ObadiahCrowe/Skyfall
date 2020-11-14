@@ -15,6 +15,7 @@ public class ServiceFactory {
     static {
         INSTANCE.registerProvider(new ExpansionServiceProvider());
         INSTANCE.registerProvider(new ServerServiceProvider());
+        INSTANCE.registerProvider(new SchedulerServiceProvider());
     }
 
     private final List<ServiceProvider> providers;

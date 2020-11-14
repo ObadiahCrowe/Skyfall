@@ -25,28 +25,35 @@ public class ArgumentFactory {
 
         // Register defaults
         this.registerParser(new BooleanParser());
-        this.registerParser(new DoubleParser());
-        this.registerParser(new IntegerParser());
-        this.registerParser(new LongParser());
-        this.registerParser(new PlayerParser());
-        this.registerParser(new StringParser());
-        this.registerParser(new UUIDParser());
-        this.registerParser(new EnumParser());
-        this.registerParser(new IPAddressParser());
-        this.registerParser(new StringArrayParser());
-        this.registerParser(new WorldParser());
-        this.registerParser(new SubstanceParser());
         this.registerParser(new CommandParser());
+        this.registerParser(new DoubleParser());
+        this.registerParser(new EnumParser());
+        this.registerParser(new ExpansionParser());
+        this.registerParser(new GamemodeParser(), true);
+        this.registerParser(new IntegerParser());
+        this.registerParser(new IPAddressParser());
+        this.registerParser(new LongParser());
+        this.registerParser(new PathParser());
+        this.registerParser(new PlayerParser());
+        this.registerParser(new StringArrayParser());
+        this.registerParser(new StringParser());
+        this.registerParser(new SubstanceParser(), true);
+        this.registerParser(new UUIDParser());
+        this.registerParser(new WorldParser());
     }
 
     public void registerParser(ArgumentParser parser) {
+        this.registerParser(parser, false);
+    }
+
+    private void registerParser(ArgumentParser parser, boolean ignoreEnumWarning) {
         this.parsers.add(parser);
 
         for (Class type : parser.getTypes()) {
-            if (type.isEnum() && !(parser instanceof EnumParser)) {
-                Server.get().getLogger().warning("Registered parser " + parser.getClass().getSimpleName() + " which " +
-                        "supports parsing enum of type " + type + "! This is not recommended due to default support for " +
-                        " enums which also has tab completion.");
+            if (type.isEnum() && !(parser instanceof EnumParser) && !ignoreEnumWarning) {
+                Server.get().getLogger().warn("Registered parser " + parser.getClass().getSimpleName() + " which " +
+                  "supports parsing enum of type " + type + "! This is not recommended due to default support for " +
+                  " enums which also has tab completion.");
             }
 
             // Avoid allowing to override existing. We prioritize by what was registered first

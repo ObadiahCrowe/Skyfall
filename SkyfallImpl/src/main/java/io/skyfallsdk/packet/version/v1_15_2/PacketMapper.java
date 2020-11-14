@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 
 public class PacketMapper extends NetPacketMapper {
 
-    public PacketMapper(ProtocolVersion from, Class<? extends NetPacketMapper> to) {
-        super(from, to);
+    public PacketMapper() {
+        super(ProtocolVersion.v1_15_2, io.skyfallsdk.packet.version.v1_15_1.PacketMapper.class);
     }
 
     @Override

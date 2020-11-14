@@ -1,7 +1,7 @@
 package io.skyfallsdk.command.util;
 
 import com.google.common.collect.Lists;
-import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.ChatFormat;
 import io.skyfallsdk.player.Player;

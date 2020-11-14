@@ -1,12 +1,11 @@
 package io.skyfallsdk.config;
 
 import io.skyfallsdk.Server;
-import io.skyfallsdk.config.type.JsonConfig;
 import io.skyfallsdk.config.type.YamlConfig;
 
 import java.nio.file.Path;
 
-public class PerformanceConfig extends JsonConfig<PerformanceConfig> {
+public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
 
     private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(4);
 
@@ -31,7 +30,7 @@ public class PerformanceConfig extends JsonConfig<PerformanceConfig> {
 
     @Override
     public Path getPath() {
-        return Server.get().getPath().resolve("performance.json");
+        return Server.get().getPath().resolve("performance.yml");
     }
 
     @Override

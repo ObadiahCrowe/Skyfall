@@ -8,7 +8,7 @@ public enum DefaultTickSpec implements TickSpec {
     TILE_ENTITY(50L),
     OTHER(50L);
 
-    private long tickLength;
+    private final long tickLength;
 
     DefaultTickSpec(long defaultTickLength) {
         this.tickLength = defaultTickLength;

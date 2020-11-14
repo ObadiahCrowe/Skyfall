@@ -10,13 +10,13 @@ import java.util.concurrent.ThreadFactory;
 
 public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThreadFactory, Thread.UncaughtExceptionHandler {
 
-    public static final PoolSpec CHUNKS = new PoolSpec("Skyfall - Chunks", 4, false);
+    public static final PoolSpec CHUNKS = new PoolSpec("SF-Chunks", 4, false);
 
-    public static final PoolSpec ENTITIES = new PoolSpec("Skyfall - Entities", 4, true);
-    public static final PoolSpec PLAYERS = new PoolSpec("Skyfall - Players", 4, false);
+    public static final PoolSpec ENTITIES = new PoolSpec("SF-Entities", 4, true);
+    public static final PoolSpec PLAYERS = new PoolSpec("SF-Players", 4, false);
 
-    public static final PoolSpec SCHEDULER = new PoolSpec("Skyfall - Scheduler", 4, true);
-    public static final PoolSpec WORLD = new PoolSpec("Skyfall - World", 2, true);
+    public static final PoolSpec SCHEDULER = new PoolSpec("SF-Scheduler", 4, true);
+    public static final PoolSpec WORLD = new PoolSpec("SF-World", 2, true);
 
     private final String name;
     private final int maxThreads;
@@ -45,7 +45,7 @@ public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThrea
         e.printStackTrace(new PrintStream(System.out) {
             @Override
             public void println(Object o) {
-                Server.get().getLogger().severe(String.valueOf(o));
+                Server.get().getLogger().error(String.valueOf(o));
             }
         });
     }
@@ -53,7 +53,7 @@ public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThrea
     @Override
     public ForkJoinWorkerThread newThread(ForkJoinPool pool) {
         ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
-        thread.setName(this.name + " - " + thread.getPoolIndex());
+        thread.setName(this.name + '-' + thread.getPoolIndex());
         thread.setUncaughtExceptionHandler(this);
 
         return thread;

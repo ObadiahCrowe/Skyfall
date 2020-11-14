@@ -1,4 +1,4 @@
-package io.skyfallsdk.chat;
+package io.skyfallsdk.chat.colour;
 
 import it.unimi.dsi.fastutil.chars.Char2IntArrayMap;
 import it.unimi.dsi.fastutil.chars.Char2IntMap;

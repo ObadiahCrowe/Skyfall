@@ -19,7 +19,7 @@ public class SubstanceParser implements ArgumentParser<Substance> {
                   return true;
               }
 
-              return substance.name().startsWith(value);
+              return substance.name().toLowerCase().startsWith(value.toLowerCase());
           })
           .map(Substance::getMinecraftId)
           .collect(Collectors.toList());
@@ -34,6 +34,15 @@ public class SubstanceParser implements ArgumentParser<Substance> {
 
     @Override
     public Substance parse(CommandSender sender, Class type, String value) throws ArgumentParseException {
-        return null;
+        Substance substance = Arrays.stream(Substance.values())
+          .filter(sub -> sub.name().toLowerCase().startsWith(value.toLowerCase()) || sub.getMinecraftId().toLowerCase().startsWith(value.toLowerCase()))
+          .findFirst()
+          .orElse(null);
+
+        if (substance == null) {
+            throw new ArgumentParseException("Could not parse Substance, \"" + value + "\"!");
+        }
+
+        return substance;
     }
 }

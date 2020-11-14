@@ -4,17 +4,19 @@ import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
+import io.skyfallsdk.expansion.ExpansionRegistry;
+import io.skyfallsdk.packet.PacketRegistry;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.ServerCommandSender;
 import io.skyfallsdk.world.World;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Logger;
 
 public interface Server extends ServerCommandSender, PermissionHolder {
 
@@ -28,9 +30,13 @@ public interface Server extends ServerCommandSender, PermissionHolder {
 
     Logger getLogger();
 
+    Logger getLogger(Expansion expansion);
+
     Scheduler getScheduler();
 
     CommandMap getCommandMap();
+
+    PacketRegistry getPacketRegistry();
 
     Player getPlayer(String username);
 
@@ -49,6 +55,8 @@ public interface Server extends ServerCommandSender, PermissionHolder {
     int getMaxPlayers();
 
     void setMaxPlayers(int maxPlayers);
+
+    ExpansionRegistry getExpansionRegistry();
 
     <T extends Expansion> T getExpansion(Class<T> expansionClass);
 

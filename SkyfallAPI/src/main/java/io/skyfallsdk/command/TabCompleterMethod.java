@@ -1,7 +1,7 @@
 package io.skyfallsdk.command;
 
 import com.google.common.collect.Lists;
-import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.TabCompleter;
 import io.skyfallsdk.command.parameter.CommandParameter;

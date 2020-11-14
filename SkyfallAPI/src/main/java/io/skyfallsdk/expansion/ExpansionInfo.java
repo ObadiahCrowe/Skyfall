@@ -15,7 +15,7 @@ public @interface ExpansionInfo {
 
     String[] authors();
 
-    String[] dependencies();
+    String[] dependencies() default {};
 
     long expansionId() default -1L;
 }

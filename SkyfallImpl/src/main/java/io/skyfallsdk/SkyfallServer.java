@@ -1,26 +1,34 @@
 package io.skyfallsdk;
 
 import io.skyfallsdk.chat.ChatComponent;
-import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.thread.ConsoleThread;
+import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
+import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.net.NetServer;
+import io.skyfallsdk.packet.NetPacketRegistry;
+import io.skyfallsdk.packet.PacketRegistry;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.world.World;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 public class SkyfallServer implements Server {
 
@@ -30,47 +38,77 @@ public class SkyfallServer implements Server {
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
 
+    private final NetPacketRegistry packetRegistry;
+    private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
+    private final NetServer server;
 
     private final ConsoleThread consoleThread;
 
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
-        logger = Logger.getLogger("Skyfall");
+        logger = LogManager.getLogger(SkyfallServer.class);
 
         logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
 
         logger.info("Loading default configs..");
-        //this.config = LoadableConfig.getByClass(ServerConfig.class).load();
-        //this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
-        this.config = new ServerConfig().getDefaultConfig();
-        this.perfConfig = new PerformanceConfig().getDefaultConfig();
+        this.config = LoadableConfig.getByClass(ServerConfig.class).load();
+        this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
 
-        logger.info("Setting up...");
-        this.commandMap = new ServerCommandMap();
+        if (!this.config.isDebugEnabled()) {
+            LoggerContext context = (LoggerContext) LogManager.getContext(false);
+            Configuration config = context.getConfiguration();
+            LoggerConfig loggerCfg = config.getLoggerConfig("io.netty");
+            loggerCfg.setLevel(Level.OFF);
+            context.updateLoggers();
+        }
 
         logger.info("Initialising thread pools..");
         ThreadPool.initDefaultPools();
 
+        logger.info("Setting up expansion support...");
+        this.expansionRegistry = new ServerExpansionRegistry(this);
+        this.commandMap = new ServerCommandMap();
+
+        this.packetRegistry = new NetPacketRegistry();
+
+        /*
+         * Load all immediately to give them absolute control before the server initialises.
+         */
+        this.expansionRegistry.loadAllExpansions();
+
         logger.info("Starting server..");
-        NetServer.init("localhost", 25565);
+        this.server = NetServer.init(this.config.getNetworkConfig().getAddress(), this.config.getNetworkConfig().getPort());
 
         this.consoleThread = new ConsoleThread(this);
+        this.consoleThread.setDaemon(true);
+        this.consoleThread.setUncaughtExceptionHandler((t, e) -> logger.error("Uncaught exception on thread \"" + t.getName() + "\": " + e.getMessage()));
         this.consoleThread.start();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownInternal, "SF-Shutdown"));
+    }
+
+    private void shutdownInternal() {
+        try {
+            logger.info("Shuttng down Netty server..");
+            this.server.shutdown();
+
+            logger.info("Shutting down thread pools..");
+            ThreadPool.shutdownAll();
+
+            logger.info("Saving configs..");
+            this.config.save();
+
+            this.consoleThread.interrupt();
+        } catch (InterruptedException e) {
+            logger.error(e);
+        }
     }
 
     @Override
     public void shutdown() {
-        logger.info("Saving configs..");
-        this.config.save();
-
-        logger.info("Shutting down thread pools..");
-        ThreadPool.shutdownAll();
-
-        this.consoleThread.interrupt();
+        System.exit(0);
     }
 
     public ServerConfig getConfig() {
@@ -92,13 +130,23 @@ public class SkyfallServer implements Server {
     }
 
     @Override
+    public Logger getLogger(Expansion expansion) {
+        return LogManager.getLogger(expansion);
+    }
+
+    @Override
     public Scheduler getScheduler() {
         return ThreadPool.createForSpec(PoolSpec.SCHEDULER);
     }
 
     @Override
-    public CommandMap getCommandMap() {
+    public ServerCommandMap getCommandMap() {
         return this.commandMap;
+    }
+
+    @Override
+    public NetPacketRegistry getPacketRegistry() {
+        return this.packetRegistry;
     }
 
     @Override
@@ -128,12 +176,14 @@ public class SkyfallServer implements Server {
 
     @Override
     public String getMotd() {
-        return null;
+        return this.config.getNetworkConfig().getMotd();
     }
 
     @Override
     public void setMotd(String motd) {
-
+        synchronized (this.config) {
+            this.config.getNetworkConfig().setMotd(motd);
+        }
     }
 
     @Override
@@ -147,13 +197,18 @@ public class SkyfallServer implements Server {
     }
 
     @Override
+    public ServerExpansionRegistry getExpansionRegistry() {
+        return this.expansionRegistry;
+    }
+
+    @Override
     public <T extends Expansion> T getExpansion(Class<T> expansionClass) {
-        return null;
+        return this.getExpansionRegistry().getExpansion(expansionClass);
     }
 
     @Override
     public ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass) {
-        return null;
+        return this.getExpansionRegistry().getExpansionInfo(expansionClass);
     }
 
     @Override
@@ -163,7 +218,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public ProtocolVersion getBaseVersion() {
-        return null;
+        return this.config.getBaseVersion();
     }
 
     @Override

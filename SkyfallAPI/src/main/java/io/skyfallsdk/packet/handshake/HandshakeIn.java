@@ -6,8 +6,6 @@ import io.skyfallsdk.protocol.ProtocolVersion;
 
 public interface HandshakeIn extends PacketIn {
 
-    int getProtocolVersionRaw();
-
     ProtocolVersion getProtocolVersion();
 
     String getServerAddress();

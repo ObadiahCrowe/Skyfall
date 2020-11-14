@@ -4,6 +4,9 @@ import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.options.Sender;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
+import io.skyfallsdk.command.parameter.context.Context;
+import io.skyfallsdk.command.parameter.context.ContextContainer;
+import io.skyfallsdk.command.parameter.context.ContextParameter;
 import io.skyfallsdk.command.parameter.sender.SenderCommandSenderParameter;
 import io.skyfallsdk.command.parameter.sender.SenderFactory;
 import io.skyfallsdk.command.parameter.sender.SenderParameter;
@@ -35,6 +38,16 @@ public interface CommandParameter<T> {
         Class<?> type = parameter.getType();
         if (parameter.isAnnotationPresent(Service.class)) {
             return new ServiceParameter<T>((Class<T>) type);
+        }
+
+        Context contextAnnot = parameter.getAnnotation(Context.class);
+        if (contextAnnot != null) {
+            if (!type.isAssignableFrom(ContextContainer.class)) {
+                throw new IllegalArgumentException(type.getName() + " can't be context parameter!");
+            }
+
+            boolean instantiate = contextAnnot.instantiate();
+            return (CommandParameter<T>) new ContextParameter(contextAnnot.value(), instantiate);
         }
 
         Sender senderAnnot = parameter.getAnnotation(Sender.class);

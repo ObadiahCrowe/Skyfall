@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.longs.Long2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -31,17 +33,24 @@ public class ServerTickRegistry<T extends TickSpec> implements TickRegistry<T> {
 
     @Override
     public Optional<Tickable<T>> getById(long id) {
-        return Optional.empty();
+        return this.tickableToId.object2LongEntrySet().stream()
+          .filter(entry -> entry.getLongValue() == id)
+          .map(Map.Entry::getKey)
+          .findFirst();
     }
 
     @Override
     public long getId(Tickable<T> tickable) {
-        return 0;
+        if (!this.tickableToId.containsKey(tickable)) {
+            throw new NoSuchElementException("This TickRegistry does not include this Tickable.");
+        }
+
+        return this.tickableToId.getLong(tickable);
     }
 
     @Override
     public long getLastExecutionTime(long id) {
-        return 0;
+        return this.executionTimes.get(id);
     }
 
     @Override

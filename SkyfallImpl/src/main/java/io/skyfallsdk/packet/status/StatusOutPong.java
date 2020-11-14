@@ -1,13 +1,8 @@
 package io.skyfallsdk.packet.status;
 
-import io.skyfallsdk.packet.Packet;
-import io.skyfallsdk.packet.version.NetPacketOut;
+import io.skyfallsdk.packet.PacketOut;
 
-public abstract class StatusOutPong extends NetPacketOut {
-
-    public StatusOutPong(Class<? extends Packet> packet) {
-        super(packet);
-    }
+public abstract class StatusOutPong implements PacketOut {
 
     public abstract long getPayload();
 }

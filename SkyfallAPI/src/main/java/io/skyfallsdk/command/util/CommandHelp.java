@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.util;
 
-import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.event.HoverEvent;
 import io.skyfallsdk.chat.event.HoverType;

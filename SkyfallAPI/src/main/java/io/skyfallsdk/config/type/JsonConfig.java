@@ -5,18 +5,21 @@ import com.google.gson.GsonBuilder;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.config.ConfigType;
 import io.skyfallsdk.config.LoadableConfig;
+import org.apache.logging.log4j.Logger;
 
+import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
+@ThreadSafe
 public abstract class JsonConfig<T extends JsonConfig> implements LoadableConfig<T> {
 
     private static final Gson GSON_INSTANCE = new GsonBuilder()
       .serializeNulls()
       .disableHtmlEscaping()
+      .setPrettyPrinting()
       .create();
 
     /**
@@ -52,7 +55,7 @@ public abstract class JsonConfig<T extends JsonConfig> implements LoadableConfig
             return (T) GSON_INSTANCE.fromJson(String.join("", Files.readAllLines(this.getPath())), this.configurationClass);
         } catch (IOException | ClassCastException e) {
             if (e instanceof NoSuchFileException) {
-                this.logger.warning("Could not find, " + this.getPath().toFile().getName() + ", creating one now..");
+                this.logger.warn("Could not find, " + this.getPath().toFile().getName() + ", creating one now..");
             } else {
                 e.printStackTrace();
             }

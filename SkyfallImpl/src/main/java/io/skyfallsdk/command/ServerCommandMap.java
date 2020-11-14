@@ -3,10 +3,13 @@ package io.skyfallsdk.command;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.colour.ChatColour;
+import io.skyfallsdk.command.defaults.GamemodeCommand;
+import io.skyfallsdk.command.defaults.expansion.ExpansionCommand;
 import io.skyfallsdk.command.defaults.HelpCommand;
 import io.skyfallsdk.command.defaults.StopCommand;
 import io.skyfallsdk.command.defaults.VersionCommand;
+import io.skyfallsdk.command.defaults.expansion.ExpansionLoadCommand;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.player.Player;
@@ -15,7 +18,6 @@ import io.skyfallsdk.util.Validator;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 public class ServerCommandMap implements CommandMap {
@@ -23,19 +25,21 @@ public class ServerCommandMap implements CommandMap {
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile("\\s+");
 
     private final Map<String, Command> knownCommands;
-    private final Logger logger;
 
     public ServerCommandMap() {
         this.knownCommands = Maps.newConcurrentMap();
-        this.logger = Server.get().getLogger();
 
         this.registerDefaultCommands();
     }
 
     private void registerDefaultCommands() {
+        this.registerCommand(ExpansionCommand.class).addSubcommands(
+          ExpansionLoadCommand.class
+        );
+        this.registerCommand(GamemodeCommand.class);
         this.registerCommand(HelpCommand.class);
-        this.registerCommand(VersionCommand.class);
         this.registerCommand(StopCommand.class);
+        this.registerCommand(VersionCommand.class);
     }
 
     @Override

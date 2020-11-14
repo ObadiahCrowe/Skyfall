@@ -5,9 +5,10 @@ import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.command.parameter.argument.ArgumentFactory;
 import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
+import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 public interface Expansion {
 
@@ -15,8 +16,16 @@ public interface Expansion {
 
     void onShutdown();
 
+    default ExpansionInfo getInfo() {
+        return Server.get().getExpansionInfo(this);
+    }
+
+    default Path getPath() {
+        return Server.get().getPath().resolve("expansions").resolve(this.getInfo().name());
+    }
+
     default Logger getLogger() {
-        return Server.get().getLogger();
+        return Server.get().getLogger(this);
     }
 
     default void registerArgumentParsers(ArgumentParser... parsers) {

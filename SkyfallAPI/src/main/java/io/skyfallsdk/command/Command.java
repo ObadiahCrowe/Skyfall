@@ -2,9 +2,11 @@ package io.skyfallsdk.command;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.colour.ChatColour;
+import io.skyfallsdk.command.parameter.context.CommandContext;
 import io.skyfallsdk.command.defaults.HelpSubCommand;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.*;
@@ -78,8 +80,8 @@ public class Command extends AnnotatedPermissible {
         Object commandInstance;
 
         try {
-            commandInstance = commandClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            commandInstance = commandClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }
@@ -139,10 +141,12 @@ public class Command extends AnnotatedPermissible {
     private final String[] aliases;
     private final CommandExecutorMethod[] executorMethods;
     private final Object commandInstance;
+    private final Map<CommandSender, CommandContext> contextBySender;
     private Command superCommand;
     private Command[] subCommands;
     private boolean disabled;
 
+    @SuppressWarnings("unchecked")
     Command(Class<?> commandClass, Object commandInstance, String name, String description, String[] aliases, Command[] subCommands) {
         super(commandClass);
 
@@ -152,6 +156,7 @@ public class Command extends AnnotatedPermissible {
         this.aliases = aliases;
         this.subCommands = subCommands;
         this.commandInstance = commandInstance;
+        this.contextBySender = Maps.newConcurrentMap();
 
         for (Command command : this.subCommands) {
             command.superCommand = this;
@@ -166,9 +171,9 @@ public class Command extends AnnotatedPermissible {
         if (annotation != null) {
             for (Class cloneExecutorTarget : annotation.value()) {
                 try {
-                    Object instance = cloneExecutorTarget.newInstance();
+                    Object instance = cloneExecutorTarget.getConstructor().newInstance();
                     executorMethods.addAll(getExecutorMethods(this, cloneExecutorTarget, instance));
-                } catch (InstantiationException | IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
@@ -188,6 +193,14 @@ public class Command extends AnnotatedPermissible {
 
     public Object getCommandInstance() {
         return this.commandInstance;
+    }
+
+    public void removeContext(Player player) {
+        this.contextBySender.remove(player);
+    }
+
+    public CommandContext getContext(CommandSender sender) {
+        return this.contextBySender.computeIfAbsent(sender, s -> new CommandContext());
     }
 
     public Command getSuperCommand() {
@@ -266,6 +279,12 @@ public class Command extends AnnotatedPermissible {
         return Arrays.stream(this.subCommands)
           .filter(subCmd -> subCmd.getCommandClass() == commandClass)
           .findFirst().orElse(null);
+    }
+
+    public void addSubcommands(Class<?>... commandClasses) {
+        for (Class<?> commandClass : commandClasses) {
+            this.addSubcommand(commandClass);
+        }
     }
 
     public void addSubcommand(Class<?> commandClass) {

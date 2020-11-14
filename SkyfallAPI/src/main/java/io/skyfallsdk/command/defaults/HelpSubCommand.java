@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.defaults;
 
-import io.skyfallsdk.chat.ChatColour;
+import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.options.*;
@@ -8,8 +8,6 @@ import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.util.CommandCompletion;
 import io.skyfallsdk.command.util.CommandHelp;
 import io.skyfallsdk.command.util.ListCommand;
-import io.skyfallsdk.permission.defaults.PlayerPermission;
-import io.skyfallsdk.permission.permissible.PlayerPermissible;
 import io.skyfallsdk.server.CommandSender;
 
 import java.util.Arrays;
