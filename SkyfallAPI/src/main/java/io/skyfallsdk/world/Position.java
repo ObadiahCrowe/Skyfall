@@ -15,11 +15,12 @@ public class Position extends AbstractVector<Position> {
         super(x, y, z);
 
         this.world = world;
+
+        this.yaw = 0.0F;
+        this.pitch = 0.0F;
     }
 
     public World getWorld() {
         return this.world;
     }
-
-    
 }

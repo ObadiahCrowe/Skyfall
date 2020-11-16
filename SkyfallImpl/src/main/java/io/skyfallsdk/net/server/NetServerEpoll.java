@@ -21,7 +21,7 @@ public class NetServerEpoll extends NetServer {
     public NetServerEpoll(String address, int port) {
         super(address, port);
 
-        int threads = ((SkyfallServer) Server.get()).getPerfConfig().getNettyThreads();
+        int threads = ((SkyfallServer) Server.get()).getPerformanceConfig().getNettyThreads();
 
         this.bossGroup = new EpollEventLoopGroup(threads >> 2);
         this.workerGroup = new EpollEventLoopGroup(threads >> 2);
@@ -35,8 +35,11 @@ public class NetServerEpoll extends NetServer {
           .channel(EpollServerSocketChannel.class)
           .childHandler(new ChannelHandler())
           .option(ChannelOption.SO_BACKLOG, 128)
-          .option(ChannelOption.TCP_NODELAY, true)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
+
+        if (System.getProperty("os.name").contains("Windows")) {
+            bootstrap.option(ChannelOption.TCP_NODELAY, true);
+        }
 
         this.future = bootstrap.bind(this.getAddress(), this.getPort());
     }

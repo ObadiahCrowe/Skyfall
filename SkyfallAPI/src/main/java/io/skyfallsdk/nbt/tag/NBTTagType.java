@@ -60,6 +60,7 @@ public enum NBTTagType {
      * @param <T>   The type of this tag (Equal to {@link #getTagClass()})
      * @return The created instance
      */
+    @SuppressWarnings("unchecked")
     public <G, T extends NBTTag<G>> T newInstance(String name, G value) {
         switch (this) {
             case END:
@@ -101,6 +102,7 @@ public enum NBTTagType {
      * @param <T>  The type of this tag (Equal to {@link #getTagClass()})
      * @return The created instance
      */
+    @SuppressWarnings("unchecked")
     public <G, T extends NBTTag<G>> T newEmptyInstance(String name) {
         switch (this) {
             case END:

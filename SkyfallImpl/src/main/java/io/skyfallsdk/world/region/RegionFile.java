@@ -1,11 +1,7 @@
 package io.skyfallsdk.world.region;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -55,12 +51,11 @@ public class RegionFile {
         this.sizeOffsetTable = new int[SECTOR_INTS];
         this.chunkTimestamps = new int[SECTOR_INTS];
 
-        File asFile = this.getPath().toFile();
-        if (asFile.exists()) {
-            this.lastModified = asFile.lastModified();
+        if (Files.exists(this.getPath())) {
+            this.lastModified = Files.getLastModifiedTime(this.getPath()).toMillis();
         }
 
-        this.file = new RandomAccessFile(asFile, "rw");
+        this.file = new RandomAccessFile(this.getPath().toFile(), "rw");
 
         // Check if file is set up
         if (this.file.length() < SECTOR_BYTES) {

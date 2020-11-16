@@ -8,9 +8,9 @@ public abstract class AbstractVector<T extends AbstractVector<T>> implements Ser
 
     private static final long serialVersionUID = -6747473014221445194L;
 
-    private final double x;
-    private final double y;
-    private final double z;
+    protected final double x;
+    protected final double y;
+    protected final double z;
 
     public AbstractVector(double x, double y, double z) {
         this.x = x;

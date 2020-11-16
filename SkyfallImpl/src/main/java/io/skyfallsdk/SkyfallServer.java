@@ -14,10 +14,11 @@ import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.packet.NetPacketRegistry;
-import io.skyfallsdk.packet.PacketRegistry;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.world.SkyfallWorldLoader;
 import io.skyfallsdk.world.World;
+import io.skyfallsdk.world.WorldLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +28,7 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +44,8 @@ public class SkyfallServer implements Server {
     private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
     private final NetServer server;
+
+    private final SkyfallWorldLoader worldLoader;
 
     private final ConsoleThread consoleThread;
 
@@ -81,6 +85,8 @@ public class SkyfallServer implements Server {
         logger.info("Starting server..");
         this.server = NetServer.init(this.config.getNetworkConfig().getAddress(), this.config.getNetworkConfig().getPort());
 
+        this.worldLoader = new SkyfallWorldLoader(workingDir);
+
         this.consoleThread = new ConsoleThread(this);
         this.consoleThread.setDaemon(true);
         this.consoleThread.setUncaughtExceptionHandler((t, e) -> logger.error("Uncaught exception on thread \"" + t.getName() + "\": " + e.getMessage()));
@@ -115,7 +121,7 @@ public class SkyfallServer implements Server {
         return this.config;
     }
 
-    public PerformanceConfig getPerfConfig() {
+    public PerformanceConfig getPerformanceConfig() {
         return this.perfConfig;
     }
 
@@ -165,13 +171,13 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public List<World> getWorlds() {
-        return null;
+    public Collection<World> getWorlds() {
+        return this.worldLoader.getLoadedWorlds();
     }
 
     @Override
     public World getWorld(String name) {
-        return null;
+        return this.worldLoader.get(name).orElse(null);
     }
 
     @Override
@@ -181,9 +187,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public void setMotd(String motd) {
-        synchronized (this.config) {
-            this.config.getNetworkConfig().setMotd(motd);
-        }
+        this.config.getNetworkConfig().setMotd(motd);
     }
 
     @Override
@@ -219,6 +223,11 @@ public class SkyfallServer implements Server {
     @Override
     public ProtocolVersion getBaseVersion() {
         return this.config.getBaseVersion();
+    }
+
+    @Override
+    public WorldLoader getWorldLoader() {
+        return this.worldLoader;
     }
 
     @Override

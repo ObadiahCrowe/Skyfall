@@ -11,9 +11,11 @@ import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.ServerCommandSender;
 import io.skyfallsdk.world.World;
+import io.skyfallsdk.world.WorldLoader;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -44,7 +46,7 @@ public interface Server extends ServerCommandSender, PermissionHolder {
 
     List<Player> getPlayers();
 
-    List<World> getWorlds();
+    Collection<World> getWorlds();
 
     World getWorld(String name);
 
@@ -69,6 +71,8 @@ public interface Server extends ServerCommandSender, PermissionHolder {
     List<ProtocolVersion> getSupportedVersions();
 
     ProtocolVersion getBaseVersion();
+
+    WorldLoader getWorldLoader();
 
     static class Impl {
         static AtomicReference<Server> IMPL = new AtomicReference<>(null);

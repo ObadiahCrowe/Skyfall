@@ -2,6 +2,7 @@ package io.skyfallsdk.packet;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.packet.version.NetPacketMapper;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
@@ -44,9 +45,13 @@ public class NetPacketRegistry implements PacketRegistry {
         }
 
         // Albeit slower, but looks cleaner on the console, plus it's solely at startup.
-        for (int i : VERSION_TO_MAPPER.int2ReferenceEntrySet().stream().map(Int2ReferenceMap.Entry::getIntKey).sorted(IntComparators.OPPOSITE_COMPARATOR).collect(Collectors.toList())) {
-            Server.get().getLogger().info("Registered a PacketMapper for: " + ProtocolVersion.values()[i].getName());
+        if (((SkyfallServer) Server.get()).getConfig().isDebugEnabled()) {
+            for (int i : VERSION_TO_MAPPER.int2ReferenceEntrySet().stream().map(Int2ReferenceMap.Entry::getIntKey).sorted(IntComparators.OPPOSITE_COMPARATOR).collect(Collectors.toList())) {
+                Server.get().getLogger().info("Registered a PacketMapper for: " + ProtocolVersion.values()[i].getName());
+            }
         }
+
+        Server.get().getLogger().info("Registered PacketMappers successfully!");
     }
 
     @Override
