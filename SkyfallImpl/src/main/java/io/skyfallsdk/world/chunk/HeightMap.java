@@ -8,8 +8,8 @@ import io.skyfallsdk.nbt.tag.type.TagLongArray;
  */
 public class HeightMap {
 
-    private String name;
-    private long[] map;
+    private final String name;
+    private final long[] map;
 
     public HeightMap(TagLongArray map) {
         this(map.getName(), map.getValue());
@@ -33,7 +33,7 @@ public class HeightMap {
     }
 
     public TagLongArray toNBT() {
-        return NBTTagType.LONG_ARRAY.newInstance(this.getName(), this.map);
+        return NBTTagType.LONG_ARRAY.newInstance(this.name, this.map);
     }
 
     // Internals

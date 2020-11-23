@@ -1,8 +1,10 @@
 package io.skyfallsdk.net;
 
 import io.netty.channel.epoll.Epoll;
+import io.netty.channel.kqueue.KQueue;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.net.server.NetServerEpoll;
+import io.skyfallsdk.net.server.NetServerKQueue;
 import io.skyfallsdk.net.server.NetServerNio;
 
 public abstract class NetServer {
@@ -15,6 +17,8 @@ public abstract class NetServer {
     protected NetServer(String address, int port) {
         this.address = address;
         this.port = port;
+
+        Server.get().getLogger().info("Using " + this.getClass().getSimpleName() + " as Network Sever.");
     }
 
     protected String getAddress() {
@@ -34,12 +38,7 @@ public abstract class NetServer {
             throw new IllegalStateException("Network server is already initialised!");
         }
 
-        boolean hasEpoll = Epoll.isAvailable();
-        if (hasEpoll) {
-            Server.get().getLogger().info("Epoll is available.. using.");
-        }
-
-        instance = hasEpoll ? new NetServerEpoll(address, port) : new NetServerNio(address, port);
+        instance = Epoll.isAvailable() ? new NetServerEpoll(address, port) : KQueue.isAvailable() ? new NetServerKQueue(address, port) : new NetServerNio(address, port);
         instance.init();
 
         return instance;
