@@ -16,6 +16,7 @@ import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.packet.NetPacketRegistry;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.util.UtilGitVersion;
 import io.skyfallsdk.world.SkyfallWorldLoader;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
@@ -52,6 +53,7 @@ public class SkyfallServer implements Server {
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
         logger = LogManager.getLogger(SkyfallServer.class);
+        logger.info("Starting Skyfall version " + UtilGitVersion.getFromSkyfall().getPretty());
 
         logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
@@ -67,6 +69,8 @@ public class SkyfallServer implements Server {
             loggerCfg.setLevel(Level.OFF);
             context.updateLoggers();
         }
+
+        logger.info("Implementing on " + this.config.getBaseVersion().getName() + " as base version!");
 
         logger.info("Initialising thread pools..");
         ThreadPool.initDefaultPools();
@@ -250,4 +254,12 @@ public class SkyfallServer implements Server {
     public boolean hasPermission(String permission) {
         return true;
     }
+
+    @Override
+    public boolean isOp() {
+        return true;
+    }
+
+    @Override
+    public void setOp(boolean op) {}
 }

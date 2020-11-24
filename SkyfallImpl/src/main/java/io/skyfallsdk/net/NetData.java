@@ -1,7 +1,17 @@
 package io.skyfallsdk.net;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
+import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.nbt.stream.NBTInputStream;
+import io.skyfallsdk.nbt.stream.NBTOutputStream;
+import io.skyfallsdk.nbt.tag.NBTTag;
+import io.skyfallsdk.nbt.tag.type.TagCompound;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
@@ -100,5 +110,29 @@ public class NetData {
     public static void writeString(ByteBuf buf, String value) {
         writeVarInt(buf, value.length());
         buf.writeBytes(value.getBytes(StandardCharsets.UTF_8));
+    }
+
+    public static ChatComponent readChatComponent(ByteBuf buf) {
+        return ChatComponent.fromJson(readString(buf));
+    }
+
+    public static void writeChatComponent(ByteBuf buf, ChatComponent component) {
+        writeString(buf, component.toString());
+    }
+
+    public static NBTTag<?> readNBT(ByteBuf buf) {
+        try {
+            return new NBTInputStream(new ByteBufInputStream(buf)).readTag();
+        } catch (IOException e) {
+            throw new DecoderException("Could not decode NBT data from ByteBuf!", e);
+        }
+    }
+
+    public static void writeNBT(ByteBuf buf, NBTTag<?> tag) {
+        try {
+            tag.write(new NBTOutputStream(new ByteBufOutputStream(buf)));
+        } catch (IOException e) {
+            throw new EncoderException("Could not encode NBT data to ByteBuf!", e);
+        }
     }
 }

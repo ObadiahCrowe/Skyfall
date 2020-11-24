@@ -7,9 +7,10 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
-public class ServerTickRegistry<T extends TickSpec> implements TickRegistry<T> {
+public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T> {
 
     private static final Object2ObjectOpenHashMap<Enum<? extends TickSpec>, ServerTickRegistry<?>> TICK_REGISTRIES = new Object2ObjectOpenHashMap<>();
 
@@ -20,13 +21,13 @@ public class ServerTickRegistry<T extends TickSpec> implements TickRegistry<T> {
     }
 
     private final T spec;
-    private final LongAdder nextId;
+    private final AtomicInteger nextId;
     private final Object2LongOpenHashMap<Tickable<T>> tickableToId;
     private final Long2IntArrayMap executionTimes;
 
     private ServerTickRegistry(T spec) {
         this.spec = spec;
-        this.nextId = new LongAdder();
+        this.nextId = new AtomicInteger();
         this.tickableToId = new Object2LongOpenHashMap<>();
         this.executionTimes = new Long2IntArrayMap();
     }
@@ -46,6 +47,11 @@ public class ServerTickRegistry<T extends TickSpec> implements TickRegistry<T> {
         }
 
         return this.tickableToId.getLong(tickable);
+    }
+
+    @Override
+    public long getLastExecutionTime(Tickable<T> tickable) {
+        return this.executionTimes.get(this.getId(tickable));
     }
 
     @Override

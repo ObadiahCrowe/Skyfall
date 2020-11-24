@@ -7,4 +7,8 @@ public interface PermissionHolder {
     void removePermission(String permission);
 
     boolean hasPermission(String permission);
+
+    boolean isOp();
+
+    void setOp(boolean op);
 }

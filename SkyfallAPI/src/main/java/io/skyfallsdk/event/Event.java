@@ -1,5 +1,7 @@
 package io.skyfallsdk.event;
 
+import io.skyfallsdk.subscription.Subscribable;
+
 import javax.annotation.concurrent.NotThreadSafe;
 
 /**
@@ -8,7 +10,7 @@ import javax.annotation.concurrent.NotThreadSafe;
  * Not thread safe as all events of a type are executed in a specified order in accordance with their priority.
  */
 @NotThreadSafe
-public interface Event {
+public interface Event extends Subscribable {
 
     default String getEventName() {
         return this.getClass().getSimpleName();

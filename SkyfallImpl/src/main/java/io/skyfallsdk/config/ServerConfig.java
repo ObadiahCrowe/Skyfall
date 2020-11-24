@@ -24,6 +24,8 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private Gamemode gamemode;
     private Difficulty difficulty;
 
+    private int renderDistance;
+
     private String baseVersion;
     private List<String> supportedVersions;
 
@@ -42,6 +44,8 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
         this.maxPlayers = maxPlayers;
         this.onlineMode = onlineMode;
+
+        this.renderDistance = 10;
 
         this.gamemode = gamemode;
         this.difficulty = difficulty;
@@ -94,6 +98,14 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public void setDifficulty(Difficulty difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public int getRenderDistance() {
+        return this.renderDistance;
+    }
+
+    public void setRenderDistance(int renderDistance) {
+        this.renderDistance = renderDistance;
     }
 
     public ProtocolVersion getBaseVersion() {

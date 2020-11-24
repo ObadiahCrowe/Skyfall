@@ -7,6 +7,11 @@ import java.util.UUID;
 
 public interface BossBar {
 
+    /**
+     * Sends this BossBar to a player.
+     *
+     * @param player Player to send the BossBar to.
+     */
     void sendToPlayer(Player player);
 
     void removeFromPlayer(Player player);
@@ -19,7 +24,7 @@ public interface BossBar {
 
     void updateFlags(BarFlag... flags);
 
-    void destroyBar();
+    void remove();
 
     UUID getUuid();
 

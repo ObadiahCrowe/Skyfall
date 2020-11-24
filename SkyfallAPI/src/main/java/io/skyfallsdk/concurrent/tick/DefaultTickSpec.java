@@ -1,6 +1,8 @@
 package io.skyfallsdk.concurrent.tick;
 
-public enum DefaultTickSpec implements TickSpec {
+import io.skyfallsdk.Server;
+
+public enum DefaultTickSpec implements TickSpec<DefaultTickSpec> {
 
     BLOCK(50L, false),
     REDSTONE(50L, true),
@@ -15,6 +17,11 @@ public enum DefaultTickSpec implements TickSpec {
     DefaultTickSpec(long defaultTickLength, boolean sequential) {
         this.tickLength = defaultTickLength;
         this.sequential = sequential;
+    }
+
+    @Override
+    public TickRegistry<DefaultTickSpec> getRegistry() {
+        return Server.get().getTickRegistry(this);
     }
 
     @Override

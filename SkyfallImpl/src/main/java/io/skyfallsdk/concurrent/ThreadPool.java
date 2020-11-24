@@ -149,7 +149,7 @@ public class ThreadPool implements ScheduledExecutorService, Scheduler {
 
     public static void shutdownAll() {
         for (ThreadPool pool : THREAD_POOLS.values()) {
-            Server.get().getLogger().info("Shutting down ThreadPool: " + pool.spec.getName());
+            Server.get().getLogger().info("Shutting down ThreadPool: " + pool.spec.getName() + "..");
             pool.shutdown();
         }
     }

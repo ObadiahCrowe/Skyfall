@@ -68,6 +68,10 @@ public class UtilGitVersion {
             return this.commitMessage;
         }
 
+        public String getPretty() {
+            return this.branch + '-' + this.gitCommitId + " (Built on: " + this.getBuildTime() + ')';
+        }
+
         @Override
         public String toString() {
             return "GitInfo{" +

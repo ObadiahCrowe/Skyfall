@@ -2,6 +2,8 @@ package io.skyfallsdk;
 
 import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.concurrent.Scheduler;
+import io.skyfallsdk.concurrent.tick.TickRegistry;
+import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
@@ -73,6 +75,8 @@ public interface Server extends ServerCommandSender, PermissionHolder {
     ProtocolVersion getBaseVersion();
 
     WorldLoader getWorldLoader();
+
+    <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(T spec);
 
     static class Impl {
         static AtomicReference<Server> IMPL = new AtomicReference<>(null);

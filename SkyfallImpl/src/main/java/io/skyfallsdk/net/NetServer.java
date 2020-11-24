@@ -18,7 +18,7 @@ public abstract class NetServer {
         this.address = address;
         this.port = port;
 
-        Server.get().getLogger().info("Using " + this.getClass().getSimpleName() + " as Network Sever.");
+        Server.get().getLogger().info("Using " + this.getClass().getSimpleName() + " as Network Server.");
     }
 
     protected String getAddress() {
