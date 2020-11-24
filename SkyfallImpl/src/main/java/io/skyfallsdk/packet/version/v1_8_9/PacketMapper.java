@@ -7,8 +7,7 @@ import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.packet.version.NetPacketMapper;
 import io.skyfallsdk.packet.version.v1_8_9.handshake.HandshakeIn;
 import io.skyfallsdk.packet.version.v1_8_9.handshake.HandshakeInLegacy;
-import io.skyfallsdk.packet.version.v1_8_9.login.LoginInEncryptionResponse;
-import io.skyfallsdk.packet.version.v1_8_9.login.LoginInStart;
+import io.skyfallsdk.packet.version.v1_8_9.login.*;
 import io.skyfallsdk.packet.version.v1_8_9.status.StatusInPing;
 import io.skyfallsdk.packet.version.v1_8_9.status.StatusInRequest;
 import io.skyfallsdk.packet.version.v1_8_9.status.StatusOutPong;
@@ -34,6 +33,13 @@ public class PacketMapper extends NetPacketMapper {
         // Login
         this.register(LoginInStart.class, PacketState.LOGIN, PacketDestination.IN, 0x00);
         this.register(LoginInEncryptionResponse.class, PacketState.LOGIN, PacketDestination.IN, 0x01);
+        this.register(LoginOutDisconnect.class, PacketState.LOGIN, PacketDestination.OUT, 0x00);
+        this.register(LoginOutEncryptionRequest.class, PacketState.LOGIN, PacketDestination.OUT, 0x01);
+        this.register(LoginOutLoginSuccess.class, PacketState.LOGIN, PacketDestination.OUT, 0x02);
+        this.register(LoginOutSetCompression.class, PacketState.LOGIN, PacketDestination.OUT, 0x03);
+
+        // Play
+        //
     }
 
     private void register(Class<? extends Packet> packetClass, PacketState state, PacketDestination destination, int packetId) {

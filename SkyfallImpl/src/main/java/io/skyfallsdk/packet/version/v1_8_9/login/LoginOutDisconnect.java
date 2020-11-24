@@ -3,7 +3,6 @@ package io.skyfallsdk.packet.version.v1_8_9.login;
 import io.netty.buffer.ByteBuf;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.net.NetData;
-import io.skyfallsdk.packet.PacketOut;
 
 public class LoginOutDisconnect extends io.skyfallsdk.packet.login.LoginOutDisconnect {
 
@@ -18,11 +17,6 @@ public class LoginOutDisconnect extends io.skyfallsdk.packet.login.LoginOutDisco
     @Override
     public ChatComponent getReason() {
         return this.reason;
-    }
-
-    @Override
-    public Class<? extends PacketOut> getGeneric() {
-        return io.skyfallsdk.packet.login.LoginOutDisconnect.class;
     }
 
     @Override

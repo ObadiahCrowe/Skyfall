@@ -6,6 +6,12 @@ public class PacketException extends RuntimeException {
 
     private final Class<? extends Packet> packet;
 
+    public PacketException(int id, String message) {
+        super("Error with packet of id (" + id + "): " + message);
+
+        this.packet = null;
+    }
+
     public PacketException(Class<? extends Packet> packet) {
         super("Error in packet: " + packet.getName());
 

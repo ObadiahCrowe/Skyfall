@@ -3,6 +3,7 @@ package io.skyfallsdk.packet;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallServer;
+import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketMapper;
 import io.skyfallsdk.packet.version.v1_8_9.status.StatusOutPong;
 import io.skyfallsdk.protocol.ProtocolVersion;
@@ -64,6 +65,21 @@ public class NetPacketRegistry {
     }
 
     private NetPacketRegistry() {}
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Packet> T newInstance(Class<T> packetClass) {
+        return (T) ID_TO_CONSTRUCTOR.get(PACKET_TO_ID.getInt(packetClass)).newInstance();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Packet> T newInstance(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
+        int id = shift(version, state, destination, packetId);
+        if (!ID_TO_PACKET.containsKey(id)) {
+            throw new PacketException(id, "Unknown packet.");
+        }
+
+        return (T) ID_TO_CONSTRUCTOR.get(id).newInstance();
+    }
 
     public static <T extends Packet> T register(Class<T> packetClass, ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
         return register(packetClass, version, state, destination, packetId, ConstructorAccess.get(packetClass));

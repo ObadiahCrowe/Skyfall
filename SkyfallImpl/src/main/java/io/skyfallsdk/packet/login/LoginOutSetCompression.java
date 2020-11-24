@@ -1,19 +1,17 @@
-package io.skyfallsdk.packet.status;
+package io.skyfallsdk.packet.login;
 
 import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketOut;
 import io.skyfallsdk.packet.version.NetPacketOut;
 
-public abstract class StatusOutPong extends NetPacketOut {
+public abstract class LoginOutSetCompression extends NetPacketOut {
 
-    public StatusOutPong(Class<? extends Packet> packet) {
+    public LoginOutSetCompression(Class<? extends Packet> packet) {
         super(packet);
     }
 
     @Override
     public Class<? extends PacketOut> getGeneric() {
-        return StatusOutPong.class;
+        return LoginOutSetCompression.class;
     }
-
-    public abstract long getPayload();
 }
