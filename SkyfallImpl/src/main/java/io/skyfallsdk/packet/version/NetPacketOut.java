@@ -1,10 +1,8 @@
 package io.skyfallsdk.packet.version;
 
 import io.netty.buffer.ByteBuf;
-import io.skyfallsdk.packet.Packet;
-import io.skyfallsdk.packet.PacketDestination;
-import io.skyfallsdk.packet.PacketOut;
-import io.skyfallsdk.packet.PacketState;
+import io.skyfallsdk.Server;
+import io.skyfallsdk.packet.*;
 
 public abstract class NetPacketOut implements PacketOut {
 
@@ -12,8 +10,8 @@ public abstract class NetPacketOut implements PacketOut {
     private final PacketState state;
 
     public NetPacketOut(Class<? extends Packet> packet) {
-        this.id = 0x00;
-        this.state = PacketState.PLAY;
+        this.id = NetPacketRegistry.getId(packet);
+        this.state = NetPacketRegistry.getState(packet);
     }
 
     public abstract Class<? extends PacketOut> getGeneric();

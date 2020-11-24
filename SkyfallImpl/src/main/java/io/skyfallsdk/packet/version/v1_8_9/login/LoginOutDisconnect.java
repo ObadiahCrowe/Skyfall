@@ -10,7 +10,7 @@ public class LoginOutDisconnect extends io.skyfallsdk.packet.login.LoginOutDisco
     private final ChatComponent reason;
 
     public LoginOutDisconnect(ChatComponent reason) {
-        super();
+        super(LoginOutDisconnect.class);
 
         this.reason = reason;
     }
@@ -22,7 +22,7 @@ public class LoginOutDisconnect extends io.skyfallsdk.packet.login.LoginOutDisco
 
     @Override
     public Class<? extends PacketOut> getGeneric() {
-        return null;
+        return io.skyfallsdk.packet.login.LoginOutDisconnect.class;
     }
 
     @Override

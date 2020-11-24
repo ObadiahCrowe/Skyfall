@@ -15,7 +15,7 @@ import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.net.NetServer;
-import io.skyfallsdk.packet.NetPacketRegistry;
+import io.skyfallsdk.packet.*;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.UtilGitVersion;
@@ -43,7 +43,7 @@ public class SkyfallServer implements Server {
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
 
-    private final NetPacketRegistry packetRegistry;
+    private final PacketRegistry packetRegistry;
     private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
     private final NetServer server;
@@ -81,7 +81,27 @@ public class SkyfallServer implements Server {
         this.expansionRegistry = new ServerExpansionRegistry(this);
         this.commandMap = new ServerCommandMap();
 
-        this.packetRegistry = new NetPacketRegistry();
+        this.packetRegistry = new PacketRegistry() {
+            @Override
+            public int getId(Class<? extends Packet> packet) {
+                return NetPacketRegistry.getId(packet);
+            }
+
+            @Override
+            public PacketState getState(Class<? extends Packet> packet) {
+                return NetPacketRegistry.getState(packet);
+            }
+
+            @Override
+            public PacketDestination getDestination(Class<? extends Packet> packet) {
+                return NetPacketRegistry.getDestination(packet);
+            }
+
+            @Override
+            public ProtocolVersion getProtocolVersion(Class<? extends Packet> packet) {
+                return NetPacketRegistry.getProtocolVersion(packet);
+            }
+        };
 
         /*
          * Load all immediately to give them absolute control before the server initialises.
@@ -157,7 +177,7 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public NetPacketRegistry getPacketRegistry() {
+    public PacketRegistry getPacketRegistry() {
         return this.packetRegistry;
     }
 
