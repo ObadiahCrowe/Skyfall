@@ -6,6 +6,8 @@ import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.thread.ConsoleThread;
+import io.skyfallsdk.concurrent.tick.TickRegistry;
+import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
@@ -232,6 +234,11 @@ public class SkyfallServer implements Server {
     @Override
     public WorldLoader getWorldLoader() {
         return this.worldLoader;
+    }
+
+    @Override
+    public <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(T spec) {
+        return null;
     }
 
     @Override

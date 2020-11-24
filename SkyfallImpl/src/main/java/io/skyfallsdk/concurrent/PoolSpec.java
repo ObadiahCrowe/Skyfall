@@ -2,7 +2,6 @@ package io.skyfallsdk.concurrent;
 
 import io.skyfallsdk.Server;
 
-import java.io.PrintStream;
 import java.util.Objects;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
@@ -42,12 +41,7 @@ public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThrea
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        e.printStackTrace(new PrintStream(System.out) {
-            @Override
-            public void println(Object o) {
-                Server.get().getLogger().error(String.valueOf(o));
-            }
-        });
+        Server.get().getLogger().error(e);
     }
 
     @Override

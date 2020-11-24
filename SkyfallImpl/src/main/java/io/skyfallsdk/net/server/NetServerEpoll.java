@@ -1,5 +1,6 @@
 package io.skyfallsdk.net.server;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -21,10 +22,10 @@ public class NetServerEpoll extends NetServer {
     public NetServerEpoll(String address, int port) {
         super(address, port);
 
-        int threads = ((SkyfallServer) Server.get()).getPerformanceConfig().getNettyThreads();
-
-        this.bossGroup = new EpollEventLoopGroup(threads >> 2);
-        this.workerGroup = new EpollEventLoopGroup(threads >> 2);
+        this.bossGroup = new EpollEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Epoll Boss #%d")
+          .setUncaughtExceptionHandler((t, e) -> Server.get().getLogger().error(e)).setDaemon(false).build());
+        this.workerGroup = new EpollEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Epoll Worker #%d")
+          .setUncaughtExceptionHandler((t, e) -> Server.get().getLogger().error(e)).setDaemon(false).build());
     }
 
     @Override

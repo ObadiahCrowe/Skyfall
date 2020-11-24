@@ -1,5 +1,6 @@
 package io.skyfallsdk.net.server;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -7,7 +8,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.net.channel.ChannelHandler;
 
@@ -21,10 +21,10 @@ public class NetServerNio extends NetServer {
     public NetServerNio(String address, int port) {
         super(address, port);
 
-        int threads = ((SkyfallServer) Server.get()).getPerformanceConfig().getNettyThreads();
-
-        this.bossGroup = new NioEventLoopGroup(threads >> 2);
-        this.workerGroup = new NioEventLoopGroup(threads >> 2);
+        this.bossGroup = new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Nio Boss #%d")
+          .setUncaughtExceptionHandler((t, e) -> Server.get().getLogger().error(e)).setDaemon(false).build());
+        this.workerGroup = new NioEventLoopGroup(0, new ThreadFactoryBuilder().setNameFormat("Netty Nio Worker #%d")
+          .setUncaughtExceptionHandler((t, e) -> Server.get().getLogger().error(e)).setDaemon(false).build());
     }
 
     @Override
