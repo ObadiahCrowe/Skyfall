@@ -3,7 +3,7 @@ package io.skyfallsdk.concurrent.tick;
 /**
  * Represents a tickable object.
  */
-public interface Tickable<T extends TickSpec> {
+public interface Tickable<T extends TickSpec<T>> {
 
     default long getTickableId() {
         return this.getRegistry().getId(this);

@@ -16,6 +16,4 @@ public @interface SubscriptionInfo {
      * @return The priority in which this subscription will be received.
      */
     SubscriptionPriority priority() default SubscriptionPriority.MIDDLE;
-
-    Class<? extends SubscriptionController> controller();
 }
