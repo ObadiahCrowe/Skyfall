@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T> {
 
-    private static final Object2ObjectOpenHashMap<Enum<? extends TickSpec>, ServerTickRegistry<?>> TICK_REGISTRIES = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<TickSpec<?>, ServerTickRegistry<?>> TICK_REGISTRIES = new Object2ObjectOpenHashMap<>();
 
     static {
         for (DefaultTickSpec tickSpec : DefaultTickSpec.values()) {
@@ -62,5 +62,10 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     @Override
     public T getSpec() {
         return this.spec;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends TickSpec<T>> ServerTickRegistry<T> getTickRegistry(T spec) {
+        return (ServerTickRegistry<T>) TICK_REGISTRIES.computeIfAbsent(spec, ts -> new ServerTickRegistry<>(spec));
     }
 }
