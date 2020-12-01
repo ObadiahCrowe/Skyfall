@@ -4,11 +4,19 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.CorruptedFrameException;
+import io.skyfallsdk.SkyfallServer;
+import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
 
 import java.util.List;
 
 public class PacketSplitter extends ByteToMessageDecoder {
+
+    private final SkyfallServer server;
+
+    public PacketSplitter(SkyfallServer server) {
+        this.server = server;
+    }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> list) throws Exception {
@@ -23,7 +31,15 @@ public class PacketSplitter extends ByteToMessageDecoder {
             byte b = buf.readByte();
 
             if (b >= 0) {
+                buf.resetReaderIndex();
+
                 int packetSize = NetData.readVarInt(buf);
+                if (packetSize >= this.server.getConfig().getMaxPacketSize()) {
+                    NetClient client = NetClient.get(ctx);
+                    this.server.getLogger().warn("A client has attempted to surpass the packet size limit. " + (client == null ?
+                      "At IP address: " + ctx.channel().remoteAddress().toString() : "Player: " + client.getAddress().toString())); // TODO: 02/12/2020 Switch to player
+                    ctx.close();
+                }
 
                 if (buf.readableBytes() < packetSize) {
                     buf.resetReaderIndex();

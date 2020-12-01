@@ -25,6 +25,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private Difficulty difficulty;
 
     private int renderDistance;
+    private int maxPacketSize;
 
     private String baseVersion;
     private List<String> supportedVersions;
@@ -46,6 +47,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
         this.onlineMode = onlineMode;
 
         this.renderDistance = 10;
+        this.maxPacketSize = 30_000;
 
         this.gamemode = gamemode;
         this.difficulty = difficulty;
@@ -69,7 +71,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     }
 
     public int getMaxPlayers() {
-        return maxPlayers;
+        return this.maxPlayers;
     }
 
     public void setMaxPlayers(int maxPlayers) {
@@ -77,7 +79,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     }
 
     public boolean isOnlineMode() {
-        return onlineMode;
+        return this.onlineMode;
     }
 
     public void setOnlineMode(boolean onlineMode) {
@@ -85,7 +87,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     }
 
     public Gamemode getGamemode() {
-        return gamemode;
+        return this.gamemode;
     }
 
     public void setGamemode(Gamemode gamemode) {
@@ -93,7 +95,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     }
 
     public Difficulty getDifficulty() {
-        return difficulty;
+        return this.difficulty;
     }
 
     public void setDifficulty(Difficulty difficulty) {
@@ -106,6 +108,14 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public void setRenderDistance(int renderDistance) {
         this.renderDistance = renderDistance;
+    }
+
+    public int getMaxPacketSize() {
+        return this.maxPacketSize;
+    }
+
+    public void setMaxPacketSize(int maxPacketSize) {
+        this.maxPacketSize = maxPacketSize;
     }
 
     public ProtocolVersion getBaseVersion() {

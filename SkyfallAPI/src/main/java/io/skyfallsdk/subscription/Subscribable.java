@@ -1,5 +1,6 @@
 package io.skyfallsdk.subscription;
 
-public interface Subscribable {
-
-}
+/**
+ * Wrapper interface for anything that can be subscribed to.
+ */
+public interface Subscribable {}

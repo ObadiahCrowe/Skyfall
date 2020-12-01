@@ -42,10 +42,6 @@ public class PacketMapper extends NetPacketMapper {
         //
     }
 
-    private void register(Class<? extends Packet> packetClass, PacketState state, PacketDestination destination, int packetId) {
-        PacketRegistry.register(packetClass, this.getFrom(), state, destination, packetId);
-    }
-
     @Override
     public Int2IntMap getSubstanceMappings() {
         return null;

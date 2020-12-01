@@ -8,7 +8,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.net.channel.ChannelHandler;
 

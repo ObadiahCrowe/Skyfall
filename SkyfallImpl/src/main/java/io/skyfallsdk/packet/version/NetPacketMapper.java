@@ -1,6 +1,9 @@
 package io.skyfallsdk.packet.version;
 
 import io.skyfallsdk.packet.Packet;
+import io.skyfallsdk.packet.PacketDestination;
+import io.skyfallsdk.packet.PacketRegistry;
+import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import it.unimi.dsi.fastutil.Function;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -25,6 +28,14 @@ public abstract class NetPacketMapper {
     public NetPacketMapper(ProtocolVersion from, @Nullable Class<? extends NetPacketMapper> to) {
         this.from = from;
         this.to = to;
+    }
+
+    protected void register(Class<? extends Packet> packetClass, PacketState state, PacketDestination destination, int packetId) {
+        if (destination == PacketDestination.OUT) {
+            return;
+        }
+
+        PacketRegistry.register(packetClass, this.from, state, destination, packetId);
     }
 
     public ProtocolVersion getFrom() {

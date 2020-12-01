@@ -5,14 +5,16 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketMapper;
-import io.skyfallsdk.packet.version.v1_8_9.status.StatusOutPong;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
+import it.unimi.dsi.fastutil.longs.Long2ReferenceMap;
+import it.unimi.dsi.fastutil.longs.Long2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
+import it.unimi.dsi.fastutil.objects.Reference2LongMap;
+import it.unimi.dsi.fastutil.objects.Reference2LongOpenHashMap;
 import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
@@ -23,17 +25,15 @@ import java.util.stream.Collectors;
 
 public class PacketRegistry {
 
-    private static final Int2ReferenceMap<Class<? extends Packet>> ID_TO_PACKET = new Int2ReferenceOpenHashMap<>();
-    private static final Reference2IntMap<Class<? extends Packet>> PACKET_TO_ID = new Reference2IntOpenHashMap<>();
+    private static final Long2ReferenceMap<Class<? extends Packet>> ID_TO_PACKET = new Long2ReferenceOpenHashMap<>();
+    private static final Reference2LongMap<Class<? extends Packet>> PACKET_TO_ID = new Reference2LongOpenHashMap<>();
 
-    private static final Int2ReferenceMap<ConstructorAccess<? extends Packet>> ID_TO_CONSTRUCTOR = new Int2ReferenceOpenHashMap<>();
+    private static final Long2ReferenceMap<ConstructorAccess<? extends Packet>> ID_TO_CONSTRUCTOR = new Long2ReferenceOpenHashMap<>();
     private static final Int2ReferenceMap<NetPacketMapper> VERSION_TO_MAPPER = new Int2ReferenceOpenHashMap<>();
 
-    private static final int VERSION_SHIFT = 31;
-
-    private static final int STATE_SHIFT = 29;
-
+    private static final int VERSION_SHIFT = 29;
     private static final int DESTINATION_SHIFT = 27;
+    private static final int STATE_SHIFT = 25;
 
     static {
         Server.get().getLogger().info("Preparing registration of PacketMappers..");
@@ -68,14 +68,21 @@ public class PacketRegistry {
 
     @SuppressWarnings("unchecked")
     public static <T extends Packet> T newInstance(Class<T> packetClass) {
-        return (T) ID_TO_CONSTRUCTOR.get(PACKET_TO_ID.getInt(packetClass)).newInstance();
+        return (T) ID_TO_CONSTRUCTOR.get(PACKET_TO_ID.getLong(packetClass)).newInstance();
     }
 
     @SuppressWarnings("unchecked")
     public static <T extends Packet> T newInstance(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
-        int id = shift(version, state, destination, packetId);
+        System.out.println("using: " + version + ", " + state + ", " + destination + ", " + packetId);
+        long id = shift(version, state, destination, packetId);
+
+        System.out.println("ur id: " + id);
+        ID_TO_PACKET.forEach((i, packet) -> {
+            System.out.println("id: " + i + " (" + packet.getCanonicalName() + ")");
+        });
+
         if (!ID_TO_PACKET.containsKey(id)) {
-            throw new PacketException(id, "Unknown packet.");
+            throw new PacketException(packetId, "Unknown packet.");
         }
 
         return (T) ID_TO_CONSTRUCTOR.get(id).newInstance();
@@ -87,10 +94,23 @@ public class PacketRegistry {
 
     public static <T extends Packet> T register(Class<T> packetClass, ProtocolVersion version, PacketState state,
                                                 PacketDestination destination, int packetId, @Nullable ConstructorAccess<T> constructor) {
-        int id = shift(version, state, destination, packetId);
+        long id = shift(version, state, destination, packetId);
+
+        System.out.println(" ");
+        System.out.println(packetClass.getCanonicalName());
+        System.out.println("pre id: " + packetId);
+        System.out.println("pre ver: " + version);
+        System.out.println("pre state: " + state);
+        System.out.println("pre dest: " + destination);
 
         ID_TO_PACKET.put(id, packetClass);
         PACKET_TO_ID.put(packetClass, id);
+
+        System.out.println("post id: " + getId(packetClass));
+        System.out.println("post ver: " + getProtocolVersion(packetClass));
+        System.out.println("post state: " + getState(packetClass));
+        System.out.println("post dest: " + getDestination(packetClass));
+        System.out.println(" ");
 
         if (destination == PacketDestination.IN) {
             ID_TO_CONSTRUCTOR.put(id, ConstructorAccess.get(packetClass));
@@ -105,29 +125,36 @@ public class PacketRegistry {
         return constructor.newInstance();
     }
 
-    private static int shift(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
-        int id = packetId;
+    private static long shift(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
+        long id = packetId;
+
+        // 0000 0000
+        // 0001 1111
 
         id |= version.ordinal() << VERSION_SHIFT;
-        id |= state.ordinal() << STATE_SHIFT;
         id |= destination.ordinal() << DESTINATION_SHIFT;
+        id |= state.ordinal() << STATE_SHIFT;
 
         return id;
     }
 
-    public static int getId(Class<? extends Packet> packet) {
-        return PACKET_TO_ID.getInt(packet);
+    public static long getData(Class<? extends Packet> packet) {
+        return PACKET_TO_ID.getLong(packet);
     }
 
-    public static PacketState getState(Class<? extends Packet> packet) {
-        return PacketState.values()[PACKET_TO_ID.getInt(packet) >> STATE_SHIFT & 0x2];
+    public static int getId(Class<? extends Packet> packet) {
+        return (int) (PACKET_TO_ID.getLong(packet) & 0x4FFFF);
     }
 
     public static PacketDestination getDestination(Class<? extends Packet> packet) {
-        return PacketDestination.values()[PACKET_TO_ID.getInt(packet) >> DESTINATION_SHIFT & 0x1];
+        return PacketDestination.values()[(int) (PACKET_TO_ID.getLong(packet) >> DESTINATION_SHIFT & 0x1)];
+    }
+
+    public static PacketState getState(Class<? extends Packet> packet) {
+        return PacketState.values()[(int) (PACKET_TO_ID.getLong(packet) >> STATE_SHIFT & 0x3)];
     }
 
     public static ProtocolVersion getProtocolVersion(Class<? extends Packet> packet) {
-        return ProtocolVersion.values()[PACKET_TO_ID.getInt(packet) >> VERSION_SHIFT & 0x13];
+        return ProtocolVersion.values()[(int) (PACKET_TO_ID.getLong(packet) >> VERSION_SHIFT & 0x1F)];
     }
 }
