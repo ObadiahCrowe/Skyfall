@@ -6,6 +6,7 @@ import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketMapper;
 import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.util.Validator;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
@@ -96,21 +97,19 @@ public class PacketRegistry {
                                                 PacketDestination destination, int packetId, @Nullable ConstructorAccess<T> constructor) {
         long id = shift(version, state, destination, packetId);
 
-        System.out.println(" ");
-        System.out.println(packetClass.getCanonicalName());
-        System.out.println("pre id: " + packetId);
-        System.out.println("pre ver: " + version);
-        System.out.println("pre state: " + state);
-        System.out.println("pre dest: " + destination);
-
         ID_TO_PACKET.put(id, packetClass);
         PACKET_TO_ID.put(packetClass, id);
 
-        System.out.println("post id: " + getId(packetClass));
-        System.out.println("post ver: " + getProtocolVersion(packetClass));
-        System.out.println("post state: " + getState(packetClass));
-        System.out.println("post dest: " + getDestination(packetClass));
-        System.out.println(" ");
+        try {
+            Validator.isEqualTo(packetId, getId(packetClass));
+            Validator.isEqualTo(version, getProtocolVersion(packetClass));
+            Validator.isEqualTo(state, getState(packetClass));
+            Validator.isEqualTo(destination, getDestination(packetClass));
+        } catch (Validator.ValidationException e) {
+            Server.get().getLogger().fatal("Encoded packet data mismatch during registration. This indicates a severe issue. Please contact a developer immediately.");
+            System.exit(0);
+            return null;
+        }
 
         if (destination == PacketDestination.IN) {
             ID_TO_CONSTRUCTOR.put(id, ConstructorAccess.get(packetClass));

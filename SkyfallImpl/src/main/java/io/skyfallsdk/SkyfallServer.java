@@ -72,6 +72,10 @@ public class SkyfallServer implements Server {
         }
 
         logger.info("Implementing on " + this.config.getBaseVersion().getName() + " as base version!");
+        try {
+            // Calls static initialiser, therefore registering all packets at startup.
+            Class.forName("io.skyfallsdk.packet.PacketRegistry");
+        } catch (ClassNotFoundException ignored) {}
 
         logger.info("Initialising thread pools..");
         ThreadPool.initDefaultPools();

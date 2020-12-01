@@ -2,7 +2,15 @@ package io.skyfallsdk.util;
 
 public class Validator {
 
-    public static void isTrue(boolean value) {
+    public static void isEqualTo(Object o1, Object o2) {
+        if (o1.equals(o2)) {
+            return;
+        }
+
+        throw new ValidationException();
+    }
+
+    public static void isFalse(boolean value) {
         if (!value) {
             return;
         }
