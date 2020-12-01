@@ -21,7 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public class NetPacketRegistry {
+public class PacketRegistry {
 
     private static final Int2ReferenceMap<Class<? extends Packet>> ID_TO_PACKET = new Int2ReferenceOpenHashMap<>();
     private static final Reference2IntMap<Class<? extends Packet>> PACKET_TO_ID = new Reference2IntOpenHashMap<>();
@@ -64,7 +64,7 @@ public class NetPacketRegistry {
         Server.get().getLogger().info("Registered PacketMappers successfully!");
     }
 
-    private NetPacketRegistry() {}
+    private PacketRegistry() {}
 
     @SuppressWarnings("unchecked")
     public static <T extends Packet> T newInstance(Class<T> packetClass) {

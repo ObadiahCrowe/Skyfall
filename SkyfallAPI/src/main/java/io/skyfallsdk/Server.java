@@ -7,7 +7,6 @@ import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
-import io.skyfallsdk.packet.PacketRegistry;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
@@ -39,8 +38,6 @@ public interface Server extends ServerCommandSender, PermissionHolder {
     Scheduler getScheduler();
 
     CommandMap getCommandMap();
-
-    PacketRegistry getPacketRegistry();
 
     Player getPlayer(String username);
 

@@ -3,7 +3,6 @@ package io.skyfallsdk.extension;
 import io.skyfallsdk.event.player.PlayerJoinEvent;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
-import io.skyfallsdk.packet.handshake.HandshakeIn;
 import io.skyfallsdk.subscription.*;
 
 @ExpansionInfo(name = "test", version = "${project.version}", authors = { "Obadiah Crowe" })
@@ -19,12 +18,12 @@ public class TestExpansion implements Expansion {
 
     }
 
-    @SubscriptionInfo(priority = SubscriptionPriority.FIRST)
+/*    @SubscriptionInfo(priority = SubscriptionPriority.FIRST)
     public void onPacketReceived(Subscription<HandshakeIn> subscription) {
         HandshakeIn packet = subscription.getSubscribable();
 
         System.out.println(packet.getProtocolVersion());
-    }
+    }*/
 
     @SubscriptionInfo(priority = SubscriptionPriority.MIDDLE)
     public void onEventReceived(Subscription<PlayerJoinEvent> subscription) {

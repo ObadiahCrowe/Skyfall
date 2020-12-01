@@ -30,7 +30,7 @@ public class UtilGitVersion {
             return new GitInfo(
               properties.getProperty("git.branch"),
               properties.getProperty("git.build.time"),
-              properties.getProperty("git.commit.id.full"),
+              properties.getProperty("git.commit.id.abbrev"),
               properties.getProperty("git.commit.message.full")
             );
         } catch (NullPointerException e) {

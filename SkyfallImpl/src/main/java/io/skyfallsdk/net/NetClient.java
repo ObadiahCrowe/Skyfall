@@ -23,6 +23,11 @@ public class NetClient implements ClientInfo {
         this.version = version;
     }
 
+    public void sendPacket(Packet packet) {
+        //
+    }
+
+    @Override
     public ProtocolVersion getVersion() {
         return this.version;
     }
@@ -35,11 +40,6 @@ public class NetClient implements ClientInfo {
     @Override
     public ClientType getType() {
         return ClientType.UNKNOWN; // TODO: 13/11/2020 Implement at some point.
-    }
-
-    @Override
-    public void sendPacket(Packet packet) {
-        //
     }
 
     @Override

@@ -43,7 +43,6 @@ public class SkyfallServer implements Server {
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
 
-    private final PacketRegistry packetRegistry;
     private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
     private final NetServer server;
@@ -80,28 +79,6 @@ public class SkyfallServer implements Server {
         logger.info("Setting up expansion support...");
         this.expansionRegistry = new ServerExpansionRegistry(this);
         this.commandMap = new ServerCommandMap();
-
-        this.packetRegistry = new PacketRegistry() {
-            @Override
-            public int getId(Class<? extends Packet> packet) {
-                return NetPacketRegistry.getId(packet);
-            }
-
-            @Override
-            public PacketState getState(Class<? extends Packet> packet) {
-                return NetPacketRegistry.getState(packet);
-            }
-
-            @Override
-            public PacketDestination getDestination(Class<? extends Packet> packet) {
-                return NetPacketRegistry.getDestination(packet);
-            }
-
-            @Override
-            public ProtocolVersion getProtocolVersion(Class<? extends Packet> packet) {
-                return NetPacketRegistry.getProtocolVersion(packet);
-            }
-        };
 
         /*
          * Load all immediately to give them absolute control before the server initialises.
@@ -174,11 +151,6 @@ public class SkyfallServer implements Server {
     @Override
     public ServerCommandMap getCommandMap() {
         return this.commandMap;
-    }
-
-    @Override
-    public PacketRegistry getPacketRegistry() {
-        return this.packetRegistry;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package io.skyfallsdk.packet.version.v1_8_9;
 
-import io.skyfallsdk.packet.NetPacketRegistry;
+import io.skyfallsdk.packet.PacketRegistry;
 import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketDestination;
 import io.skyfallsdk.packet.PacketState;
@@ -43,7 +43,7 @@ public class PacketMapper extends NetPacketMapper {
     }
 
     private void register(Class<? extends Packet> packetClass, PacketState state, PacketDestination destination, int packetId) {
-        NetPacketRegistry.register(packetClass, this.getFrom(), state, destination, packetId);
+        PacketRegistry.register(packetClass, this.getFrom(), state, destination, packetId);
     }
 
     @Override
