@@ -7,6 +7,8 @@ import java.util.Arrays;
 
 public enum ProtocolVersion {
 
+    v1_17("1.17", 1073741832),
+
     v1_16_4("1.16.4", 754),
     v1_16_3("1.16.3", 753),
     v1_16_2("1.16.2", 738),
