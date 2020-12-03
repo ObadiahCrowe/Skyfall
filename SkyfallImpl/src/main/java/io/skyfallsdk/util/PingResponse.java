@@ -18,7 +18,7 @@ public class PingResponse {
         JsonObject object = new JsonObject();
         JsonObject version = new JsonObject();
 
-        version.addProperty("name", this.version.getName());
+        version.addProperty("name", "Skyfall " + this.version.getName());
         version.addProperty("protocol", this.version.getVersion());
 
         JsonObject players = new JsonObject();

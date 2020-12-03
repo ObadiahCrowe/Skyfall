@@ -14,4 +14,6 @@ public abstract class LoginOutSetCompression extends NetPacketOut {
     public Class<? extends PacketOut> getGeneric() {
         return LoginOutSetCompression.class;
     }
+
+    public abstract int getThreshold();
 }

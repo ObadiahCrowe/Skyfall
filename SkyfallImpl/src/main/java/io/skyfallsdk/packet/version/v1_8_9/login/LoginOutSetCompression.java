@@ -12,4 +12,9 @@ public class LoginOutSetCompression extends io.skyfallsdk.packet.login.LoginOutS
     public void write(ByteBuf buf) {
 
     }
+
+    @Override
+    public int getThreshold() {
+        return 0;
+    }
 }

@@ -26,6 +26,8 @@ public class PacketMapper extends NetPacketMapper {
         this.register(StatusInPing.class, PacketState.STATUS, PacketDestination.IN, 0x01);
         this.register(StatusOutResponse.class, PacketState.STATUS, PacketDestination.OUT, 0x00);
         this.register(StatusOutPong.class, PacketState.STATUS, PacketDestination.OUT, 0x01);
+
+        // Login
     }
 
     @Override
