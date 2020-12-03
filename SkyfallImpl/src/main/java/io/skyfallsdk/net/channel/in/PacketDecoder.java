@@ -16,7 +16,13 @@ import java.util.List;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
+    private final boolean isDebugEnabled;
+
     private NetClient client;
+
+    public PacketDecoder(boolean isDebugEnabled) {
+        this.isDebugEnabled = isDebugEnabled;
+    }
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
@@ -37,10 +43,10 @@ public class PacketDecoder extends ByteToMessageDecoder {
         }
 
         int packetId = NetData.readVarInt(buf);
-        NetPacketIn packetIn = PacketRegistry.newInstance(this.client.getVersion() == ProtocolVersion.UNKNOWN ? ProtocolVersion.values()[0] :
+        NetPacketIn packet = PacketRegistry.newInstance(this.client.getVersion() == ProtocolVersion.UNKNOWN ? ProtocolVersion.values()[0] :
           this.client.getVersion(), this.client.getState(), PacketDestination.IN, packetId);
 
-        if (packetIn == null) {
+        if (packet == null) {
             Server.get().getLogger().error("Could not construct packet with id: 0x" + Integer.toHexString(packetId) + "!");
             return;
         }
@@ -49,12 +55,16 @@ public class PacketDecoder extends ByteToMessageDecoder {
             return;
         }
 
-        packetIn.read(buf, this.client);
+        if (this.isDebugEnabled) {
+            Server.get().getLogger().debug("Preparing to read packet: " + packet.getClass().getCanonicalName() + " with packet id: 0x" + Integer.toHexString(packetId));
+        }
+
+        packet.read(buf, this.client);
 
         if (buf.readableBytes() > 0) {
-            throw new PacketException(packetId, "shit");
+            throw new PacketException(packetId, "Received packet: " + packet.getClass().getCanonicalName() + ", was larger than expected. Received " + buf.readableBytes() + " extra bytes.");
         } else {
-            list.add(packetIn);
+            list.add(packet);
         }
     }
 
