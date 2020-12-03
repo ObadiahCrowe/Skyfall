@@ -7,6 +7,7 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
 import io.skyfallsdk.packet.*;
+import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketIn;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import org.apache.logging.log4j.core.net.Protocol;
@@ -31,10 +32,29 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> list) throws Exception {
-        if (buf.readableBytes() != 0) {
-            int packetId = NetData.readVarInt(buf);
+        if (buf.readableBytes() == 0) {
+            return;
+        }
 
-            System.out.println("caught packet id: 0x" + Integer.toHexString(packetId));
+        int packetId = NetData.readVarInt(buf);
+        NetPacketIn packetIn = PacketRegistry.newInstance(this.client.getVersion() == ProtocolVersion.UNKNOWN ? ProtocolVersion.values()[0] :
+          this.client.getVersion(), this.client.getState(), PacketDestination.IN, packetId);
+
+        if (packetIn == null) {
+            Server.get().getLogger().error("Could not construct packet with id: 0x" + Integer.toHexString(packetId) + "!");
+            return;
+        }
+
+        if (buf.readableBytes() == 0) {
+            return;
+        }
+
+        packetIn.read(buf, this.client);
+
+        if (buf.readableBytes() > 0) {
+            throw new PacketException(packetId, "shit");
+        } else {
+            list.add(packetIn);
         }
     }
 

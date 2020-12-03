@@ -1,6 +1,7 @@
 package io.skyfallsdk.net.channel.in;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.CorruptedFrameException;
@@ -28,8 +29,7 @@ public class PacketSplitter extends ByteToMessageDecoder {
                 return;
             }
 
-            byte b = buf.readByte();
-
+            final byte b = buf.readByte();
             if (b >= 0) {
                 buf.resetReaderIndex();
 
@@ -46,7 +46,7 @@ public class PacketSplitter extends ByteToMessageDecoder {
                     return;
                 }
 
-                list.add(buf.readBytes(packetSize));
+                list.add(buf.readRetainedSlice(packetSize));
                 return;
             }
         }

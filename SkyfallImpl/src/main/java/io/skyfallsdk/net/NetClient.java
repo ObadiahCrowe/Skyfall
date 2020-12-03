@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketState;
+import io.skyfallsdk.packet.version.NetPacketOut;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.protocol.client.ClientInfo;
 import io.skyfallsdk.protocol.client.ClientType;
@@ -51,8 +52,8 @@ public class NetClient implements ClientInfo {
         }
     }
 
-    public void sendPacket(Packet packet) {
-        //
+    public void sendPacket(NetPacketOut packet) {
+        this.channel.writeAndFlush(packet);
     }
 
     @Override

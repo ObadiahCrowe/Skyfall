@@ -9,11 +9,9 @@ import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.nbt.stream.NBTInputStream;
 import io.skyfallsdk.nbt.stream.NBTOutputStream;
 import io.skyfallsdk.nbt.tag.NBTTag;
-import io.skyfallsdk.nbt.tag.type.TagCompound;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.UUID;
 
 public class NetData {
@@ -25,6 +23,16 @@ public class NetData {
     public static void writeUuid(ByteBuf buf, UUID uuid) {
         buf.writeLong(uuid.getMostSignificantBits());
         buf.writeLong(uuid.getLeastSignificantBits());
+    }
+
+    public static int getVarIntSize(int input) {
+        for (int i = 1; i < 5; ++i) {
+            if ((input & -1 << i * 7) == 0) {
+                return i;
+            }
+        }
+
+        return 5;
     }
 
     public static int readVarInt(ByteBuf buf) {
