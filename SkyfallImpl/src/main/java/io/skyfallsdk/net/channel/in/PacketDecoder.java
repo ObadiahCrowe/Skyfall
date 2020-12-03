@@ -51,10 +51,6 @@ public class PacketDecoder extends ByteToMessageDecoder {
             return;
         }
 
-        if (buf.readableBytes() == 0) {
-            return;
-        }
-
         if (this.isDebugEnabled) {
             Server.get().getLogger().debug("Preparing to read packet: " + packet.getClass().getCanonicalName() + " with packet id: 0x" + Integer.toHexString(packetId));
         }

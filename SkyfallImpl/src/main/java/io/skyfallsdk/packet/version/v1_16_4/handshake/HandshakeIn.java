@@ -26,9 +26,11 @@ public class HandshakeIn extends NetPacketIn implements io.skyfallsdk.packet.han
         this.protocolVersion = NetData.readVarInt(buf);
         this.serverAddress = NetData.readString(buf);
         this.port = buf.readShort();
-        this.nextState = NetData.readVarInt(buf) == 1 ? PacketState.STATUS : PacketState.LOGIN;
+        this.nextState = PacketState.values()[NetData.readVarInt(buf)];
 
         connection.setState(this.nextState);
+        connection.setVersion(this.getProtocolVersion());
+
         if (!Server.get().getSupportedVersions().contains(this.getProtocolVersion())) {
             connection.disconnect("Invalid version. Please connect on one of the following versions:" +
               Server.get().getSupportedVersions().stream().map(ver ->  ", " + ver.getName()).collect(Collectors.joining()).replaceFirst(",", ""));

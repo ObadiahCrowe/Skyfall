@@ -7,7 +7,7 @@ public class Validator {
             return;
         }
 
-        throw new ValidationException();
+        throw new ValidationException(o1.toString() + " is not equal to " + o2.toString());
     }
 
     public static void isFalse(boolean value) {

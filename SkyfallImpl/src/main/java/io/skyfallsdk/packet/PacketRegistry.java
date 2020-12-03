@@ -34,7 +34,7 @@ public class PacketRegistry {
 
     private static final int VERSION_SHIFT = 29;
     private static final int DESTINATION_SHIFT = 27;
-    private static final int STATE_SHIFT = 25;
+    private static final int STATE_SHIFT = 24;
 
     static {
         Server.get().getLogger().info("Preparing registration of PacketMappers..");
@@ -107,6 +107,7 @@ public class PacketRegistry {
             Validator.isEqualTo(destination, getDestination(packetClass));
         } catch (Validator.ValidationException e) {
             Server.get().getLogger().fatal("Encoded packet data mismatch during registration. This indicates a severe issue. Please contact a developer immediately.");
+            Server.get().getLogger().fatal(e);
             System.exit(0);
             return null;
         }
@@ -126,9 +127,6 @@ public class PacketRegistry {
 
     private static long shift(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
         long id = packetId;
-
-        // 0000 0000
-        // 0001 1111
 
         id |= version.ordinal() << VERSION_SHIFT;
         id |= destination.ordinal() << DESTINATION_SHIFT;
@@ -150,7 +148,7 @@ public class PacketRegistry {
     }
 
     public static PacketState getState(Class<? extends Packet> packet) {
-        return PacketState.values()[(int) (PACKET_TO_ID.getLong(packet) >> STATE_SHIFT & 0x3)];
+        return PacketState.values()[(int) (PACKET_TO_ID.getLong(packet) >> STATE_SHIFT & 0x7)];
     }
 
     public static ProtocolVersion getProtocolVersion(Class<? extends Packet> packet) {

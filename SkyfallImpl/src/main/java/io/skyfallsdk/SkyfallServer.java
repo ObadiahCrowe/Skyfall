@@ -1,5 +1,6 @@
 package io.skyfallsdk;
 
+import com.google.common.collect.Lists;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.concurrent.PoolSpec;
@@ -170,7 +171,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public List<Player> getPlayers() {
-        return null;
+        return Lists.newArrayList();
     }
 
     @Override
