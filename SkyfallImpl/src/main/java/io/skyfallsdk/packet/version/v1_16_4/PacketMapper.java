@@ -5,6 +5,7 @@ import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.packet.version.NetPacketMapper;
 import io.skyfallsdk.packet.version.v1_16_4.handshake.HandshakeIn;
 import io.skyfallsdk.packet.version.v1_16_4.handshake.HandshakeInLegacy;
+import io.skyfallsdk.packet.version.v1_16_4.login.*;
 import io.skyfallsdk.packet.version.v1_16_4.status.StatusInPing;
 import io.skyfallsdk.packet.version.v1_16_4.status.StatusInRequest;
 import io.skyfallsdk.packet.version.v1_16_4.status.StatusOutPong;
@@ -28,6 +29,14 @@ public class PacketMapper extends NetPacketMapper {
         this.register(StatusOutPong.class, PacketState.STATUS, PacketDestination.OUT, 0x01);
 
         // Login
+        this.register(LoginInStart.class, PacketState.LOGIN, PacketDestination.IN, 0x00);
+        this.register(LoginInEncryptionResponse.class, PacketState.LOGIN, PacketDestination.IN, 0x01);
+        this.register(LoginInPluginResponse.class, PacketState.LOGIN, PacketDestination.IN, 0x02);
+        this.register(LoginOutDisconnect.class, PacketState.LOGIN, PacketDestination.OUT, 0x00);
+        this.register(LoginOutEncryptionRequest.class, PacketState.LOGIN, PacketDestination.OUT, 0x01);
+        this.register(LoginOutSuccess.class, PacketState.LOGIN, PacketDestination.OUT, 0x02);
+        this.register(LoginOutSetCompression.class, PacketState.LOGIN, PacketDestination.OUT, 0x03);
+        this.register(LoginOutPluginRequest.class, PacketState.LOGIN, PacketDestination.OUT, 0x04);
     }
 
     @Override

@@ -34,7 +34,7 @@ public class PacketSplitter extends ByteToMessageDecoder {
                 buf.resetReaderIndex();
 
                 int packetSize = NetData.readVarInt(buf);
-                if (packetSize >= this.server.getConfig().getMaxPacketSize()) {
+                if (packetSize >= this.server.getPerformanceConfig().getMaxPacketSize()) {
                     NetClient client = NetClient.get(ctx);
                     this.server.getLogger().warn("A client has attempted to surpass the packet size limit. " + (client == null ?
                       "At IP address: " + ctx.channel().remoteAddress().toString() : "Player: " + client.getAddress().toString())); // TODO: 02/12/2020 Switch to player

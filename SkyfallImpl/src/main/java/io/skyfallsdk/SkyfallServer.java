@@ -195,6 +195,16 @@ public class SkyfallServer implements Server {
     }
 
     @Override
+    public boolean isOnlineMode() {
+        return this.config.isOnlineMode();
+    }
+
+    @Override
+    public void setOnlineMode(boolean onlineMode) {
+        this.config.setOnlineMode(onlineMode);
+    }
+
+    @Override
     public int getMaxPlayers() {
         return this.config.getMaxPlayers();
     }

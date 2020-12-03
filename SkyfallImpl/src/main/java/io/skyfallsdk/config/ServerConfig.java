@@ -25,7 +25,6 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private Difficulty difficulty;
 
     private int renderDistance;
-    private int maxPacketSize;
 
     private String baseVersion;
     private List<String> supportedVersions;
@@ -47,7 +46,6 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
         this.onlineMode = onlineMode;
 
         this.renderDistance = 10;
-        this.maxPacketSize = 30_000;
 
         this.gamemode = gamemode;
         this.difficulty = difficulty;
@@ -108,14 +106,6 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public void setRenderDistance(int renderDistance) {
         this.renderDistance = renderDistance;
-    }
-
-    public int getMaxPacketSize() {
-        return this.maxPacketSize;
-    }
-
-    public void setMaxPacketSize(int maxPacketSize) {
-        this.maxPacketSize = maxPacketSize;
     }
 
     public ProtocolVersion getBaseVersion() {

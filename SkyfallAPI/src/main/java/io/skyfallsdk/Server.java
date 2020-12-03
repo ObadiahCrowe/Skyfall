@@ -53,6 +53,10 @@ public interface Server extends ServerCommandSender, PermissionHolder {
 
     void setMotd(String motd);
 
+    boolean isOnlineMode();
+
+    void setOnlineMode(boolean onlineMode);
+
     int getMaxPlayers();
 
     void setMaxPlayers(int maxPlayers);

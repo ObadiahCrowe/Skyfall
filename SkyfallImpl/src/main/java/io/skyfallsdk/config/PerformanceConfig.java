@@ -7,9 +7,9 @@ import java.nio.file.Path;
 
 public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
 
-    private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(4);
+    private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(30_000);
 
-    private int nettyThreads;
+    private int maxPacketSize;
 
     /**
      * Represents a configuration file.
@@ -18,14 +18,14 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
         super(PerformanceConfig.class);
     }
 
-    private PerformanceConfig(int nettyThreads) {
+    private PerformanceConfig(int maxPacketSize) {
         super(PerformanceConfig.class);
 
-        this.nettyThreads = nettyThreads;
+        this.maxPacketSize = maxPacketSize;
     }
 
-    public int getNettyThreads() {
-        return this.nettyThreads;
+    public int getMaxPacketSize() {
+        return this.maxPacketSize;
     }
 
     @Override
