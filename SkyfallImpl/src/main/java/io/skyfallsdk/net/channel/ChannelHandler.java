@@ -8,7 +8,6 @@ import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.net.channel.in.PacketDecoder;
 import io.skyfallsdk.net.channel.in.PacketSplitter;
 import io.skyfallsdk.net.channel.out.PacketEncoder;
-import io.skyfallsdk.net.channel.out.PacketPrepender;
 
 public class ChannelHandler extends ChannelInitializer<SocketChannel> {
 
@@ -21,7 +20,6 @@ public class ChannelHandler extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("splitter", new PacketSplitter(server));
         pipeline.addLast("decoder", new PacketDecoder(server.getConfig().isDebugEnabled()));
 
-        pipeline.addLast("prepender", new PacketPrepender());
         pipeline.addLast("encoder", new PacketEncoder(server.getConfig().isDebugEnabled()));
     }
 }

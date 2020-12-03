@@ -18,17 +18,29 @@ public class PacketEncoder extends MessageToByteEncoder<NetPacketOut> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, NetPacketOut packet, ByteBuf buf) throws Exception {
-        try {
-            int packetId = packet.getId();
+        ByteBuf buffer = ctx.alloc().buffer();
 
+        try {
             if (this.isDebugEnabled) {
-                Server.get().getLogger().debug("Preparing to send packet: " + packet.getClass().getCanonicalName() + " with packet id: 0x" + Integer.toHexString(packetId));
+                Server.get().getLogger().debug("Preparing to send packet: " + packet.getClass().getCanonicalName() + " with packet id: 0x" + Integer.toHexString(packet.getId()));
             }
 
-            NetData.writeVarInt(buf, packet.getId());
-            packet.write(buf);
+            NetData.writeVarInt(buffer, packet.getId());
+            packet.write(buffer);
+
+            ByteBuf out = ctx.alloc().buffer();
+            try {
+                NetData.writeVarInt(out, buffer.readableBytes());
+                out.writeBytes(buffer);
+
+                buf.writeBytes(out);
+            } finally {
+                out.release();
+            }
         } catch (Exception e) {
             throw new PacketException(packet, e.getMessage());
+        } finally {
+            buffer.release();
         }
     }
 }
