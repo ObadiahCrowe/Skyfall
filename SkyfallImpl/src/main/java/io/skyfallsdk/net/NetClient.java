@@ -87,6 +87,32 @@ public class NetClient implements ClientInfo {
     }
 
     @Override
+    public String getUsername() {
+        synchronized (this.address) {
+            return this.username;
+        }
+    }
+
+    public void setUsername(String username) {
+        synchronized (this.address) {
+            this.username = username;
+        }
+    }
+
+    @Override
+    public UUID getUuid() {
+        synchronized (this.address) {
+            return this.uuid;
+        }
+    }
+
+    public void setUuid(UUID uuid) {
+        synchronized (this.address) {
+            this.uuid = uuid;
+        }
+    }
+
+    @Override
     public void disconnect(ChatComponent reason) {
 
     }

@@ -482,7 +482,7 @@ public class Command extends AnnotatedPermissible {
 
                 Player target = sender instanceof Player ? (Player) sender : null;
                 Server.get().getPlayers().stream()
-                  .map(Player::getName)
+                  .map(Player::getUsername)
                   .filter(str -> !tabComplete.contains(str))
                   .forEach(tabComplete::add);
             } catch (ArgumentParseException e) {

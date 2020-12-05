@@ -4,6 +4,7 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.parameter.service.Service;
+import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.server.CommandSender;
 
 import java.io.IOException;

@@ -13,6 +13,6 @@ public class ExpansionCommand {
 
     @CommandExecutor
     public void onCommandExecute(@Sender CommandSender sender, @Service Server server) {
-        ExpansionRegistry registry = server.getExpansionRegistry();
+        sender.executeCommand("expansion help");
     }
 }

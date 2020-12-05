@@ -1,5 +1,7 @@
 package io.skyfallsdk.nbt.stream;
 
+import io.skyfallsdk.nbt.tag.NBTTag;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 

@@ -58,7 +58,7 @@ public class PacketRegistry {
         // Albeit slower, but looks cleaner on the console, plus it's solely at startup.
         if (IS_DEBUGGING) {
             for (int i : VERSION_TO_MAPPER.int2ReferenceEntrySet().stream().map(Int2ReferenceMap.Entry::getIntKey).sorted(IntComparators.OPPOSITE_COMPARATOR).collect(Collectors.toList())) {
-                Server.get().getLogger().info("Registered a PacketMapper for: " + ProtocolVersion.values()[i].getName());
+                Server.get().getLogger().debug("Registered a PacketMapper for: " + ProtocolVersion.values()[i].getName());
             }
         }
 
