@@ -16,8 +16,8 @@ import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
+import io.skyfallsdk.mojang.MojangAPI;
 import io.skyfallsdk.net.NetServer;
-import io.skyfallsdk.packet.*;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.UtilGitVersion;
@@ -31,6 +31,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -56,7 +58,11 @@ public class SkyfallServer implements Server {
     SkyfallServer() {
         workingDir = Paths.get(System.getProperty("user.dir"));
         logger = LogManager.getLogger(SkyfallServer.class);
-        logger.info("Starting Skyfall version " + UtilGitVersion.getFromSkyfall().getPretty());
+        try {
+            logger.info("Starting Skyfall version " + UtilGitVersion.getFromSkyfall().getPretty());
+        } catch (NullPointerException e) {
+            logger.info("Starting unknown Skyfall version");
+        }
 
         logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
@@ -227,6 +233,11 @@ public class SkyfallServer implements Server {
     @Override
     public ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass) {
         return this.getExpansionRegistry().getExpansionInfo(expansionClass);
+    }
+
+    @Override
+    public MojangAPI getMojangApi() {
+        return null;
     }
 
     @Override

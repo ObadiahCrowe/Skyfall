@@ -19,4 +19,6 @@ public interface Player extends LivingEntity, CommandSender, PermissionHolder {
     }
 
     ClientInfo getClient();
+
+    PlayerProperties getProperties();
 }
