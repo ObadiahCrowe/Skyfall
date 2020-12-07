@@ -1,4 +1,4 @@
-name: Pre-release CI
+name: Pre-Release CI
 
 on:
   push:
@@ -18,7 +18,11 @@ jobs:
           java-version: 11
       - name: Build with Maven
         run: mvn -B package --file pom.xml
-      - name: Publish to GitHub Packages
-        run: mvn -B deploy --file SkyfallImpl/pom.xml
+      - name: Publish to GitHub Releases
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.commitId }}
+          release_name: Skyfall Pre-Release ${{ github.commitId }}
+          prerelease: true
