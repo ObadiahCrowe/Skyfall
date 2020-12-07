@@ -19,10 +19,20 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: Publish to GitHub Releases
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.commitId }}
-          release_name: Skyfall Pre-Release ${{ github.commitId }}
-          prerelease: true
+          tag_name: ${{ github.run_number }}
+          release_name: Skyfall-PreRelease-b${{ github.run_number }}
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: SkyfallImpl/target/Skyfall-1.0-SNAPSHOT.jar
+          asset_name: Skyfall-PreRelease-b${{ github.run_number }}.jar
+          asset_content_type: application/java-archive
