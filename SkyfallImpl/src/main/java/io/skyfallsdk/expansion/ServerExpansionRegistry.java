@@ -59,7 +59,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
 
     @Override
     public void loadExpansion(Path path) {
-
+        this.server.getLogger().debug("Attempting to load expansion at: " + path.toString());
     }
 
     @Override

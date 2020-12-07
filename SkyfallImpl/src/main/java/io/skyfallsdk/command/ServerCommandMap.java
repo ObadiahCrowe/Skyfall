@@ -9,7 +9,9 @@ import io.skyfallsdk.command.defaults.expansion.ExpansionCommand;
 import io.skyfallsdk.command.defaults.HelpCommand;
 import io.skyfallsdk.command.defaults.StopCommand;
 import io.skyfallsdk.command.defaults.VersionCommand;
+import io.skyfallsdk.command.defaults.expansion.ExpansionListCommand;
 import io.skyfallsdk.command.defaults.expansion.ExpansionLoadCommand;
+import io.skyfallsdk.command.defaults.expansion.ExpansionUnloadCommand;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.player.Player;
@@ -34,7 +36,9 @@ public class ServerCommandMap implements CommandMap {
 
     private void registerDefaultCommands() {
         this.registerCommand(ExpansionCommand.class).addSubcommands(
-          ExpansionLoadCommand.class
+          ExpansionListCommand.class,
+          ExpansionLoadCommand.class,
+          ExpansionUnloadCommand.class
         );
         this.registerCommand(GamemodeCommand.class);
         this.registerCommand(HelpCommand.class);
