@@ -16,13 +16,12 @@ import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
-import io.skyfallsdk.mojang.MojangAPI;
+import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.net.NetServer;
-import io.skyfallsdk.packet.PacketRegistry;
-import io.skyfallsdk.packet.version.v1_16_4.status.StatusOutPong;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.UtilGitVersion;
+import io.skyfallsdk.util.http.NetMojangAPI;
 import io.skyfallsdk.world.SkyfallWorldLoader;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
@@ -50,6 +49,8 @@ public class SkyfallServer implements Server {
     private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
     private final NetServer server;
+
+    private final NetMojangAPI mojangAPI;
 
     private final SkyfallWorldLoader worldLoader;
 
@@ -91,6 +92,8 @@ public class SkyfallServer implements Server {
         logger.info("Setting up expansion support...");
         this.expansionRegistry = new ServerExpansionRegistry(this);
         this.commandMap = new ServerCommandMap();
+
+        this.mojangAPI = new NetMojangAPI(this);
 
         /*
          * Load all immediately to give them absolute control before the server initialises.
@@ -237,7 +240,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public MojangAPI getMojangApi() {
-        return null;
+        return this.mojangAPI;
     }
 
     @Override

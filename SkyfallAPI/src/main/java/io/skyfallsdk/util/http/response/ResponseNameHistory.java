@@ -1,4 +1,4 @@
-package io.skyfallsdk.mojang.response;
+package io.skyfallsdk.util.http.response;
 
 public class ResponseNameHistory {
 

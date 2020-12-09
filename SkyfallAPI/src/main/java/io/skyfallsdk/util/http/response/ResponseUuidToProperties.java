@@ -1,4 +1,4 @@
-package io.skyfallsdk.mojang.response;
+package io.skyfallsdk.util.http.response;
 
 import io.skyfallsdk.player.PlayerProperties;
 

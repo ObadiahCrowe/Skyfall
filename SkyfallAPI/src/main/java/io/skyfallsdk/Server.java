@@ -7,7 +7,7 @@ import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
-import io.skyfallsdk.mojang.MojangAPI;
+import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
