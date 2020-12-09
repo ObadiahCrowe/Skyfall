@@ -48,7 +48,6 @@ public class PacketRegistry {
 
                 VERSION_TO_MAPPER.put(instance.getFrom().ordinal(), instance);
             } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                //e.printStackTrace();
                 Server.get().getLogger().error("An error occurred whilst registering a PacketMapper. ", e);
             }
         }
@@ -103,6 +102,11 @@ public class PacketRegistry {
 
     public static <T extends Packet> T register(Class<T> packetClass, ProtocolVersion version, PacketState state,
                                                 PacketDestination destination, int packetId, @Nullable ConstructorAccess<T> constructor) {
+        if (IS_DEBUGGING) {
+            Server.get().getLogger().debug("Registering packet data for: " + packetClass.getCanonicalName() + " - (" +
+              version.name() + ", " + state.name() + ", " + destination.name() + ", 0x" + Integer.toHexString(packetId) + ")");
+        }
+
         int id = shift(version, state, destination, packetId);
 
         ID_TO_PACKET.put(id, packetClass);
@@ -122,7 +126,13 @@ public class PacketRegistry {
 
         if (destination == PacketDestination.IN) {
             ID_TO_CONSTRUCTOR.put(id, ConstructorAccess.get(packetClass));
-        } else {
+            return constructor.newInstance();
+        }
+
+        return null;
+        // TODO: 09/12/2020 Sort this out for outgoing packets
+
+/*        else {
             if (constructor == null) {
                 throw new IllegalArgumentException("Constructor cannot be null for outgoing packet.");
             }
@@ -130,7 +140,7 @@ public class PacketRegistry {
             ID_TO_CONSTRUCTOR.put(id, constructor);
         }
 
-        return constructor.newInstance();
+        return constructor.newInstance();*/
     }
 
     private static int shift(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {

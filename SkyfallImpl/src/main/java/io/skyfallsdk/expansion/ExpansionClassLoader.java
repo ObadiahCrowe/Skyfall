@@ -32,17 +32,17 @@ public class ExpansionClassLoader extends URLClassLoader {
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return LOADED_CLASSES.computeIfAbsent(name, func -> {
-            try {
-                Class<?> c = super.findClass(name);
+        Class<?> clazz = LOADED_CLASSES.get(name);
+        if (clazz != null) {
+            return clazz;
+        }
 
-                ExpansionClassLoader.this.heldClasses.add(c);
-                return c;
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                return null;
-            }
-        });
+        clazz = super.findClass(name);
+
+        LOADED_CLASSES.put(name, clazz);
+        this.heldClasses.add(clazz);
+
+        return clazz;
     }
 
 

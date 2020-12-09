@@ -1,6 +1,7 @@
 package io.skyfallsdk.expansion;
 
 import javax.annotation.concurrent.ThreadSafe;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 @ThreadSafe
 public interface ExpansionRegistry {
 
-    void loadExpansion(Path path);
+    void loadExpansion(Path path) throws IOException;
 
     default void unloadExpansion(Expansion expansion) {
         this.unloadExpansion(expansion.getClass());

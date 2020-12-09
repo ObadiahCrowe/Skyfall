@@ -1,6 +1,7 @@
 package io.skyfallsdk.command.defaults.expansion;
 
 import io.skyfallsdk.Server;
+import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.parameter.service.Service;
@@ -19,5 +20,10 @@ public class ExpansionLoadCommand {
     @CommandExecutor
     public void onCommandExecute(@Sender CommandSender sender, @Arg Path path, @Service Server server) {
         // TODO: 14/11/2020 load
+        try {
+            server.getExpansionRegistry().loadExpansion(path);
+        } catch (IOException e) {
+            throw new CommandException(e);
+        }
     }
 }

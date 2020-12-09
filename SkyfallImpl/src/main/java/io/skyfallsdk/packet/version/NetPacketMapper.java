@@ -32,6 +32,7 @@ public abstract class NetPacketMapper {
 
     protected void register(Class<? extends Packet> packetClass, PacketState state, PacketDestination destination, int packetId) {
         if (destination == PacketDestination.OUT) {
+            PacketRegistry.register(packetClass, this.from, state, destination, packetId, null);
             return;
         }
 

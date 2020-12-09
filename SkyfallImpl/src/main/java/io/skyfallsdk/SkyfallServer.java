@@ -18,6 +18,8 @@ import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.mojang.MojangAPI;
 import io.skyfallsdk.net.NetServer;
+import io.skyfallsdk.packet.PacketRegistry;
+import io.skyfallsdk.packet.version.v1_16_4.status.StatusOutPong;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.UtilGitVersion;
@@ -31,8 +33,6 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;

@@ -139,6 +139,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
           ", onlineMode=" + onlineMode +
           ", gamemode=" + gamemode +
           ", difficulty=" + difficulty +
+          ", renderDistance=" + renderDistance +
           ", baseVersion='" + baseVersion + '\'' +
           ", supportedVersions=" + supportedVersions +
           '}';
@@ -172,6 +173,15 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
         public int getPort() {
             return this.port;
+        }
+
+        @Override
+        public String toString() {
+            return "ServerNetConfig{" +
+              "motd='" + motd + '\'' +
+              ", address='" + address + '\'' +
+              ", port=" + port +
+              '}';
         }
     }
 }
