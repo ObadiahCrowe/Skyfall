@@ -3,14 +3,11 @@ package io.skyfallsdk.net;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.skyfallsdk.chat.ChatComponent;
-import io.skyfallsdk.concurrent.PoolSpec;
-import io.skyfallsdk.concurrent.ThreadPool;
-import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.packet.login.LoginOutDisconnect;
+import io.skyfallsdk.packet.play.PlayOutDisconnect;
 import io.skyfallsdk.packet.version.NetPacketOut;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.protocol.client.ClientInfo;
@@ -21,8 +18,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 
 public class NetClient implements ClientInfo {
 
@@ -117,6 +112,8 @@ public class NetClient implements ClientInfo {
     public void disconnect(ChatComponent reason) {
         if (this.state == PacketState.LOGIN) {
             this.sendPacket(LoginOutDisconnect.make(this.version, reason));
+        } else {
+            this.sendPacket(PlayOutDisconnect.make(this.version, reason));
         }
     }
 
