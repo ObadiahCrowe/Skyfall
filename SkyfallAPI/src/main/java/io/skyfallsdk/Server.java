@@ -54,7 +54,7 @@ public interface Server extends ServerCommandSender, PermissionHolder {
 
     void setMotd(String motd);
 
-    Path getFavicon();
+    Path getServerIcon();
 
     boolean isOnlineMode();
 

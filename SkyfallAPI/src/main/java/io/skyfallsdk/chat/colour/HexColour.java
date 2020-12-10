@@ -6,13 +6,11 @@ public class HexColour implements Colour {
 
     private final int[] rgb;
 
-    public HexColour(int r, int g, int b) {
-        this.rgb = new int[] {
-          r, g, b
-        };
+    private HexColour(int[] rgb) {
+        this.rgb = rgb;
     }
 
-    public HexColour(String hexCode) {
+    private HexColour(String hexCode) {
         int rawHex = Integer.parseInt(hexCode.replace("#", ""));
 
         this.rgb = new int[] {
@@ -53,5 +51,17 @@ public class HexColour implements Colour {
     @Override
     public String toParsable() {
         return String.format(HEX_FORMAT, this.rgb[0], this.rgb[1], this.rgb[2]);
+    }
+
+    public static HexColour of(String hexCode) {
+        return new HexColour(hexCode);
+    }
+
+    public static HexColour of(int[] rgb) {
+        return new HexColour(rgb);
+    }
+
+    public static HexColour of(int r, int g, int b) {
+        return new HexColour(new int[] { r, g, b });
     }
 }

@@ -5,19 +5,13 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.chat.colour.HexColour;
-import io.skyfallsdk.concurrent.PoolSpec;
-import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
+import io.skyfallsdk.net.crypto.NetCrypt;
 import io.skyfallsdk.packet.version.NetPacketIn;
 import io.skyfallsdk.util.http.response.ResponseNameHistory;
 
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class LoginInStart extends NetPacketIn implements io.skyfallsdk.packet.login.LoginInStart {
 
@@ -40,15 +34,15 @@ public class LoginInStart extends NetPacketIn implements io.skyfallsdk.packet.lo
         Server.get().getMojangApi().getUuid(this.username).thenAccept(uuid -> {
             connection.setUuid(uuid);
 
-            System.out.println(connection.getUsername());
-            System.out.println(connection.getUuid());
-
             if (Server.get().isOnlineMode()) {
-                // TODO: 10/12/2020 this
-            }
+                NetCrypt crypt = NetCrypt.get(connection);
 
-            connection.disconnect(ChatComponent.from("» rip u «").setColour(ChatColour.RED).addExtra(ChatComponent.from(" lol")
-              .setColour(new HexColour(114, 152, 214))));
+                connection.sendPacket(new LoginOutEncryptionRequest(serverId, crypt.getKeyPair().getPublic().getEncoded(), crypt.getToken()));
+            } else {
+                // TODO: 11/12/2020 Change this, this is solely test code until crypto and world loading is somewhat done
+                connection.disconnect(ChatComponent.from("» rip u «").setColour(ChatColour.RED).addExtra(ChatComponent.from(" lol")
+                  .setColour(HexColour.of(114, 152, 214))));
+            }
         });
 
 

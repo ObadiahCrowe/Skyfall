@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.net.crypto.NetCrypt;
 import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.packet.login.LoginOutDisconnect;
 import io.skyfallsdk.packet.play.PlayOutDisconnect;
@@ -41,6 +42,10 @@ public class NetClient implements ClientInfo {
 
         this.username = null;
         this.uuid = null;
+    }
+
+    public NetCrypt getCrypt() {
+        return NetCrypt.get(this);
     }
 
     public PacketState getState() {

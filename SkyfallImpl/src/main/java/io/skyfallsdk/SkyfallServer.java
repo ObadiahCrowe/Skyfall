@@ -47,7 +47,7 @@ public class SkyfallServer implements Server {
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
 
-    private final Path favicon;
+    private final Path serverIcon;
 
     private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
@@ -75,8 +75,8 @@ public class SkyfallServer implements Server {
         this.config = LoadableConfig.getByClass(ServerConfig.class).load();
         this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
 
-        Path favicon = workingDir.resolve("favicon.png");
-        this.favicon = Files.exists(favicon) ? favicon : null;
+        Path serverIcon = workingDir.resolve("server-icon.png");
+        this.serverIcon = Files.exists(serverIcon) ? serverIcon : null;
 
         if (!this.config.isDebugEnabled()) {
             LoggerContext context = (LoggerContext) LogManager.getContext(false);
@@ -210,8 +210,8 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public Path getFavicon() {
-        return this.favicon;
+    public Path getServerIcon() {
+        return this.serverIcon;
     }
 
     @Override

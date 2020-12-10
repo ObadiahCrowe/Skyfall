@@ -40,9 +40,9 @@ public class PingResponse {
         object.add("players", players);
         object.add("description", ChatComponent.from("Hello").setColour(ChatColour.RED).toJson());
 
-        if (Server.get().getFavicon() != null) {
+        if (Server.get().getServerIcon() != null) {
             try {
-                object.addProperty("favicon", "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(Server.get().getFavicon())));
+                object.addProperty("favicon", "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(Server.get().getServerIcon())));
             } catch (IOException e) {
                 Server.get().getLogger().error("An unexpected error occurred whilst parsing your server's favicon!", e);
             }
