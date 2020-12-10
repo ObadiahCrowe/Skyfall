@@ -16,11 +16,11 @@ import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
-import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.UtilGitVersion;
+import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.util.http.NetMojangAPI;
 import io.skyfallsdk.world.SkyfallWorldLoader;
 import io.skyfallsdk.world.World;
@@ -32,6 +32,7 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -45,6 +46,8 @@ public class SkyfallServer implements Server {
 
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
+
+    private final Path favicon;
 
     private final ServerExpansionRegistry expansionRegistry;
     private final ServerCommandMap commandMap;
@@ -72,6 +75,9 @@ public class SkyfallServer implements Server {
         this.config = LoadableConfig.getByClass(ServerConfig.class).load();
         this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
 
+        Path favicon = workingDir.resolve("favicon.png");
+        this.favicon = Files.exists(favicon) ? favicon : null;
+
         if (!this.config.isDebugEnabled()) {
             LoggerContext context = (LoggerContext) LogManager.getContext(false);
             Configuration config = context.getConfiguration();
@@ -93,7 +99,7 @@ public class SkyfallServer implements Server {
         this.expansionRegistry = new ServerExpansionRegistry(this);
         this.commandMap = new ServerCommandMap();
 
-        this.mojangAPI = new NetMojangAPI(this);
+        this.mojangAPI = new NetMojangAPI();
 
         /*
          * Load all immediately to give them absolute control before the server initialises.
@@ -201,6 +207,11 @@ public class SkyfallServer implements Server {
     @Override
     public void setMotd(String motd) {
         this.config.getNetworkConfig().setMotd(motd);
+    }
+
+    @Override
+    public Path getFavicon() {
+        return this.favicon;
     }
 
     @Override

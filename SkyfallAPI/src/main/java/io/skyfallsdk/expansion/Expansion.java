@@ -20,6 +20,10 @@ public interface Expansion {
         return Server.get().getExpansionInfo(this);
     }
 
+    default Server getServer() {
+        return Server.get();
+    }
+
     default Path getPath() {
         return Server.get().getPath().resolve("expansions").resolve(this.getInfo().name());
     }

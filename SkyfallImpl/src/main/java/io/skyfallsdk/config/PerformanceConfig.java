@@ -7,10 +7,10 @@ import java.nio.file.Path;
 
 public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
 
-    private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(30_000, 100);
+    private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(30_000, 256);
 
     private int maxPacketSize;
-    private int mojangApiCacheSize;
+    private int compressionThreshold;
 
     /**
      * Represents a configuration file.
@@ -19,19 +19,19 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
         super(PerformanceConfig.class);
     }
 
-    private PerformanceConfig(int maxPacketSize, int mojangApiCacheSize) {
+    private PerformanceConfig(int maxPacketSize, int compressionThreshold) {
         super(PerformanceConfig.class);
 
         this.maxPacketSize = maxPacketSize;
-        this.mojangApiCacheSize = mojangApiCacheSize;
+        this.compressionThreshold = compressionThreshold;
     }
 
     public int getMaxPacketSize() {
         return this.maxPacketSize;
     }
 
-    public int getMojangApiCacheSize() {
-        return this.mojangApiCacheSize;
+    public int getCompressionThreshold() {
+        return this.compressionThreshold;
     }
 
     @Override

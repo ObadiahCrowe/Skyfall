@@ -10,6 +10,7 @@ import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketState;
+import io.skyfallsdk.packet.login.LoginOutDisconnect;
 import io.skyfallsdk.packet.version.NetPacketOut;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.protocol.client.ClientInfo;
@@ -114,7 +115,9 @@ public class NetClient implements ClientInfo {
 
     @Override
     public void disconnect(ChatComponent reason) {
-
+        if (this.state == PacketState.LOGIN) {
+            this.sendPacket(LoginOutDisconnect.make(this.version, reason));
+        }
     }
 
     public static NetClient get(ChannelHandlerContext ctx) {

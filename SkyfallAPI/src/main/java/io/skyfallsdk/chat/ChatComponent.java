@@ -9,7 +9,7 @@ import io.skyfallsdk.chat.event.HoverEvent;
 
 import java.util.List;
 
-public class ChatComponent {
+public class ChatComponent implements Cloneable {
 
     private final String text;
 
@@ -76,6 +76,14 @@ public class ChatComponent {
 
     public boolean isReset() {
         return this.formats[5];
+    }
+
+    public ChatComponent addFormats(ChatFormat... formats) {
+        for (ChatFormat format : formats) {
+            this.addFormats(format);
+        }
+
+        return this;
     }
 
     public ChatComponent addFormat(ChatFormat format) {
@@ -159,7 +167,7 @@ public class ChatComponent {
 
         String text = this.text;
 
-        // This basically keeps unicode working
+        // This keeps unicode working
         if (text != null) {
             StringBuilder builder = new StringBuilder();
             for (char c : text.toCharArray()) {
@@ -179,12 +187,29 @@ public class ChatComponent {
             json.addProperty("text", builder.toString());
         }
 
-        json.addProperty("bold", this.isBold());
-        json.addProperty("italic", this.isItalic());
-        json.addProperty("underlined", this.isUnderlined());
-        json.addProperty("strikethrough", this.isStruckthrough());
-        json.addProperty("obfuscated", this.isObfuscated());
-        json.addProperty("reset", this.isReset());
+        if (this.isBold()) {
+            json.addProperty("bold", this.isBold());
+        }
+
+        if (this.isItalic()) {
+            json.addProperty("italic", this.isItalic());
+        }
+
+        if (this.isUnderlined()) {
+            json.addProperty("underlined", this.isUnderlined());
+        }
+
+        if (this.isStruckthrough()) {
+            json.addProperty("strikethrough", this.isStruckthrough());
+        }
+
+        if (this.isObfuscated()) {
+            json.addProperty("obfuscated", this.isObfuscated());
+        }
+
+        if (this.isReset()) {
+            json.addProperty("reset", this.isReset());
+        }
 
         Colour colour = this.getColour();
         if (colour != null) {
@@ -229,6 +254,11 @@ public class ChatComponent {
     @Override
     public String toString() {
         return this.toJson().toString().replace("\\\\", "\\");
+    }
+
+    @Override
+    protected ChatComponent clone() throws CloneNotSupportedException {
+        return (ChatComponent) super.clone();
     }
 
     @Override

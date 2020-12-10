@@ -2,9 +2,11 @@ package io.skyfallsdk.packet;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.SkyfallMain;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketMapper;
+import io.skyfallsdk.packet.version.NetPacketOut;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.Validator;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
@@ -12,10 +14,14 @@ import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import javassist.*;
+import javassist.bytecode.ClassFile;
+import javassist.bytecode.MethodInfo;
 import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -73,7 +79,8 @@ public class PacketRegistry {
     @SuppressWarnings("unchecked")
     public static <T extends Packet> T newInstance(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
         if (IS_DEBUGGING) {
-            Server.get().getLogger().debug("Attempting to find packet with the following criteria: " + version + ", " + state + ", " + destination + ", 0x" + Integer.toHexString(packetId));
+            Server.get().getLogger().debug("Attempting to find packet with the following criteria: " + version + ", " +
+              state + ", " + destination + ", 0x" + Integer.toHexString(packetId));
         }
 
         int id = shift(version, state, destination, packetId);
@@ -124,8 +131,40 @@ public class PacketRegistry {
         }
 
         if (destination == PacketDestination.IN) {
-            ID_TO_CONSTRUCTOR.put(id, ConstructorAccess.get(packetClass));
+            Validator.notNull(constructor);
+
+            ID_TO_CONSTRUCTOR.put(id, constructor);
             return constructor.newInstance();
+        }
+
+        try {
+            ClassPool classPool = ClassPool.getDefault();
+
+            CtClass netPacketClass = ClassPool.getDefault().getCtClass(packetClass.getCanonicalName());
+            netPacketClass.addConstructor(CtNewConstructor.defaultConstructor(netPacketClass));
+
+            CtClass newPacket = classPool.makeClass(packetClass.getCanonicalName() + "2");
+            newPacket.addConstructor(CtNewConstructor.make("public " + packetClass.getCanonicalName() + "2() {}", newPacket));
+            newPacket.setSuperclass(netPacketClass);
+
+
+            NetPacketOut packetOut = (NetPacketOut) newPacket.toClass().newInstance();
+
+            System.out.println("generic1: " + packetOut.getGeneric().getCanonicalName());
+
+            Class<?> rawPacket = ClassPool.getDefault().toClass(netPacketClass);
+
+            System.out.println("got raw: " + rawPacket.getCanonicalName());
+
+            Class<? extends NetPacketOut> clazz = (Class<? extends NetPacketOut>) netPacketClass.toClass();
+
+            System.out.println(clazz.getCanonicalName());
+            NetPacketOut packet = clazz.getConstructor().newInstance();
+
+            System.out.println("generic: " + packet.getGeneric().getCanonicalName());
+
+        } catch (CannotCompileException | NotFoundException | NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
         }
 
         return null;

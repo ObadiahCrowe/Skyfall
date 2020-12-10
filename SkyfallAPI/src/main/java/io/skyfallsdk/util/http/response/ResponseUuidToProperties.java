@@ -11,7 +11,7 @@ public class ResponseUuidToProperties {
 
     private final PlayerProperties properties;
 
-    public ResponseUuidToProperties(UUID uuid, String name, PlayerProperties properties) {
+    ResponseUuidToProperties(UUID uuid, String name, PlayerProperties properties) {
         this.uuid = uuid;
         this.name = name;
         this.properties = properties;

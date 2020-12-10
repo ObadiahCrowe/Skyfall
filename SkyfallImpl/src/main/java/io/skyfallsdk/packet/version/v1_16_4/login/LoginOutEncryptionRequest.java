@@ -45,9 +45,7 @@ public class LoginOutEncryptionRequest extends io.skyfallsdk.packet.login.LoginO
     @Override
     public void write(ByteBuf buf) {
         NetData.writeString(buf, this.serverId);
-        NetData.writeVarInt(buf, this.publicKey.length);
-        buf.writeBytes(this.publicKey);
-        NetData.writeVarInt(buf, this.verifyToken.length);
-        buf.writeBytes(this.verifyToken);
+        NetData.writeByteArray(buf, this.publicKey);
+        NetData.writeByteArray(buf, this.verifyToken);
     }
 }

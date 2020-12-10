@@ -15,6 +15,7 @@ public class JsonBodyHandler<T> implements HttpResponse.BodyHandler<Supplier<T>>
 
     private static final Gson RESPONSE_GSON = new GsonBuilder()
       .registerTypeAdapter(ResponseUuidAtTime.class, new ResponseUuidAtTimeAdapter())
+      .registerTypeAdapter(ResponseUuidToProperties.class, new ResponseUuidToPropertiesAdapter())
       .setLenient()
       .serializeNulls()
       .setPrettyPrinting()
@@ -42,7 +43,7 @@ public class JsonBodyHandler<T> implements HttpResponse.BodyHandler<Supplier<T>>
                 return RESPONSE_GSON.fromJson(new JsonReader(new InputStreamReader(input)), target);
             } catch (Exception e) {
                 Server.get().getLogger().error(e);
-                return null;
+                throw new RuntimeException(e);
             }
         };
     }
@@ -55,6 +56,16 @@ public class JsonBodyHandler<T> implements HttpResponse.BodyHandler<Supplier<T>>
             JsonObject object = element.getAsJsonObject();
 
             return new ResponseUuidAtTime(UtilString.uuidFromUndashed(object.get("id").getAsString()), object.get("name").getAsString());
+        }
+    }
+
+    private static class ResponseUuidToPropertiesAdapter implements JsonDeserializer<ResponseUuidToProperties> {
+
+        @Override
+        public ResponseUuidToProperties deserialize(JsonElement element, Type type, JsonDeserializationContext ctx) throws JsonParseException {
+            System.out.println(element.toString());
+
+            return null;
         }
     }
 }

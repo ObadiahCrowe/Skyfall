@@ -15,11 +15,17 @@ public interface Entity extends Tickable<DefaultTickSpec> {
 
     UUID getUuid();
 
+    EntityType getType();
+
     World getWorld();
 
     Position getPosition();
 
+    void setPosition(Position position);
+
     Vector getVelocity();
+
+    void setVelocity(Vector velocity);
 
     @Override
     default TickRegistry<DefaultTickSpec> getRegistry() {

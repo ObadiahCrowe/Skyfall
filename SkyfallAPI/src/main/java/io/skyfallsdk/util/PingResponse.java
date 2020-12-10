@@ -3,13 +3,20 @@ package io.skyfallsdk.util;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.net.NetClient;
+import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.protocol.client.ClientInfo;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 
 public class PingResponse {
 
     private final ProtocolVersion version;
 
+    // TODO: 10/12/2020 work with event 
     private PingResponse(ProtocolVersion version) {
         this.version = version;
     }
@@ -29,19 +36,22 @@ public class PingResponse {
         JsonArray sample = new JsonArray();
 
         players.add("sample", sample);
-
-        JsonObject description = new JsonObject();
-
-        description.addProperty("text", Server.get().getMotd());
-
         object.add("version", version);
         object.add("players", players);
-        object.add("description", description);
+        object.add("description", ChatComponent.from("Hello").setColour(ChatColour.RED).toJson());
+
+        if (Server.get().getFavicon() != null) {
+            try {
+                object.addProperty("favicon", "data:image/png;base64," + Base64.getEncoder().encodeToString(Files.readAllBytes(Server.get().getFavicon())));
+            } catch (IOException e) {
+                Server.get().getLogger().error("An unexpected error occurred whilst parsing your server's favicon!", e);
+            }
+        }
 
         return object.toString();
     }
 
-    public static PingResponse createResponse(NetClient connection) {
+    public static PingResponse createResponse(ClientInfo connection) {
         return new PingResponse(connection.getVersion());
     }
 }

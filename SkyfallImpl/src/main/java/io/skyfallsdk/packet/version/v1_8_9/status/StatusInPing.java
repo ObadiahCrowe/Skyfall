@@ -13,12 +13,14 @@ public class StatusInPing extends NetPacketIn implements io.skyfallsdk.packet.st
     }
 
     @Override
-    public void read(ByteBuf buf, NetClient connection) {
-        this.payload = buf.readLong();
+    public long getPayload() {
+        return this.payload;
     }
 
     @Override
-    public long getPayload() {
-        return this.payload;
+    public void read(ByteBuf buf, NetClient connection) {
+        this.payload = buf.readLong();
+
+        connection.sendPacket(new StatusOutPong(this.payload));
     }
 }

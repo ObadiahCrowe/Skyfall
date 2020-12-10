@@ -20,6 +20,11 @@ public class SkyfallEntity implements Entity {
     }
 
     @Override
+    public EntityType getType() {
+        return null;
+    }
+
+    @Override
     public World getWorld() {
         return null;
     }
@@ -30,8 +35,18 @@ public class SkyfallEntity implements Entity {
     }
 
     @Override
+    public void setPosition(Position position) {
+
+    }
+
+    @Override
     public Vector getVelocity() {
         return null;
+    }
+
+    @Override
+    public void setVelocity(Vector velocity) {
+
     }
 
     @Override

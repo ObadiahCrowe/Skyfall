@@ -4,16 +4,16 @@ import java.util.UUID;
 
 public class ResponseUuidAtTime {
 
-    private final UUID id;
+    private final UUID uuid;
     private final String name;
 
-    ResponseUuidAtTime(UUID id, String name) {
-        this.id = id;
+    ResponseUuidAtTime(UUID uuid, String name) {
+        this.uuid = uuid;
         this.name = name;
     }
 
     public UUID getUuid() {
-        return this.id;
+        return this.uuid;
     }
 
     public String getName() {
@@ -23,7 +23,7 @@ public class ResponseUuidAtTime {
     @Override
     public String toString() {
         return "ResponseUuidAtTime{" +
-          "uuid=" + id +
+          "uuid=" + uuid +
           ", name='" + name + '\'' +
           '}';
     }

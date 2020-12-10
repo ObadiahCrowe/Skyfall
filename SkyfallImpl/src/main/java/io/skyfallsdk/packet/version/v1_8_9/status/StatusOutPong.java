@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.skyfallsdk.packet.PacketOut;
 import io.skyfallsdk.packet.version.NetPacketOut;
 
-public class StatusOutPong extends NetPacketOut {
+public class StatusOutPong extends io.skyfallsdk.packet.status.StatusOutPong {
 
     private final long payload;
 
@@ -15,17 +15,12 @@ public class StatusOutPong extends NetPacketOut {
     }
 
     @Override
-    public Class<? extends PacketOut> getGeneric() {
-        return null;
+    public long getPayload() {
+        return this.payload;
     }
 
     @Override
     public void write(ByteBuf buf) {
         buf.writeLong(this.payload);
     }
-
-/*    @Override
-    public long getPayload() {
-        return this.payload;
-    }*/
 }

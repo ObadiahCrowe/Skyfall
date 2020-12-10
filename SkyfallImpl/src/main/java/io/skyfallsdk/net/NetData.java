@@ -97,15 +97,20 @@ public class NetData {
         } while (value != 0);
     }
 
+    public static void writeByteArray(ByteBuf buf, byte[] array) {
+        NetData.writeVarInt(buf, array.length);
+        buf.writeBytes(array);
+    }
+
+    public static byte[] readByteArray(ByteBuf buf) {
+        return readByteArray(buf, buf.readableBytes());
+    }
+
     public static byte[] readByteArray(ByteBuf buf, int length) {
         byte[] bytes = new byte[length];
         buf.readBytes(bytes);
 
         return bytes;
-    }
-
-    public static byte[] readByteArray(ByteBuf buf) {
-        return readByteArray(buf, buf.readableBytes());
     }
 
     public static String readString(ByteBuf buf) {
