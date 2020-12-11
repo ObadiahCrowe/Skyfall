@@ -26,11 +26,6 @@ public class StatusOutResponse extends io.skyfallsdk.packet.status.StatusOutResp
     }
 
     @Override
-    public Class<? extends PacketOut> getGeneric() {
-        return null;
-    }
-
-    @Override
     public void write(ByteBuf buf) {
         NetData.writeString(buf, this.json);
     }

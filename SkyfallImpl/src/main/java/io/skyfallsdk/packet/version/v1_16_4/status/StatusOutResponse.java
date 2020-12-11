@@ -26,8 +26,6 @@ public class StatusOutResponse extends io.skyfallsdk.packet.status.StatusOutResp
 
     @Override
     public void write(ByteBuf buf) {
-        System.out.println(this.json);
-
         NetData.writeString(buf, this.json);
     }
 }

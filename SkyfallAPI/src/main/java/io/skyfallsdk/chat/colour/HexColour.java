@@ -1,5 +1,9 @@
 package io.skyfallsdk.chat.colour;
 
+import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.protocol.annotation.ProtocolSupported;
+
+@ProtocolSupported(from = ProtocolVersion.v1_16)
 public class HexColour implements Colour {
 
     private static final String HEX_FORMAT = "#%02x%02x%02x";

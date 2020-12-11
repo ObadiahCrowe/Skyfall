@@ -1,6 +1,7 @@
 package io.skyfallsdk.packet.version.v1_15_2.status;
 
 import io.netty.buffer.ByteBuf;
+import io.skyfallsdk.net.NetData;
 import io.skyfallsdk.packet.PacketOut;
 import io.skyfallsdk.util.PingResponse;
 
@@ -25,12 +26,7 @@ public class StatusOutResponse extends io.skyfallsdk.packet.status.StatusOutResp
     }
 
     @Override
-    public Class<? extends PacketOut> getGeneric() {
-        return null;
-    }
-
-    @Override
     public void write(ByteBuf buf) {
-        // write json
+        NetData.writeString(buf, this.json);
     }
 }

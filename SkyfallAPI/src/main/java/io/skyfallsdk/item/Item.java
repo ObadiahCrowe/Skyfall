@@ -17,6 +17,10 @@ public class Item {
         this.amount = amount;
     }
 
+    public Substance getSubstance() {
+        return this.substance;
+    }
+
     public static class Builder implements Cloneable {
 
         private final Substance substance;

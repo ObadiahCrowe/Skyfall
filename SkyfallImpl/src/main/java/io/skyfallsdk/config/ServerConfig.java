@@ -1,6 +1,8 @@
 package io.skyfallsdk.config;
 
 import io.skyfallsdk.Server;
+import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.chat.colour.HexColour;
 import io.skyfallsdk.config.type.YamlConfig;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.Difficulty;
@@ -39,7 +41,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private ServerConfig(int maxPlayers, boolean onlineMode, Gamemode gamemode, Difficulty difficulty) {
         super(ServerConfig.class);
 
-        this.server = new ServerNetConfig("Powered by Skyfall.", "localhost", 25565);
+        this.server = new ServerNetConfig("Powered by Skyfall.", "0.0.0.0", 25565);
         this.debugEnabled = false;
 
         this.maxPlayers = maxPlayers;

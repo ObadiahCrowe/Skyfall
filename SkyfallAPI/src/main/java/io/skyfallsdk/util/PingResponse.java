@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.colour.ChatColour;
+import io.skyfallsdk.chat.colour.HexColour;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.protocol.client.ClientInfo;
 
@@ -38,7 +39,8 @@ public class PingResponse {
         players.add("sample", sample);
         object.add("version", version);
         object.add("players", players);
-        object.add("description", ChatComponent.from("Hello").setColour(ChatColour.RED).toJson());
+        object.add("description", ChatComponent.from("Powered by ").setColour(HexColour.of(114, 152, 214))
+          .addExtra(ChatComponent.from("Skyfall.").setColour(HexColour.of(182, 208, 222))).toJson()); // TODO: 11/12/2020 Add fromJson method
 
         if (Server.get().getServerIcon() != null) {
             try {
