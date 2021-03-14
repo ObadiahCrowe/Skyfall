@@ -10,8 +10,12 @@ public class YamlExpansionConstructor extends Constructor {
 
     private static final Map<String, Class<?>> CLASS_MAPPINGS = Maps.newHashMap();
 
+    private final Class<?> rootClass;
+
     public YamlExpansionConstructor(Class<?> root) {
         super(root);
+
+	this.rootClass = root;
     }
 
     @Override
@@ -19,7 +23,7 @@ public class YamlExpansionConstructor extends Constructor {
         String name = node.getTag().getClassName();
         Class<?> clazz = CLASS_MAPPINGS.computeIfAbsent(name, (claz) -> {
             try {
-                return Class.forName(name, true, this.getClass().getClassLoader());
+                return Class.forName(name, true, this.rootClass.getClassLoader());
             } catch (ClassNotFoundException e) {
                 return null;
             }
