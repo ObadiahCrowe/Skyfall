@@ -4,12 +4,12 @@ import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.config.ConfigType;
 import io.skyfallsdk.config.LoadableConfig;
+import io.skyfallsdk.config.representer.YamlExpansionConstructor;
 import io.skyfallsdk.config.representer.YamlObjectRepresenter;
 import org.apache.logging.log4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.introspector.BeanAccess;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -58,7 +58,7 @@ public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig
         this.clazz = clazz;
         this.logger = Server.get().getLogger();
 
-        this.backingYaml = new Yaml(new Constructor(this.clazz), REPRESENTER, DUMPER_OPTIONS);
+        this.backingYaml = new Yaml(new YamlExpansionConstructor(this.clazz), REPRESENTER, DUMPER_OPTIONS);
         this.backingYaml.setBeanAccess(BeanAccess.FIELD);
 
         for (Field field : this.clazz.getDeclaredFields()) {

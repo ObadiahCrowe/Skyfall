@@ -6,22 +6,28 @@ import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.vector.Vector;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class SkyfallEntity implements Entity {
+public abstract class SkyfallEntity implements Entity {
+
+    private static final AtomicInteger ENTITY_ID = new AtomicInteger(0);
+
+    private final int id;
+    private final UUID uuid;
+
+    public SkyfallEntity() {
+        this.id = ENTITY_ID.incrementAndGet();
+        this.uuid = UUID.randomUUID();
+    }
 
     @Override
     public int getId() {
-        return 0;
+        return this.id;
     }
 
     @Override
     public UUID getUuid() {
-        return null;
-    }
-
-    @Override
-    public EntityType getType() {
-        return null;
+        return this.uuid;
     }
 
     @Override
