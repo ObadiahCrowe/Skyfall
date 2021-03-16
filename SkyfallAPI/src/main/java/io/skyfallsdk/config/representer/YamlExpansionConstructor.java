@@ -15,7 +15,7 @@ public class YamlExpansionConstructor extends Constructor {
     public YamlExpansionConstructor(Class<?> root) {
         super(root);
 
-	this.rootClass = root;
+        this.rootClass = root;
     }
 
     @Override

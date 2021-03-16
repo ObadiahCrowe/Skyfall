@@ -51,6 +51,10 @@ public enum ChatColour implements Colour {
         return this.hex;
     }
 
+    public HexColour toHexColour() {
+        return HexColour.of(this.hex);
+    }
+
     @Override
     public String toString() {
         return String.valueOf('§' + this.code);

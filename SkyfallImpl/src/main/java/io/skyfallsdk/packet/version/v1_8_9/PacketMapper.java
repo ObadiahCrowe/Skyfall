@@ -1,7 +1,5 @@
 package io.skyfallsdk.packet.version.v1_8_9;
 
-import io.skyfallsdk.packet.PacketRegistry;
-import io.skyfallsdk.packet.Packet;
 import io.skyfallsdk.packet.PacketDestination;
 import io.skyfallsdk.packet.PacketState;
 import io.skyfallsdk.packet.version.NetPacketMapper;

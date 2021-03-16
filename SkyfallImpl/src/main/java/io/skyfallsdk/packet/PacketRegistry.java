@@ -2,11 +2,9 @@ package io.skyfallsdk.packet;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.SkyfallMain;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketMapper;
-import io.skyfallsdk.packet.version.NetPacketOut;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.util.Validator;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
@@ -14,14 +12,10 @@ import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
-import javassist.*;
-import javassist.bytecode.ClassFile;
-import javassist.bytecode.MethodInfo;
 import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -33,9 +27,9 @@ public class PacketRegistry {
     private static final Int2ReferenceMap<ConstructorAccess<? extends Packet>> ID_TO_CONSTRUCTOR = new Int2ReferenceOpenHashMap<>();
     private static final Int2ReferenceMap<NetPacketMapper> VERSION_TO_MAPPER = new Int2ReferenceOpenHashMap<>();
 
-    private static final int VERSION_SHIFT = 29;
-    private static final int DESTINATION_SHIFT = 27;
-    private static final int STATE_SHIFT = 24;
+    private static final int VERSION_SHIFT = 26;
+    private static final int DESTINATION_SHIFT = 19;
+    private static final int STATE_SHIFT = 17;
 
     private static final boolean IS_DEBUGGING;
 
@@ -109,7 +103,7 @@ public class PacketRegistry {
     public static <T extends Packet> T register(Class<T> packetClass, ProtocolVersion version, PacketState state,
                                                 PacketDestination destination, int packetId, @Nullable ConstructorAccess<T> constructor) {
         if (IS_DEBUGGING) {
-            Server.get().getLogger().debug("Registering packet data for: " + packetClass.getCanonicalName() + " - (" +
+            Server.get().getLogger().info("Registering packet data for: " + packetClass.getCanonicalName() + " - (" +
               version.name() + ", " + state.name() + ", " + destination.name() + ", 0x" + Integer.toHexString(packetId) + ")");
         }
 
@@ -125,7 +119,12 @@ public class PacketRegistry {
             Validator.isEqualTo(destination, getDestination(packetClass));
         } catch (Validator.ValidationException e) {
             Server.get().getLogger().fatal("Encoded packet data mismatch during registration. This indicates a severe issue. Please contact a developer immediately.");
-            Server.get().getLogger().fatal(e);
+            Server.get().getLogger().fatal("Caught packet: " + packetClass.getCanonicalName() +
+              "\n Expected Id: " + packetId + " - Got: " + getId(packetClass) +
+              "\n Expected Version: " + version + " - Got: " + getProtocolVersion(packetClass) +
+              "\n Expected State: " + state + " - Got: " + getState(packetClass) +
+              "\n Expected Destination: " + destination + " - Got: " + getDestination(packetClass));
+            e.printStackTrace();
             System.exit(0);
             return null;
         }
@@ -137,14 +136,18 @@ public class PacketRegistry {
             return constructor.newInstance();
         }
 
-        try {
+/*        try {
             ClassPool classPool = ClassPool.getDefault();
 
             CtClass netPacketClass = ClassPool.getDefault().getCtClass(packetClass.getCanonicalName());
             netPacketClass.addConstructor(CtNewConstructor.defaultConstructor(netPacketClass));
 
+
+            CtClass superClass = netPacketClass.getSuperclass();
             CtClass newPacket = classPool.makeClass(packetClass.getCanonicalName() + "2");
-            newPacket.addConstructor(CtNewConstructor.make("public " + packetClass.getCanonicalName() + "2() {}", newPacket));
+            CtConstructor newConstructor = CtNewConstructor.make("public " + newPacket.getName() + "() {}", newPacket);
+
+            newPacket.addConstructor(newConstructor);
             newPacket.setSuperclass(netPacketClass);
 
 
@@ -165,7 +168,7 @@ public class PacketRegistry {
 
         } catch (CannotCompileException | NotFoundException | NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
-        }
+        }*/
 
         return null;
         // TODO: 09/12/2020 Sort this out for outgoing packets
@@ -184,9 +187,9 @@ public class PacketRegistry {
     private static int shift(ProtocolVersion version, PacketState state, PacketDestination destination, int packetId) {
         int id = packetId;
 
-        id |= version.ordinal() << VERSION_SHIFT;
-        id |= destination.ordinal() << DESTINATION_SHIFT;
         id |= state.ordinal() << STATE_SHIFT;
+        id |= destination.ordinal() << DESTINATION_SHIFT;
+        id |= version.ordinal() << VERSION_SHIFT;
 
         return id;
     }
@@ -196,18 +199,18 @@ public class PacketRegistry {
     }
 
     public static int getId(Class<? extends Packet> packet) {
-        return PACKET_TO_ID.getInt(packet) & 0x4FFFF;
+        return PACKET_TO_ID.getInt(packet) & 0xFFFF;
     }
 
     public static PacketDestination getDestination(Class<? extends Packet> packet) {
-        return PacketDestination.values()[PACKET_TO_ID.getInt(packet) >> DESTINATION_SHIFT & 0x1];
+        return PacketDestination.values()[(PACKET_TO_ID.getInt(packet) >> DESTINATION_SHIFT) & 0x1];
     }
 
     public static PacketState getState(Class<? extends Packet> packet) {
-        return PacketState.values()[PACKET_TO_ID.getInt(packet) >> STATE_SHIFT & 0x7];
+        return PacketState.values()[(PACKET_TO_ID.getInt(packet) >> STATE_SHIFT) & 0x03];
     }
 
     public static ProtocolVersion getProtocolVersion(Class<? extends Packet> packet) {
-        return ProtocolVersion.values()[PACKET_TO_ID.getInt(packet) >> VERSION_SHIFT & 0x1F];
+        return ProtocolVersion.values()[PACKET_TO_ID.getInt(packet) >>> VERSION_SHIFT];
     }
 }
