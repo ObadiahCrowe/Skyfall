@@ -19,6 +19,7 @@ import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.server.ServerState;
 import io.skyfallsdk.util.UtilGitVersion;
 import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.util.http.NetMojangAPI;
@@ -37,12 +38,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class SkyfallServer implements Server {
 
     private static Path workingDir;
     private static Logger logger;
+
+    private static ServerState state;
 
     private final ServerConfig config;
     private final PerformanceConfig perfConfig;
@@ -67,6 +73,8 @@ public class SkyfallServer implements Server {
         } catch (NullPointerException e) {
             logger.info("Starting unknown Skyfall version");
         }
+
+        state = ServerState.INITIALISING;
 
         logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
@@ -116,10 +124,13 @@ public class SkyfallServer implements Server {
         this.consoleThread.setUncaughtExceptionHandler((t, e) -> logger.error("Uncaught exception on thread \"" + t.getName() + "\": " + e.getMessage()));
         this.consoleThread.start();
 
+        state = ServerState.RUNNING;
+
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownInternal, "SF-Shutdown"));
     }
 
     private void shutdownInternal() {
+        state = ServerState.TERMINATING;
         try {
             logger.info("Shuttng down Netty server..");
             this.server.shutdown();
@@ -139,6 +150,11 @@ public class SkyfallServer implements Server {
     @Override
     public void shutdown() {
         System.exit(0);
+    }
+
+    @Override
+    public ServerState getState() {
+        return state;
     }
 
     public ServerConfig getConfig() {
@@ -161,7 +177,7 @@ public class SkyfallServer implements Server {
 
     @Override
     public Logger getLogger(Expansion expansion) {
-        return LogManager.getLogger(expansion);
+        return LogManager.getLogger(Expansion.class);
     }
 
     @Override
@@ -195,8 +211,8 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public World getWorld(String name) {
-        return this.worldLoader.get(name).orElse(null);
+    public CompletableFuture<Optional<World>> getWorld(String name) {
+        return this.worldLoader.get(name);
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.skyfallsdk.expansion;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.skyfallsdk.SkyfallServer;
+import io.skyfallsdk.concurrent.PoolSpec;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.function.Function;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -19,6 +21,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
 
     private static final Map<Class<? extends Expansion>, Expansion> EXPANSION_INSTANCES = Maps.newHashMap();
     private static final Map<Class<? extends Expansion>, ExpansionInfo> EXPANSION_INFO = Maps.newHashMap();
+    private static final Map<Class<? extends Expansion>, Thread> EXPANSION_MAIN_THREADS = Maps.newHashMap();
 
     private final SkyfallServer server;
     private final Path expansionPath;
@@ -127,7 +130,11 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
             EXPANSION_INSTANCES.put(entryPoint, expansion);
             EXPANSION_INFO.put(entryPoint, info);
 
-            expansion.onStartup();
+            if (!Files.exists(expansion.getPath())) {
+                Files.createDirectory(expansion.getPath());
+            }
+
+            this.getLocalThread(expansion).start();
             this.server.getLogger().info("Successfully loaded Expansion, " + info.name() + "!");
         } catch (IllegalStateException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
@@ -153,5 +160,15 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
     @Override
     public Collection<Expansion> getExpansions() {
         return Collections.unmodifiableCollection(EXPANSION_INSTANCES.values());
+    }
+
+    @Override
+    public Thread getLocalThread(Expansion expansion) {
+        return EXPANSION_MAIN_THREADS.computeIfAbsent(expansion.getClass(), expansionClass -> {
+            Thread thread = PoolSpec.SCHEDULER.newThread(expansion::onStartup);
+            thread.setName(thread.getName() + "-" + this.getExpansionInfo(expansionClass).name());
+
+            return thread;
+        });
     }
 }

@@ -7,6 +7,7 @@ import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
+import io.skyfallsdk.server.ServerState;
 import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.player.Player;
@@ -19,7 +20,9 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
 public interface Server extends ServerCommandSender, PermissionHolder {
@@ -29,6 +32,8 @@ public interface Server extends ServerCommandSender, PermissionHolder {
     }
 
     void shutdown();
+
+    ServerState getState();
 
     Path getPath();
 
@@ -48,7 +53,7 @@ public interface Server extends ServerCommandSender, PermissionHolder {
 
     Collection<World> getWorlds();
 
-    World getWorld(String name);
+    CompletableFuture<Optional<World>> getWorld(String name);
 
     String getMotd();
 

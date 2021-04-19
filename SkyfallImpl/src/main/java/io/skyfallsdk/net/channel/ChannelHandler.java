@@ -18,7 +18,7 @@ public class ChannelHandler extends ChannelInitializer<SocketChannel> {
         SkyfallServer server = (SkyfallServer) Server.get();
 
         pipeline.addLast("splitter", new PacketSplitter(server));
-        pipeline.addLast("decoder", new PacketDecoder(server.getConfig().isDebugEnabled()));
+        pipeline.addLast("decoder", new PacketDecoder(server.getConfig().isDebugEnabled(), server.getPerformanceConfig().getConnectionThrottleThreshold()));
 
         pipeline.addLast("encoder", new PacketEncoder(server.getConfig().isDebugEnabled()));
     }

@@ -32,6 +32,10 @@ public interface Expansion {
         return Server.get().getLogger(this);
     }
 
+    default Thread getLocalThread() {
+        return Server.get().getExpansionRegistry().getLocalThread(this);
+    }
+
     default void registerArgumentParsers(ArgumentParser... parsers) {
         ArgumentFactory factory = ArgumentFactory.getInstance();
         for (ArgumentParser parser : parsers) {

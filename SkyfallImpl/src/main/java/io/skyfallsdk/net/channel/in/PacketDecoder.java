@@ -1,27 +1,40 @@
 package io.skyfallsdk.net.channel.in;
 
+import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
 import io.skyfallsdk.packet.*;
 import io.skyfallsdk.packet.exception.PacketException;
 import io.skyfallsdk.packet.version.NetPacketIn;
 import io.skyfallsdk.protocol.ProtocolVersion;
-import org.apache.logging.log4j.core.net.Protocol;
+import io.skyfallsdk.server.ServerState;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
+    private static final Map<NetClient, Long> THROTTLED_CONNECTIONS = Maps.newConcurrentMap();
+    private static final ChatComponent DISCONNECT_THROTTLED = ChatComponent.from("Your connection has been throttled. Please wait before reconnecting.").setColour(ChatColour.RED);
+    private static final ChatComponent DISCONNECT_SHUTDOWN = ChatComponent.from("The server is currently shutting down.").setColour(ChatColour.RED);
+
     private final boolean isDebugEnabled;
+    private final int throttleThreshold;
+    private final boolean shouldThrottleConnections;
 
     private NetClient client;
 
-    public PacketDecoder(boolean isDebugEnabled) {
+    public PacketDecoder(boolean isDebugEnabled, int throttleThreshold) {
         this.isDebugEnabled = isDebugEnabled;
+        this.throttleThreshold = throttleThreshold;
+        this.shouldThrottleConnections = this.throttleThreshold != -1;
     }
 
     @Override
@@ -48,6 +61,21 @@ public class PacketDecoder extends ByteToMessageDecoder {
 
         if (packet == null) {
             Server.get().getLogger().error("Could not construct packet with id: 0x" + Integer.toHexString(packetId) + "!");
+            return;
+        }
+
+        if (packet.getState() == PacketState.HANDSHAKE && this.shouldThrottleConnections && !this.client.getAddress().getHostAddress().equals("127.0.0.1")) {
+            long currTime = System.currentTimeMillis();
+            long time = THROTTLED_CONNECTIONS.compute(this.client, (c, t) -> Objects.requireNonNullElse(t, currTime));
+
+            if ((currTime - time) < 0) {
+                this.client.disconnect(DISCONNECT_THROTTLED);
+                return;
+            }
+        }
+
+        if (Server.get().getState() == ServerState.TERMINATING) {
+            this.client.disconnect(DISCONNECT_SHUTDOWN);
             return;
         }
 

@@ -26,4 +26,6 @@ public interface ExpansionRegistry {
     <T extends Expansion> T getExpansion(Class<T> expansionClass);
 
     Collection<Expansion> getExpansions();
+
+    Thread getLocalThread(Expansion expansion);
 }

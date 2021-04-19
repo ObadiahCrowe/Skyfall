@@ -4,6 +4,9 @@ import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
+import io.skyfallsdk.Server;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.net.crypto.NetCrypt;
 import io.skyfallsdk.packet.PacketState;
@@ -18,6 +21,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class NetClient implements ClientInfo {
@@ -120,6 +124,21 @@ public class NetClient implements ClientInfo {
         } else {
             this.sendPacket(PlayOutDisconnect.make(this.version, reason));
         }
+
+        this.channel.closeFuture().addListener(future -> Server.get().getLogger().info(NetClient.this.username + " (" + NetClient.this.uuid.toString() + ") has disconnected."));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NetClient netClient = (NetClient) o;
+        return address.equals(netClient.address);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address);
     }
 
     public static NetClient get(ChannelHandlerContext ctx) {

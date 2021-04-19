@@ -138,6 +138,10 @@ public abstract class YamlConfig<T extends YamlConfig> implements LoadableConfig
                     continue;
                 }
 
+                if (Modifier.isTransient(field.getModifiers())) {
+                    continue;
+                }
+
                 try {
                     if (field.getClass().isEnum()) {
                         tags.put(field.getName(), ((Enum<?>) field.get(this)).name());

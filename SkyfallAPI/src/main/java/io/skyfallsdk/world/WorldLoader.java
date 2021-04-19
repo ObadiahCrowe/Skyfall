@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Represents
@@ -29,9 +30,7 @@ public interface WorldLoader {
      *
      * @param name Name of the world to unload. Not case sensitive.
      */
-    default void unload(String name) {
-        this.get(name).ifPresent(this::unload);
-    }
+    void unload(String name);
 
     /**
      * Unloads a world from memory and saves to disk.
@@ -48,7 +47,7 @@ public interface WorldLoader {
      *
      * @return The world if found, {@link Optional#empty()} if no world by that name was found.
      */
-    Optional<World> get(String name);
+    CompletableFuture<Optional<World>> get(String name);
 
     /**
      * Attempts to obtain a World by it's name, if none of that name was found, it will create a new World.
@@ -58,10 +57,20 @@ public interface WorldLoader {
      * @param generator Generator of the World if creation is required.
      *
      * @return The obtained or newly created World.
-     * @throws IOException If an unexpected error occurs whilst creating the World.
      */
-    default World getOrCreate(String name, Dimension dimension, WorldGenerator generator) throws IOException {
-        return this.get(name).orElse(this.create(name, dimension, generator));
+    default CompletableFuture<World> getOrCreate(String name, Dimension dimension, WorldGenerator generator) {
+        return this.get(name).thenComposeAsync(world -> {
+            if (world.isPresent()) {
+                return CompletableFuture.completedFuture(world.get());
+            }
+
+            try {
+                return WorldLoader.this.create(name, dimension, generator);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
     }
 
     /**
@@ -74,7 +83,7 @@ public interface WorldLoader {
      * @return The newly created World.
      * @throws IOException If the world already exists on disk. Not case sensitive.
      */
-    World create(String name, Dimension dimension, WorldGenerator generator) throws IOException;
+    CompletableFuture<World> create(String name, Dimension dimension, WorldGenerator generator) throws IOException;
 
     /**
      * @return All in-memory Worlds.

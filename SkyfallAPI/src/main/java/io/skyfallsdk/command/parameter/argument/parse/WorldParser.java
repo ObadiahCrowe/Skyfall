@@ -8,6 +8,7 @@ import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.world.World;
 
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class WorldParser implements ArgumentParser<World> {
@@ -34,7 +35,14 @@ public class WorldParser implements ArgumentParser<World> {
                 return ((Player) sender).getWorld();
         }
 
-        World world = Server.get().getWorld(value);
+        World world = null;
+
+        try {
+            world = Server.get().getWorld(value).get().orElse(null);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
         if (world == null) {
             throw new ArgumentParseException("Unknown world \"" + value + "\"!");
         }
