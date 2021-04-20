@@ -131,7 +131,7 @@ public class SkyfallServer implements Server {
                 logger.info("Instantiating WorldLoader with the " + this.config.getWorldFormat() + " format.");
                 this.worldLoader = this.config.getWorldFormat().getWorldLoader().getConstructor(SkyfallServer.class, Path.class).newInstance(this, workingDir);
             } else {
-                logger.info("Custom WorldLoader detected (" + current.getClass() + "), ignoring default loader.");
+                logger.info("Custom WorldLoader detected (" + current.getClass().getCanonicalName() + "), ignoring default loader.");
                 this.worldLoader = current;
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
