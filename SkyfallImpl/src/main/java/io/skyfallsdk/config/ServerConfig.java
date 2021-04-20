@@ -7,6 +7,7 @@ import io.skyfallsdk.config.type.YamlConfig;
 import io.skyfallsdk.protocol.ProtocolVersion;
 import io.skyfallsdk.server.Difficulty;
 import io.skyfallsdk.server.Gamemode;
+import io.skyfallsdk.world.WorldFormat;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private Difficulty difficulty;
 
     private int renderDistance;
+    private WorldFormat worldFormat;
 
     private String baseVersion;
     private List<String> supportedVersions;
@@ -48,6 +50,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
         this.onlineMode = onlineMode;
 
         this.renderDistance = 10;
+        this.worldFormat = WorldFormat.ANVIL;
 
         this.gamemode = gamemode;
         this.difficulty = difficulty;
@@ -108,6 +111,14 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public void setRenderDistance(int renderDistance) {
         this.renderDistance = renderDistance;
+    }
+
+    public WorldFormat getWorldFormat() {
+        return this.worldFormat;
+    }
+
+    public void setWorldFormat(WorldFormat worldFormat) {
+        this.worldFormat = worldFormat;
     }
 
     public ProtocolVersion getBaseVersion() {

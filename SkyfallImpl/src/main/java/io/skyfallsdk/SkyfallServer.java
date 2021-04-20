@@ -23,7 +23,8 @@ import io.skyfallsdk.server.ServerState;
 import io.skyfallsdk.util.UtilGitVersion;
 import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.util.http.NetMojangAPI;
-import io.skyfallsdk.world.SkyfallWorldLoader;
+import io.skyfallsdk.world.loader.AbstractWorldLoader;
+import io.skyfallsdk.world.loader.AnvilWorldLoader;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
 import org.apache.logging.log4j.Level;
@@ -33,6 +34,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -41,7 +44,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class SkyfallServer implements Server {
 
@@ -61,7 +63,7 @@ public class SkyfallServer implements Server {
 
     private final NetMojangAPI mojangAPI;
 
-    private final SkyfallWorldLoader worldLoader;
+    private final AbstractWorldLoader worldLoader;
 
     private final ConsoleThread consoleThread;
 
@@ -74,7 +76,9 @@ public class SkyfallServer implements Server {
             logger.info("Starting unknown Skyfall version");
         }
 
-        state = ServerState.INITIALISING;
+        synchronized (this) {
+            state = ServerState.INITIALISING;
+        }
 
         logger.info("Setting Skyfall implementation..");
         Impl.IMPL.set(this);
@@ -117,23 +121,37 @@ public class SkyfallServer implements Server {
         logger.info("Starting server..");
         this.server = NetServer.init(this.config.getNetworkConfig().getAddress(), this.config.getNetworkConfig().getPort());
 
-        this.worldLoader = new SkyfallWorldLoader(workingDir);
+        try {
+            logger.info("Instantiating WorldLoader with the " + this.config.getWorldFormat() + " format.");
+            this.worldLoader = this.config.getWorldFormat().getWorldLoader().getConstructor(SkyfallServer.class, Path.class).newInstance(this, workingDir);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            logger.fatal("Could not instantiate world loader!");
+            throw new RuntimeException(e);
+        }
 
         this.consoleThread = new ConsoleThread(this);
         this.consoleThread.setDaemon(true);
         this.consoleThread.setUncaughtExceptionHandler((t, e) -> logger.error("Uncaught exception on thread \"" + t.getName() + "\": " + e.getMessage()));
         this.consoleThread.start();
 
-        state = ServerState.RUNNING;
+        synchronized (this) {
+            state = ServerState.RUNNING;
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownInternal, "SF-Shutdown"));
     }
 
     private void shutdownInternal() {
-        state = ServerState.TERMINATING;
+        synchronized (this) {
+            state = ServerState.TERMINATING;
+        }
+
         try {
             logger.info("Shuttng down Netty server..");
             this.server.shutdown();
+
+            logger.info("Saving worlds..");
+            this.worldLoader.unloadAll();
 
             logger.info("Shutting down thread pools..");
             ThreadPool.shutdownAll();

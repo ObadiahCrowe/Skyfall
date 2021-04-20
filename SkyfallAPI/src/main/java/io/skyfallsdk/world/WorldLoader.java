@@ -23,21 +23,21 @@ public interface WorldLoader {
      * @return The corresponding World if it was found.
      * @throws IOException If the world files are found but an issue occurs whilst loading it.
      */
-    Optional<World> load(Path path) throws IOException;
+    CompletableFuture<Optional<World>> load(Path path) throws IOException;
 
     /**
      * Unloads a world from memory and saves to disk by it's name.
      *
      * @param name Name of the world to unload. Not case sensitive.
      */
-    void unload(String name);
+    CompletableFuture<Void> unload(String name);
 
     /**
      * Unloads a world from memory and saves to disk.
      *
      * @param world World to unload.
      */
-    void unload(World world);
+    CompletableFuture<Void> unload(World world);
 
     /**
      * Obtains the in-memory version of the World. Will return as {@link Optional#empty()} if no in-memory World
@@ -89,4 +89,9 @@ public interface WorldLoader {
      * @return All in-memory Worlds.
      */
     Collection<World> getLoadedWorlds();
+
+    /**
+     * @return Directory housing all world folders.
+     */
+    Path getWorldDirectory();
 }
