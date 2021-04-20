@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 public class SkyfallServer implements Server {
 
@@ -122,9 +123,18 @@ public class SkyfallServer implements Server {
         this.server = NetServer.init(this.config.getNetworkConfig().getAddress(), this.config.getNetworkConfig().getPort());
 
         try {
-            logger.info("Instantiating WorldLoader with the " + this.config.getWorldFormat() + " format.");
-            this.worldLoader = this.config.getWorldFormat().getWorldLoader().getConstructor(SkyfallServer.class, Path.class).newInstance(this, workingDir);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            // Whilst this may come across as hacky, the idea is to allow expansions to reflectively set their WorldLoader if they so desire.
+            // Normally this would be exposed via the API, but we do not wish to have WorldLoader's changed at runtime unless the developer
+            // really knows what they're doing.
+            AbstractWorldLoader current = (AbstractWorldLoader) this.getClass().getDeclaredField("worldLoader").get(this);
+            if (current == null) {
+                logger.info("Instantiating WorldLoader with the " + this.config.getWorldFormat() + " format.");
+                this.worldLoader = this.config.getWorldFormat().getWorldLoader().getConstructor(SkyfallServer.class, Path.class).newInstance(this, workingDir);
+            } else {
+                logger.info("Custom WorldLoader detected (" + current.getClass() + "), ignoring default loader.");
+                this.worldLoader = current;
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
             logger.fatal("Could not instantiate world loader!");
             throw new RuntimeException(e);
         }
