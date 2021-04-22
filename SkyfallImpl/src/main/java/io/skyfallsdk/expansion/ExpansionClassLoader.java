@@ -31,7 +31,7 @@ public class ExpansionClassLoader extends URLClassLoader {
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) throws ClassNotFoundException, NoClassDefFoundError {
         Class<?> clazz = LOADED_CLASSES.get(name);
         if (clazz != null) {
             return clazz;
@@ -44,7 +44,6 @@ public class ExpansionClassLoader extends URLClassLoader {
 
         return clazz;
     }
-
 
     @Override
     public void close() throws IOException {

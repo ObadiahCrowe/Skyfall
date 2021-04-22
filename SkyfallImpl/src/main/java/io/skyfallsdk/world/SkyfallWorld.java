@@ -4,8 +4,10 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.server.Difficulty;
 import io.skyfallsdk.server.Gamemode;
 import io.skyfallsdk.world.block.Block;
+import io.skyfallsdk.world.chunk.Chunk;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 public class SkyfallWorld implements World {
 
@@ -44,6 +46,11 @@ public class SkyfallWorld implements World {
 
     @Override
     public Difficulty getDifficulty() {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Chunk> getChunk(int x, int z) {
         return null;
     }
 }

@@ -6,7 +6,10 @@ import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,19 +44,19 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
 
     public void loadAllExpansions() {
         try {
-            Files.walkFileTree(this.expansionPath, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (Files.isDirectory(file)) {
-                        return FileVisitResult.CONTINUE;
-                    }
+            Files.list(this.expansionPath).forEachOrdered(file -> {
+                if (Files.isDirectory(file)) {
+                    return;
+                }
 
-                    if (!file.getFileName().toString().endsWith(".jar")) {
-                        return FileVisitResult.CONTINUE;
-                    }
+                if (!file.getFileName().toString().endsWith(".jar")) {
+                    return;
+                }
 
+                try {
                     ServerExpansionRegistry.this.loadExpansion(file);
-                    return FileVisitResult.CONTINUE;
+                } catch (IOException e) {
+                    this.server.getLogger().fatal(e);
                 }
             });
         } catch (IOException e) {
@@ -65,7 +68,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
     @SuppressWarnings("unchecked")
     public void loadExpansion(Path path) throws IOException {
         if (!Files.exists(path)) {
-            throw new IOException("Could not find any file at: " + path.toString());
+            throw new IOException("Could not find any file at: " + path);
         }
 
         if (Files.isDirectory(path)) {
@@ -103,7 +106,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
                         entryPoint = (Class<? extends Expansion>) clazz;
                         info = clazz.getAnnotation(ExpansionInfo.class);
                     }
-                } catch (ClassNotFoundException | LinkageError e) {
+                } catch (NoClassDefFoundError ignored) {} catch (ClassNotFoundException | LinkageError e) {
                     e.printStackTrace();
                 }
             }

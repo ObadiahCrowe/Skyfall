@@ -2,6 +2,7 @@ package io.skyfallsdk.world.loader;
 
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.world.SkyfallWorld;
+import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
@@ -11,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
 
 public abstract class AbstractWorldLoader implements WorldLoader {
 
@@ -39,6 +42,11 @@ public abstract class AbstractWorldLoader implements WorldLoader {
     @Override
     public Path getWorldDirectory() {
         return this.worldDirectory;
+    }
+
+    @Override
+    public Collection<World> getLoadedWorlds() {
+        return Collections.unmodifiableCollection(WORLDS.values());
     }
 
     public abstract void unloadAll();

@@ -1,10 +1,13 @@
 package io.skyfallsdk.world;
 
+import io.skyfallsdk.Server;
 import io.skyfallsdk.server.Difficulty;
 import io.skyfallsdk.server.Gamemode;
 import io.skyfallsdk.world.block.Block;
+import io.skyfallsdk.world.chunk.Chunk;
 
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 public interface World {
 
@@ -24,5 +27,11 @@ public interface World {
 
     Difficulty getDifficulty();
 
+    CompletableFuture<Chunk> getChunk(int x, int z);
 
+
+
+    default CompletableFuture<Void> unload() {
+        return Server.get().getWorldLoader().unload(this);
+    }
 }

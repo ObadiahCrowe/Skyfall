@@ -9,6 +9,8 @@ public interface Block {
 
     Substance getSubstance();
 
+    void setSubstance(Substance substance);
+
     byte getLightLevel();
 
     void setLightLevel(byte lightLevel);

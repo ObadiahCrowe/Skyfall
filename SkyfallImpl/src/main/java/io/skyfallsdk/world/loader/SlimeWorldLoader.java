@@ -46,9 +46,4 @@ public class SlimeWorldLoader extends AbstractWorldLoader {
     public CompletableFuture<World> create(String name, Dimension dimension, WorldGenerator generator) throws IOException {
         return null;
     }
-
-    @Override
-    public Collection<World> getLoadedWorlds() {
-        return null;
-    }
 }

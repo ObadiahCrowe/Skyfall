@@ -11,6 +11,8 @@ public interface Chunk {
 
     Entity[] getEntities();
 
+    ChunkSection[] getSections();
+
     int getX();
 
     int getZ();
