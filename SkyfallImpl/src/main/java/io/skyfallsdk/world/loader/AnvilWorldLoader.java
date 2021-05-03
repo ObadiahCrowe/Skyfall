@@ -3,12 +3,15 @@ package io.skyfallsdk.world.loader;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
+import io.skyfallsdk.nbt.stream.NBTInputStream;
+import io.skyfallsdk.nbt.stream.NBTOutputStream;
 import io.skyfallsdk.util.FileVisitorCallback;
 import io.skyfallsdk.world.Dimension;
 import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
 import io.skyfallsdk.world.generate.WorldGenerator;
+import io.skyfallsdk.world.loader.AbstractWorldLoader;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.apache.logging.log4j.LogManager;
@@ -26,7 +29,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
-public class AnvilWorldLoader extends AbstractWorldLoader {
+public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOutputStream> {
 
     public AnvilWorldLoader(SkyfallServer server, Path baseDir) {
         super(server, baseDir);
@@ -89,6 +92,16 @@ public class AnvilWorldLoader extends AbstractWorldLoader {
 
     @Override
     public CompletableFuture<World> create(String name, Dimension dimension, WorldGenerator generator) throws IOException {
+        return null;
+    }
+
+    @Override
+    protected SkyfallWorld deserialize(NBTInputStream input) {
+        return null;
+    }
+
+    @Override
+    protected NBTOutputStream serialise(SkyfallWorld world) {
         return null;
     }
 }

@@ -1,17 +1,19 @@
 package io.skyfallsdk.world.loader;
 
 import io.skyfallsdk.SkyfallServer;
+import io.skyfallsdk.nbt.stream.NBTInputStream;
+import io.skyfallsdk.nbt.stream.NBTOutputStream;
 import io.skyfallsdk.world.Dimension;
+import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.generate.WorldGenerator;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class SlimeWorldLoader extends AbstractWorldLoader {
+public class SlimeWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOutputStream> {
 
     public SlimeWorldLoader(SkyfallServer server, Path baseDir) {
         super(server, baseDir);
@@ -44,6 +46,16 @@ public class SlimeWorldLoader extends AbstractWorldLoader {
 
     @Override
     public CompletableFuture<World> create(String name, Dimension dimension, WorldGenerator generator) throws IOException {
+        return null;
+    }
+
+    @Override
+    protected SkyfallWorld deserialize(NBTInputStream input) {
+        return null;
+    }
+
+    @Override
+    protected NBTOutputStream serialise(SkyfallWorld world) {
         return null;
     }
 }

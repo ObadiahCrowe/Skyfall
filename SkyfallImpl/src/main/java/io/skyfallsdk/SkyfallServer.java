@@ -24,7 +24,6 @@ import io.skyfallsdk.util.UtilGitVersion;
 import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.util.http.NetMojangAPI;
 import io.skyfallsdk.world.loader.AbstractWorldLoader;
-import io.skyfallsdk.world.loader.AnvilWorldLoader;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
 import org.apache.logging.log4j.Level;
@@ -36,15 +35,13 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class SkyfallServer implements Server {
 
@@ -139,6 +136,19 @@ public class SkyfallServer implements Server {
             throw new RuntimeException(e);
         }
 
+        logger.info("Loading worlds...");
+        try {
+            Files.walkFileTree(this.worldLoader.getWorldDirectory(), new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    SkyfallServer.this.worldLoader.load(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException e) {
+            logger.warn(e);
+        }
+
         this.consoleThread = new ConsoleThread(this);
         this.consoleThread.setDaemon(true);
         this.consoleThread.setUncaughtExceptionHandler((t, e) -> logger.error("Uncaught exception on thread \"" + t.getName() + "\": " + e.getMessage()));
@@ -204,7 +214,7 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public Logger getLogger(Expansion expansion) {
+    public Logger getLogger(Class<? extends Expansion> expansion) {
         return LogManager.getLogger(Expansion.class);
     }
 

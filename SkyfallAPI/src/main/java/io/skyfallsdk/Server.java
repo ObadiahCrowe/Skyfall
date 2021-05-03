@@ -39,7 +39,11 @@ public interface Server extends ServerCommandSender, PermissionHolder {
 
     Logger getLogger();
 
-    Logger getLogger(Expansion expansion);
+    Logger getLogger(Class<? extends Expansion> expansion);
+
+    default Logger getLogger(Expansion expansion) {
+        return this.getLogger(expansion.getClass());
+    }
 
     Scheduler getScheduler();
 

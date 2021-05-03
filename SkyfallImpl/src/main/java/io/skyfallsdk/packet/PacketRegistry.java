@@ -1,6 +1,7 @@
 package io.skyfallsdk.packet;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
+import com.google.common.reflect.ClassPath;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.packet.exception.PacketException;
@@ -12,11 +13,10 @@ import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
-import org.reflections.Reflections;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PacketRegistry {
@@ -35,20 +35,28 @@ public class PacketRegistry {
 
     static {
         Server.get().getLogger().info("Preparing registration of PacketMappers..");
-        Reflections reflections = new Reflections("io.skyfallsdk.packet.version");
-        Set<Class<? extends NetPacketMapper>> mappers = reflections.getSubTypesOf(NetPacketMapper.class);
 
-        for (Class<? extends NetPacketMapper> mapper : mappers) {
-            try {
-                NetPacketMapper instance = mapper.getConstructor().newInstance();
-                if (!Server.get().getSupportedVersions().contains(instance.getFrom())) {
-                    continue;
+        try {
+            ClassPath.from(PacketRegistry.class.getClassLoader()).getTopLevelClassesRecursive("io.skyfallsdk.packet.version").forEach(info -> {
+                Class<?> raw = info.load();
+
+                if (NetPacketMapper.class.isAssignableFrom(raw) && raw != NetPacketMapper.class) {
+                    try {
+                        NetPacketMapper instance = (NetPacketMapper) raw.getConstructor().newInstance();
+                        if (!Server.get().getSupportedVersions().contains(instance.getFrom())) {
+                            return;
+                        }
+
+                        VERSION_TO_MAPPER.put(instance.getFrom().ordinal(), instance);
+                    } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                        e.printStackTrace();
+                        Server.get().getLogger().error("An error occurred whilst registering a PacketMapper. ", e);
+                    }
                 }
-
-                VERSION_TO_MAPPER.put(instance.getFrom().ordinal(), instance);
-            } catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                Server.get().getLogger().error("An error occurred whilst registering a PacketMapper. ", e);
-            }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+            Server.get().getLogger().error("An error occurred whilst registering a PacketMapper. ", e);
         }
 
         IS_DEBUGGING = ((SkyfallServer) Server.get()).getConfig().isDebugEnabled();

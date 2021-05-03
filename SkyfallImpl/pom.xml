@@ -55,13 +55,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>io.skyfallsdk</groupId>
             <artifactId>SkyfallAPI</artifactId>
             <version>1.0-SNAPSHOT</version>

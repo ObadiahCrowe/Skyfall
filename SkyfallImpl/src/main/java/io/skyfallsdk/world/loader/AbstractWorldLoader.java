@@ -10,12 +10,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 
-public abstract class AbstractWorldLoader implements WorldLoader {
+public abstract class AbstractWorldLoader<I extends InputStream, O extends OutputStream> implements WorldLoader {
 
     protected static final Reference2ReferenceMap<String, SkyfallWorld> WORLDS = new Reference2ReferenceOpenHashMap<>();
 
@@ -48,6 +50,10 @@ public abstract class AbstractWorldLoader implements WorldLoader {
     public Collection<World> getLoadedWorlds() {
         return Collections.unmodifiableCollection(WORLDS.values());
     }
+
+    protected abstract SkyfallWorld deserialize(I input);
+
+    protected abstract O serialise(SkyfallWorld world);
 
     public abstract void unloadAll();
 }
