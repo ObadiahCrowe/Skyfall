@@ -7,6 +7,7 @@ import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
+import io.skyfallsdk.protocol.channel.PluginChannel;
 import io.skyfallsdk.server.ServerState;
 import io.skyfallsdk.util.http.MojangAPI;
 import io.skyfallsdk.permission.PermissionHolder;
@@ -92,6 +93,11 @@ public interface Server extends ServerCommandSender, PermissionHolder {
     WorldLoader getWorldLoader();
 
     <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(T spec);
+
+    PluginChannel getChannel(String name);
+
+    PluginChannel getOrCreateChannel(String name);
+
 
     static class Impl {
         static AtomicReference<Server> IMPL = new AtomicReference<>(null);

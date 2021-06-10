@@ -19,6 +19,7 @@ import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
+import io.skyfallsdk.protocol.channel.PluginChannel;
 import io.skyfallsdk.server.ServerState;
 import io.skyfallsdk.util.UtilGitVersion;
 import io.skyfallsdk.util.http.MojangAPI;
@@ -173,6 +174,9 @@ public class SkyfallServer implements Server {
             logger.info("Saving worlds..");
             this.worldLoader.unloadAll();
 
+            logger.info("Shutting down expansions..");
+            this.expansionRegistry.unloadAllExpansions();
+
             logger.info("Shutting down thread pools..");
             ThreadPool.shutdownAll();
 
@@ -326,6 +330,16 @@ public class SkyfallServer implements Server {
     @Override
     public <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(T spec) {
         return ServerTickRegistry.getTickRegistry(spec);
+    }
+
+    @Override
+    public PluginChannel getChannel(String name) {
+        return null;
+    }
+
+    @Override
+    public PluginChannel getOrCreateChannel(String name) {
+        return null;
     }
 
     @Override

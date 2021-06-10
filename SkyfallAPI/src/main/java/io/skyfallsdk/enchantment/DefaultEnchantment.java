@@ -4,18 +4,18 @@ import io.skyfallsdk.item.Item;
 
 public enum DefaultEnchantment implements Enchantment {
 
-    PROTECTION(0, "minecraft:protection", "Protection"),
-    FIRE_PROTECTION(1, "minecraft:fire_protection", "Fire Protection"),
-    FEATHER_FALLING(2, "minecraft:feather_falling", "Feather Falling"),
-    BLAST_PROTECTION(3, "minecraft:blast_protection", "Blast Protection"),
-    PROJECTILE_PROTECTION(4, "minecraft:projectile_protection", "Projectile Protection"),
+    PROTECTION(0, "minecraft:protection", "Protection", EnchantmentTarget.ARMOUR),
+    FIRE_PROTECTION(1, "minecraft:fire_protection", "Fire Protection", EnchantmentTarget.ARMOUR),
+    FEATHER_FALLING(2, "minecraft:feather_falling", "Feather Falling", EnchantmentTarget.BOOTS),
+    BLAST_PROTECTION(3, "minecraft:blast_protection", "Blast Protection", EnchantmentTarget.ARMOUR),
+    PROJECTILE_PROTECTION(4, "minecraft:projectile_protection", "Projectile Protection", EnchantmentTarget.ARMOUR),
     RESPIRATION(5, "minecraft:respiration", "Respiration"),
     AQUA_AFFINITY(6, "minecraft:aqua_affinity", "Aqua Affinity"),
     THORNS(7, "minecraft:thorns", "Thorns"),
     DEPTH_STRIDER(8, "minecraft:depth_strider", "Depth Strider"),
     FROST_WALKER(9, "minecraft:frost_walker", "Frost Walker"),
-    BINDING_CURSE(10, "minecraft:binding_curse", "Curse of Binding"),
-    SHARPNESS(11, "minecraft:sharpness", "Sharpness"),
+    BINDING_CURSE(10, "minecraft:binding_curse", "Curse of Binding", EnchantmentTarget.values()),
+    SHARPNESS(11, "minecraft:sharpness", "Sharpness", EnchantmentTarget.AXE, EnchantmentTarget.SWORD),
     SMITE(12, "minecraft:smite", "Smite"),
     BANE_OF_ARTHROPODS(13, "minecraft:bane_of_arthropods", "Bane of Arthropods"),
     KNOCKBACK(14, "minecraft:knockback", "Knockback"),
@@ -29,24 +29,26 @@ public enum DefaultEnchantment implements Enchantment {
     POWER(22, "minecraft:power", "Power"),
     PUNCH(23, "minecraft:punch", "Punch"),
     FLAME(24, "minecraft:flame", "Flame"),
-    INFINITY(25, "minecraft:infinity", "Infinity"),
-    LUCK_OF_THE_SEA(26, "minecraft:luck_of_the_sea", "Luck of the Sea"),
-    LURE(27, "minecraft:lure", "Lure"),
-    LOYALTY(28, "minecraft:loyalty", "Loyalty"),
-    IMPALING(29, "minecraft:impaling", "Impaling"),
-    RIPTIDE(30, "minecraft:riptide", "Riptide"),
-    CHANNELING(31, "minecraft:channeling", "Channeling"),
-    MENDING(32, "minecraft:mending", "Mending"),
-    VANISHING_CURSE(33, "minecraft:vanishing_curse", "Curse of Vanishing");
+    INFINITY(25, "minecraft:infinity", "Infinity", EnchantmentTarget.BOW, EnchantmentTarget.CROSSBOW),
+    LUCK_OF_THE_SEA(26, "minecraft:luck_of_the_sea", "Luck of the Sea", EnchantmentTarget.FISHING_ROD),
+    LURE(27, "minecraft:lure", "Lure", EnchantmentTarget.FISHING_ROD),
+    LOYALTY(28, "minecraft:loyalty", "Loyalty", EnchantmentTarget.TRIDENT),
+    IMPALING(29, "minecraft:impaling", "Impaling", EnchantmentTarget.TRIDENT),
+    RIPTIDE(30, "minecraft:riptide", "Riptide", EnchantmentTarget.TRIDENT),
+    CHANNELING(31, "minecraft:channeling", "Channeling", EnchantmentTarget.TRIDENT),
+    MENDING(32, "minecraft:mending", "Mending", EnchantmentTarget.TOOL, EnchantmentTarget.WEAPON),
+    VANISHING_CURSE(33, "minecraft:vanishing_curse", "Curse of Vanishing", EnchantmentTarget.values());
 
     private final int protocolId;
     private final String minecraftId;
     private final String name;
+    private final EnchantmentTarget[] targets;
 
-    DefaultEnchantment(int protocolId, String minecraftId, String name) {
+    DefaultEnchantment(int protocolId, String minecraftId, String name, EnchantmentTarget... targets) {
         this.protocolId = protocolId;
         this.minecraftId = minecraftId;
         this.name = name;
+        this.targets = targets;
     }
 
     @Override
@@ -66,7 +68,7 @@ public enum DefaultEnchantment implements Enchantment {
 
     @Override
     public EnchantmentTarget[] getTargets() {
-        return new EnchantmentTarget[0];
+        return this.targets;
     }
 
     @Override

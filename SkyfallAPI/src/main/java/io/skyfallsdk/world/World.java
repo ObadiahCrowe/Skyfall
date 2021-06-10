@@ -29,8 +29,6 @@ public interface World {
 
     CompletableFuture<Chunk> getChunk(int x, int z);
 
-
-
     default CompletableFuture<Void> unload() {
         return Server.get().getWorldLoader().unload(this);
     }

@@ -2,6 +2,7 @@ package io.skyfallsdk.expansion;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
 
@@ -61,6 +62,16 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
             });
         } catch (IOException e) {
             this.server.getLogger().fatal(e);
+        }
+    }
+
+    public void unloadAllExpansions() {
+        for (Class<? extends Expansion> expansion : EXPANSION_INSTANCES.keySet()) {
+            try {
+                this.unloadExpansion(expansion);
+            } catch (Exception e) {
+                Server.get().getLogger().error(e);
+            }
         }
     }
 
@@ -146,7 +157,12 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
 
     @Override
     public void unloadExpansion(Class<? extends Expansion> expansionClass) {
-        
+        Expansion expansion = EXPANSION_INSTANCES.getOrDefault(expansionClass, null);
+        if (expansion == null) {
+            return;
+        }
+
+        expansion.onShutdown();
     }
 
     @Override

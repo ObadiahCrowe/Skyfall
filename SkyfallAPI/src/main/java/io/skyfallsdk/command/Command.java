@@ -33,6 +33,7 @@ public class Command extends AnnotatedPermissible {
     public static final String WRAPPER_REQUIRED_ARGUMENT = "<%s>";
     public static final String WRAPPER_OPTIONAL_ARGUMENT = "[%s]";
 
+    @SuppressWarnings("rawtypes")
     private static List<CommandExecutorMethod> getExecutorMethods(Command command, Class<?> commandClass, Object commandInstance) {
         List<CommandExecutorMethod> executorMethods = Lists.newArrayList();
         List<TabCompleterMethod> tabCompleterMethods = Lists.newArrayList();
