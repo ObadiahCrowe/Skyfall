@@ -1,5 +1,7 @@
 package io.skyfallsdk;
 
+import io.sentry.Sentry;
+
 public class SkyfallMain {
 
     private static SkyfallServer server;

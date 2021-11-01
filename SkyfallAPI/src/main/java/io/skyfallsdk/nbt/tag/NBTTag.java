@@ -40,7 +40,7 @@ public abstract class NBTTag<T> implements Comparable<NBTTag<?>>, Cloneable, NBT
     public NBTTag(NBTTagType type, String name, T value) {
         Validator.isTrue(type != null, "Please provide a tag type!");
         Validator.isTrue(name != null || type == NBTTagType.END, "Please provide a name for the tag!");
-        Validator.isTrue(value != null, "Please provide a value for the tag!");
+        Validator.isTrue(value != null || type == NBTTagType.END, "Please provide a value for the tag!");
 
         this.type = type;
         this.name = name;

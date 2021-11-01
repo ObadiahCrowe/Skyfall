@@ -2,9 +2,12 @@ package io.skyfallsdk.expansion;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import io.sentry.Sentry;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -39,6 +42,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
                 Files.createDirectory(this.expansionPath);
             } catch (IOException e) {
                 this.server.getLogger().fatal(e);
+                Sentry.captureException(e);
             }
         }
     }
@@ -71,13 +75,14 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
                 this.unloadExpansion(expansion);
             } catch (Exception e) {
                 Server.get().getLogger().error(e);
+                Sentry.captureException(e);
             }
         }
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void loadExpansion(Path path) throws IOException {
+    public void loadExpansion(@NotNull Path path) throws IOException {
         if (!Files.exists(path)) {
             throw new IOException("Could not find any file at: " + path);
         }
@@ -156,7 +161,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
     }
 
     @Override
-    public void unloadExpansion(Class<? extends Expansion> expansionClass) {
+    public void unloadExpansion(@NotNull Class<? extends Expansion> expansionClass) {
         Expansion expansion = EXPANSION_INSTANCES.getOrDefault(expansionClass, null);
         if (expansion == null) {
             return;
@@ -166,23 +171,23 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
     }
 
     @Override
-    public ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass) {
+    public @NotNull ExpansionInfo getExpansionInfo(@NotNull Class<? extends Expansion> expansionClass) {
         return EXPANSION_INFO.getOrDefault(expansionClass, null);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends Expansion> T getExpansion(Class<T> expansionClass) {
+    public <T extends Expansion> T getExpansion(@NotNull Class<T> expansionClass) {
         return (T) EXPANSION_INSTANCES.getOrDefault(expansionClass, null);
     }
 
     @Override
-    public Collection<Expansion> getExpansions() {
+    public @NotNull Collection<Expansion> getExpansions() {
         return Collections.unmodifiableCollection(EXPANSION_INSTANCES.values());
     }
 
     @Override
-    public Thread getLocalThread(Expansion expansion) {
+    public @Nullable Thread getLocalThread(@NotNull Expansion expansion) {
         return EXPANSION_MAIN_THREADS.computeIfAbsent(expansion.getClass(), expansionClass -> {
             Thread thread = PoolSpec.SCHEDULER.newThread(expansion::onStartup);
             thread.setName(thread.getName() + "-" + this.getExpansionInfo(expansionClass).name());

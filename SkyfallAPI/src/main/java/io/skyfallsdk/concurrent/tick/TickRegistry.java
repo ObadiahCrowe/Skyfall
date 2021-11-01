@@ -1,6 +1,7 @@
 package io.skyfallsdk.concurrent.tick;
 
 import io.skyfallsdk.Server;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -14,13 +15,17 @@ public interface TickRegistry<T extends TickSpec<T>> {
         return this.getSpec().getTickLength();
     }
 
-    Optional<Tickable<T>> getById(long id);
+    @NotNull
+    Optional<@NotNull Tickable<T>> getById(long id);
 
-    long getId(Tickable<T> tickable);
+    void register(@NotNull Tickable<T> tickable);
 
-    long getLastExecutionTime(Tickable<T> tickable);
+    long getId(@NotNull Tickable<T> tickable);
+
+    long getLastExecutionTime(@NotNull Tickable<T> tickable);
 
     long getLastExecutionTime(long id);
 
+    @NotNull
     T getSpec();
 }

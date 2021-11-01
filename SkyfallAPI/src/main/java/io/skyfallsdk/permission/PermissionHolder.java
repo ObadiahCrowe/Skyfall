@@ -1,12 +1,14 @@
 package io.skyfallsdk.permission;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface PermissionHolder {
 
-    void addPermission(String permission);
+    void addPermission(@NotNull String permission);
 
-    void removePermission(String permission);
+    void removePermission(@NotNull String permission);
 
-    boolean hasPermission(String permission);
+    boolean hasPermission(@NotNull String permission);
 
     boolean isOp();
 

@@ -12,10 +12,10 @@ import io.skyfallsdk.command.defaults.VersionCommand;
 import io.skyfallsdk.command.defaults.expansion.ExpansionListCommand;
 import io.skyfallsdk.command.defaults.expansion.ExpansionLoadCommand;
 import io.skyfallsdk.command.defaults.expansion.ExpansionUnloadCommand;
+import io.skyfallsdk.command.defaults.world.WorldCommand;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.util.Validator;
 
 import java.util.*;
@@ -44,6 +44,7 @@ public class ServerCommandMap implements CommandMap {
         this.registerCommand(HelpCommand.class);
         this.registerCommand(StopCommand.class);
         this.registerCommand(VersionCommand.class);
+        this.registerCommand(WorldCommand.class);
     }
 
     @Override

@@ -55,7 +55,7 @@ public class SlimeWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
     }
 
     @Override
-    protected NBTOutputStream serialise(SkyfallWorld world) {
+    protected NBTOutputStream serialize(SkyfallWorld world) {
         return null;
     }
 }

@@ -6,7 +6,7 @@ import io.skyfallsdk.chat.event.HoverEvent;
 import io.skyfallsdk.chat.event.HoverType;
 import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class CommandHelp {
 

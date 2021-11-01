@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.parameter.argument;
 
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.util.Collection;
 

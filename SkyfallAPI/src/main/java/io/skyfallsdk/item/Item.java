@@ -1,6 +1,8 @@
 package io.skyfallsdk.item;
 
+import io.skyfallsdk.enchantment.Enchantment;
 import io.skyfallsdk.substance.Substance;
+import org.jetbrains.annotations.NotNull;
 
 public class Item {
 
@@ -19,6 +21,14 @@ public class Item {
 
     public Substance getSubstance() {
         return this.substance;
+    }
+
+    public boolean hasEnchantment(@NotNull Enchantment enchantment) {
+        return false;
+    }
+
+    public int getEnchantmentLevel(@NotNull Enchantment enchantment) {
+        return 0;
     }
 
     public static class Builder implements Cloneable {

@@ -1,4 +1,4 @@
-package io.skyfallsdk.server;
+package io.skyfallsdk.world.option;
 
 public enum Gamemode {
 

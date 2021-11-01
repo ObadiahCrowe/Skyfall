@@ -1,7 +1,7 @@
 package io.skyfallsdk.command.options;
 
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -2,10 +2,7 @@ package io.skyfallsdk.concurrent;
 
 import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;

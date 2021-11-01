@@ -3,68 +3,79 @@ package io.skyfallsdk.inventory;
 import io.skyfallsdk.item.Item;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.substance.Substance;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface Inventory {
 
     int getInventoryId();
 
-    String getTitle();
+    @NotNull String getTitle();
 
-    InventoryType getType();
+    @NotNull InventoryType getType();
 
     int getSlots();
 
-    Item[] getItems();
+    @NotNull Item @Nullable[] getItems();
 
-    Item getItem(int slot);
+    @Nullable Item getItem(int slot);
 
-    void setItem(int slot, Item item);
+    void setItem(int slot, @Nullable Item item);
 
-    void addItem(Substance substance);
+    void addItem(@Nullable Substance substance);
 
-    void addItems(Substance... substances);
+    void addItems(@NotNull Substance @Nullable... substances);
 
-    void addItem(Item item);
+    void addItem(@Nullable Item item);
 
-    void addItems(Item... items);
+    void addItems(@NotNull Item @Nullable... items);
 
     int getNextAvailableSlot();
 
-    int[] getSlotsMatching(Substance substance);
+    int[] getSlotsMatching(@Nullable Substance substance);
 
-    int[] getSlotsMatching(Item item);
+    int[] getSlotsMatching(@Nullable Item item);
 
-    int findFirstContaining(Substance substance);
+    int findFirstContaining(@NotNull Substance substance);
 
-    int findFirstContaining(Item item);
+    int findFirstContaining(@NotNull Item item);
 
-    int findLastContaining(Substance substance);
+    int findLastContaining(@NotNull Substance substance);
 
-    int findLastContaining(Item item);
+    int findLastContaining(@NotNull Item item);
 
     void removeItem(int slot);
 
     void removeItems(int... slots);
 
-    void removeItem(Substance substance);
+    void removeItem(@NotNull Substance substance);
 
-    void removeItems(Substance... substances);
+    void removeItems(@NotNull Substance @NotNull... substances);
 
-    void removeItem(Item item);
+    void removeItem(@NotNull Item item);
 
-    void removeItems(Item... items);
+    void removeItems(@NotNull Item @NotNull... items);
+
+    boolean contains(@NotNull Item item);
+
+    boolean contains(@NotNull Item item, int amount);
+
+    boolean contains(@NotNull Substance substance);
+
+    boolean contains(@NotNull Substance substance, int amount);
 
     void clear();
 
-    void addViewer(Player player);
+    void addViewer(@NotNull Player player);
 
-    void addViewers(Player... players);
+    void addViewers(@NotNull Player @Nullable... players);
 
-    void removeViewer(Player player);
+    void removeViewer(@NotNull Player player);
 
-    void removeViewers(Player... players);
+    void removeViewers(@NotNull Player @Nullable... players);
 
-    List<Player> getViewers();
+    @NotNull Set<? extends @NotNull Player> getViewers();
 }

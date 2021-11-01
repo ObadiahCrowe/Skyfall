@@ -7,11 +7,13 @@ import java.nio.file.Path;
 
 public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
 
-    private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(30_000, 256, 4000);
+    private static final PerformanceConfig DEFAULT_CONFIG = new PerformanceConfig(30_000, 256, 4000, 60);
 
     private int maxPacketSize;
     private int compressionThreshold;
     private int connectionThrottleThreshold;
+
+    private int initialChunkCache;
 
     /**
      * Represents a configuration file.
@@ -20,12 +22,13 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
         super(PerformanceConfig.class);
     }
 
-    private PerformanceConfig(int maxPacketSize, int compressionThreshold, int connectionThrottleThreshold) {
+    private PerformanceConfig(int maxPacketSize, int compressionThreshold, int connectionThrottleThreshold, int initialChunkCache) {
         super(PerformanceConfig.class);
 
         this.maxPacketSize = maxPacketSize;
         this.compressionThreshold = compressionThreshold;
         this.connectionThrottleThreshold = connectionThrottleThreshold;
+        this.initialChunkCache = initialChunkCache;
     }
 
     public int getMaxPacketSize() {
@@ -38,6 +41,10 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
 
     public int getConnectionThrottleThreshold() {
         return this.connectionThrottleThreshold;
+    }
+
+    public int getInitialChunkCache() {
+        return this.initialChunkCache;
     }
 
     @Override

@@ -4,7 +4,7 @@ import io.skyfallsdk.command.parameter.argument.ArgumentCompleter;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.command.util.CommandCompletion;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.lang.reflect.Type;
 import java.util.Collection;

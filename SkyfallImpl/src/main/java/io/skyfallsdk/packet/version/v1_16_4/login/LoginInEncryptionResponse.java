@@ -3,6 +3,7 @@ package io.skyfallsdk.packet.version.v1_16_4.login;
 import io.netty.buffer.ByteBuf;
 import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
+import io.skyfallsdk.net.crypto.NetCrypt;
 import io.skyfallsdk.packet.version.NetPacketIn;
 
 import java.util.Arrays;

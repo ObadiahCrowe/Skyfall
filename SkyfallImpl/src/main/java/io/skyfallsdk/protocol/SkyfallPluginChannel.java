@@ -5,6 +5,7 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.channel.PluginChannel;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,7 +45,16 @@ public class SkyfallPluginChannel implements PluginChannel {
     @Override
     public Set<Player> getPlayers() {
         return this.recipients.stream()
-          .map(uuid -> Server.get().getPlayer(uuid))
+          .map(uuid -> {
+              Player player = Server.get().getPlayer(uuid).orElse(null);
+
+              if (player == null) {
+                  this.recipients.remove(uuid);
+              }
+
+              return player;
+          })
+          .filter(Objects::nonNull)
           .collect(Collectors.toUnmodifiableSet());
     }
 

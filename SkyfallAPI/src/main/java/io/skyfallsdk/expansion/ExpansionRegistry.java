@@ -1,31 +1,36 @@
 package io.skyfallsdk.expansion;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 
 @ThreadSafe
 public interface ExpansionRegistry {
 
-    void loadExpansion(Path path) throws IOException;
+    void loadExpansion(@NotNull Path path) throws IOException;
 
-    default void unloadExpansion(Expansion expansion) {
+    default void unloadExpansion(@NotNull Expansion expansion) {
         this.unloadExpansion(expansion.getClass());
     }
 
-    void unloadExpansion(Class<? extends Expansion> expansionClass);
+    void unloadExpansion(@NotNull Class<? extends Expansion> expansionClass);
 
-    default ExpansionInfo getExpansionInfo(Expansion expansion) {
+    default @NotNull ExpansionInfo getExpansionInfo(@NotNull Expansion expansion) {
         return this.getExpansionInfo(expansion.getClass());
     }
 
-    ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass);
+    @NotNull
+    ExpansionInfo getExpansionInfo(@NotNull Class<? extends Expansion> expansionClass);
 
-    <T extends Expansion> T getExpansion(Class<T> expansionClass);
+    <T extends Expansion> @Nullable T getExpansion(@NotNull Class<T> expansionClass);
 
-    Collection<Expansion> getExpansions();
+    @NotNull
+    Collection<@NotNull Expansion> getExpansions();
 
-    Thread getLocalThread(Expansion expansion);
+    @Nullable
+    Thread getLocalThread(@NotNull Expansion expansion);
 }

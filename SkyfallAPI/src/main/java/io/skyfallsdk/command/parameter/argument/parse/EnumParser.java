@@ -2,7 +2,7 @@ package io.skyfallsdk.command.parameter.argument.parse;
 
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 import io.skyfallsdk.util.UtilMath;
 
 import java.util.Arrays;

@@ -2,7 +2,7 @@ package io.skyfallsdk.command.parameter.context;
 
 import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.parameter.CommandParameter;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class ContextParameter implements CommandParameter<ContextContainer<?>> {
 

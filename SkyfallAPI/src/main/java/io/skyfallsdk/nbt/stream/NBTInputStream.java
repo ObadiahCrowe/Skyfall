@@ -35,7 +35,12 @@ public class NBTInputStream extends DataInputStream {
         Pair<NBTTagType, String> header = NBTHeader.readHeader(this);
         NBTTag<?> tag = header.getType1().newEmptyInstance(header.getType2());
 
-        tag.read(this);
+        try {
+            tag.read(this);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return tag;
+        }
 
         return tag;
     }

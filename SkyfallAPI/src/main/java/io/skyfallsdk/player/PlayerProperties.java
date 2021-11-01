@@ -1,9 +1,9 @@
 package io.skyfallsdk.player;
 
-import javax.annotation.concurrent.Immutable;
+import org.jetbrains.annotations.Unmodifiable;
 
-@Immutable
-public class PlayerProperties {
+@Unmodifiable
+public final class PlayerProperties {
 
     private final String name;
 

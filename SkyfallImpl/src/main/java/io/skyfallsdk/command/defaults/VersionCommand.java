@@ -6,7 +6,7 @@ import io.skyfallsdk.command.options.Alias;
 import io.skyfallsdk.command.options.Command;
 import io.skyfallsdk.command.options.CommandExecutor;
 import io.skyfallsdk.command.options.Sender;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 import io.skyfallsdk.util.UtilGitVersion;
 
 @Command(name = "version", desc = "Displays the current software version.")

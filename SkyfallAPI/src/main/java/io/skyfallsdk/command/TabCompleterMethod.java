@@ -5,7 +5,6 @@ import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.TabCompleter;
 import io.skyfallsdk.command.parameter.CommandParameter;
-import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

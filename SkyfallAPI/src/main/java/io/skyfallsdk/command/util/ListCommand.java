@@ -5,7 +5,7 @@ import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.chat.ChatFormat;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 import io.skyfallsdk.util.UtilMath;
 
 import java.util.Collections;

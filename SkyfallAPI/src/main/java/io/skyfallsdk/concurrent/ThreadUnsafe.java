@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Used to mark a method as unsafe. Synchronizes the entire execution.
+ * Used to mark a method, or class, as thread unsafe. Synchronizes the entire execution.
  */
-@Target(ElementType.METHOD)
+@Target(value = { ElementType.METHOD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ThreadUnsafe {
 
     /**
-     * @return The class to lock on, e. g. the data object being modified
+     * @return The class to lock on, e.g. the data object being modified
      */
     Class value() default Object.class;
 }

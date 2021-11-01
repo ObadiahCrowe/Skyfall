@@ -15,7 +15,6 @@ import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.util.Validator;
 
 import java.lang.reflect.InvocationTargetException;

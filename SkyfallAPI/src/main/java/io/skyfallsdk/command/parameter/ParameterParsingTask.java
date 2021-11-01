@@ -4,7 +4,7 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.concurrent.Scheduler;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class ParameterParsingTask<T> implements Runnable {
 

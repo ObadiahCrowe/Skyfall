@@ -13,7 +13,6 @@ import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.command.parameter.argument.signature.CommandSignature;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadUnsafe;
-import io.skyfallsdk.server.CommandSender;
 
 import java.lang.reflect.Method;
 import java.util.Collection;

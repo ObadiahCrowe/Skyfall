@@ -53,7 +53,7 @@ public abstract class AbstractWorldLoader<I extends InputStream, O extends Outpu
 
     protected abstract SkyfallWorld deserialize(I input);
 
-    protected abstract O serialise(SkyfallWorld world);
+    protected abstract O serialize(SkyfallWorld world);
 
     public abstract void unloadAll();
 }

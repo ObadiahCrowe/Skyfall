@@ -2,29 +2,28 @@ package io.skyfallsdk.bossbar;
 
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.player.Player;
+import io.skyfallsdk.util.Validator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.concurrent.ThreadSafe;
+import java.util.Set;
 import java.util.UUID;
 
-@ThreadSafe
 public class SkyfallBossBar implements BossBar {
 
-    private volatile ChatComponent title;
-
-
     @Override
-    public void sendToPlayer(Player player) {
-
+    public void sendToPlayer(@NotNull Player player) {
+        Validator.notNull(player);
     }
 
     @Override
-    public void removeFromPlayer(Player player) {
-
+    public void removeFromPlayer(@NotNull Player player) {
+        Validator.notNull(player);
     }
 
     @Override
-    public void updateTitle(ChatComponent title) {
-
+    public void updateTitle(@NotNull ChatComponent title) {
+        Validator.notNull(title);
     }
 
     @Override
@@ -33,13 +32,13 @@ public class SkyfallBossBar implements BossBar {
     }
 
     @Override
-    public void updateStyle(BarDivision division) {
-
+    public void updateStyle(@NotNull BarDivision division) {
+        Validator.notNull(division);
     }
 
     @Override
-    public void updateFlags(BarFlag... flags) {
-
+    public void updateFlags(@NotNull BarFlag @NotNull ... flags) {
+        Validator.notNull(flags);
     }
 
     @Override
@@ -48,13 +47,13 @@ public class SkyfallBossBar implements BossBar {
     }
 
     @Override
-    public UUID getUuid() {
+    public @NotNull UUID getUuid() {
         return null;
     }
 
     @Override
-    public ChatComponent getTitle() {
-        return this.title;
+    public @Nullable ChatComponent getTitle() {
+        return null;
     }
 
     @Override
@@ -63,12 +62,12 @@ public class SkyfallBossBar implements BossBar {
     }
 
     @Override
-    public BarColour getColour() {
+    public @NotNull BarColour getColour() {
         return null;
     }
 
     @Override
-    public BarDivision getDivision() {
+    public @NotNull BarDivision getDivision() {
         return null;
     }
 
@@ -80,5 +79,10 @@ public class SkyfallBossBar implements BossBar {
     @Override
     public boolean isDragonBar() {
         return false;
+    }
+
+    @Override
+    public @NotNull Set<? extends @NotNull Player> getRecipients() {
+        return null;
     }
 }

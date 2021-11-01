@@ -1,6 +1,8 @@
 package io.skyfallsdk.world;
 
 import io.skyfallsdk.world.generate.WorldGenerator;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
@@ -23,12 +25,13 @@ public interface WorldLoader {
      * @return The corresponding World if it was found.
      * @throws IOException If the world files are found but an issue occurs whilst loading it.
      */
-    CompletableFuture<Optional<World>> load(Path path) throws IOException;
+    @NotNull
+    CompletableFuture<@NotNull Optional<@Nullable World>> load(@NotNull Path path) throws IOException;
 
     /**
-     * Unloads a world from memory and saves to disk by it's name.
+     * Unloads a world from memory and saves to disk by its name.
      *
-     * @param name Name of the world to unload. Not case sensitive.
+     * @param name Name of the world to unload. Not case-sensitive.
      */
     CompletableFuture<Void> unload(String name);
 
@@ -43,7 +46,7 @@ public interface WorldLoader {
      * Obtains the in-memory version of the World. Will return as {@link Optional#empty()} if no in-memory World
      * was found.
      *
-     * @param name Name of the World to obtain. Not case sensitive.
+     * @param name Name of the World to obtain. Not case-sensitive.
      *
      * @return The world if found, {@link Optional#empty()} if no world by that name was found.
      */
@@ -52,7 +55,7 @@ public interface WorldLoader {
     /**
      * Attempts to obtain a World by it's name, if none of that name was found, it will create a new World.
      *
-     * @param name Name of the World to obtain or create. Not case sensitive.
+     * @param name Name of the World to obtain or create. Not case-sensitive.
      * @param dimension Dimension of the World if creation is required.
      * @param generator Generator of the World if creation is required.
      *
@@ -81,7 +84,7 @@ public interface WorldLoader {
      * @param generator Generator of the World.
      *
      * @return The newly created World.
-     * @throws IOException If the world already exists on disk. Not case sensitive.
+     * @throws IOException If the world already exists on disk. Not case-sensitive.
      */
     CompletableFuture<World> create(String name, Dimension dimension, WorldGenerator generator) throws IOException;
 

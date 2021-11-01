@@ -36,6 +36,22 @@ public class Validator {
         }
     }
 
+    public static <T> void notNull(T[] object) {
+        notNull(object, "The validated object is null.");
+    }
+
+    public static <T> void notNull(T[] object, String message) {
+        if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
+
+        for (T t : object) {
+            if (t == null) {
+                throw new IllegalArgumentException(message);
+            }
+        }
+    }
+
     public static class ValidationException extends RuntimeException {
 
         public ValidationException() {

@@ -4,7 +4,7 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.chat.colour.ChatColour;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.service.Service;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 @Command(name = "stop", desc = "Shuts down the server.")
 @Alias(value = { "shutdown", "exit" })

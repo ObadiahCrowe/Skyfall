@@ -2,7 +2,6 @@ package io.skyfallsdk.command;
 
 import io.skyfallsdk.command.options.Permission;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
 import io.skyfallsdk.server.ServerCommandSender;
 
 import java.lang.reflect.Method;

@@ -3,7 +3,7 @@ package io.skyfallsdk.command.parameter.argument.parse;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class PlayerParser implements ArgumentParser<Player> {
 
@@ -24,11 +24,6 @@ public class PlayerParser implements ArgumentParser<Player> {
                 return (Player) sender;
         }
 
-        Player player = Server.get().getPlayer(value);
-        if (player == null) {
-            throw new ArgumentParseException("Couldn't find player \"" + value + "\"!");
-        }
-
-        return player;
+        return Server.get().getPlayer(value).orElseThrow(() -> new ArgumentParseException("Couldn't find player \"" + value + "\"!"));
     }
 }

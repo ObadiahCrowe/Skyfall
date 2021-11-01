@@ -55,6 +55,13 @@
         </dependency>
 
         <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry</artifactId>
+            <version>5.2.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.skyfallsdk</groupId>
             <artifactId>SkyfallAPI</artifactId>
             <version>1.0-SNAPSHOT</version>

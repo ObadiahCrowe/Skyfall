@@ -1,6 +1,6 @@
 package io.skyfallsdk.command.parameter.argument.parse;
 
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class StringParser implements ArgumentParser<String> {
 

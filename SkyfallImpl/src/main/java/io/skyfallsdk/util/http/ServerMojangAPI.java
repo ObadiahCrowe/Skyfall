@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class NetMojangAPI implements MojangAPI {
+public class ServerMojangAPI implements MojangAPI {
 
     private static final String GET_UUID_URL = "https://api.mojang.com/users/profiles/minecraft/";
     private static final String GET_NAME_HISTORY_URL = "https://api.mojang.com/user/profiles/";

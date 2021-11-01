@@ -8,7 +8,7 @@ import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.util.CommandCompletion;
 import io.skyfallsdk.command.util.CommandHelp;
 import io.skyfallsdk.command.util.ListCommand;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.util.Arrays;
 import java.util.Comparator;

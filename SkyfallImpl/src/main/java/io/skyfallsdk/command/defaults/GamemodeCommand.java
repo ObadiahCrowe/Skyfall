@@ -3,7 +3,7 @@ package io.skyfallsdk.command.defaults;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.Gamemode;
+import io.skyfallsdk.world.option.Gamemode;
 
 @Command(name = "gamemode", desc = "Switch your Gamemode.")
 @Alias(value = { "gm" })

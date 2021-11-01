@@ -2,7 +2,7 @@ package io.skyfallsdk.command.parameter.sender;
 
 import io.skyfallsdk.command.Command;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class SenderPlayerParameter implements SenderParameter<Player> {
 

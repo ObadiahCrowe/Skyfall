@@ -3,7 +3,7 @@ package io.skyfallsdk.command.parameter.argument.parse;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.command.util.CommandCompletion;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.util.Calendar;
 import java.util.Collection;

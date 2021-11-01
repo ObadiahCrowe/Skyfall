@@ -5,11 +5,9 @@ import io.skyfallsdk.command.exception.CommandException;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.argument.Arg;
 import io.skyfallsdk.command.parameter.service.Service;
-import io.skyfallsdk.concurrent.Scheduler;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Command(name = "load", desc = "Loads an Expansion from disk.")

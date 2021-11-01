@@ -1,14 +1,15 @@
 package io.skyfallsdk.concurrent.tick;
 
-import it.unimi.dsi.fastutil.longs.Long2IntArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2LongArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.LongAdder;
 
 public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T> {
 
@@ -23,17 +24,25 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     private final T spec;
     private final AtomicInteger nextId;
     private final Object2LongOpenHashMap<Tickable<T>> tickableToId;
-    private final Long2IntArrayMap executionTimes;
+    private final Long2LongArrayMap executionTimes;
 
     private ServerTickRegistry(T spec) {
         this.spec = spec;
         this.nextId = new AtomicInteger();
         this.tickableToId = new Object2LongOpenHashMap<>();
-        this.executionTimes = new Long2IntArrayMap();
+        this.executionTimes = new Long2LongArrayMap();
+    }
+
+    public @NotNull Object2LongMap.FastEntrySet<@NotNull Tickable<T>> getTickables() {
+        return this.tickableToId.object2LongEntrySet();
+    }
+
+    public void setLastExecutionTime(long tickableId, long lastExecutionTime) {
+        this.executionTimes.put(tickableId, lastExecutionTime);
     }
 
     @Override
-    public Optional<Tickable<T>> getById(long id) {
+    public @NotNull Optional<@NotNull Tickable<T>> getById(long id) {
         return this.tickableToId.object2LongEntrySet().stream()
           .filter(entry -> entry.getLongValue() == id)
           .map(Map.Entry::getKey)
@@ -41,7 +50,12 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     }
 
     @Override
-    public long getId(Tickable<T> tickable) {
+    public void register(@NotNull Tickable<T> tickable) {
+        this.tickableToId.put(tickable, this.nextId.incrementAndGet());
+    }
+
+    @Override
+    public long getId(@NotNull Tickable<T> tickable) {
         if (!this.tickableToId.containsKey(tickable)) {
             throw new NoSuchElementException("This TickRegistry does not include this Tickable.");
         }
@@ -50,7 +64,7 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     }
 
     @Override
-    public long getLastExecutionTime(Tickable<T> tickable) {
+    public long getLastExecutionTime(@NotNull Tickable<T> tickable) {
         return this.executionTimes.get(this.getId(tickable));
     }
 
@@ -60,7 +74,7 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     }
 
     @Override
-    public T getSpec() {
+    public @NotNull T getSpec() {
         return this.spec;
     }
 

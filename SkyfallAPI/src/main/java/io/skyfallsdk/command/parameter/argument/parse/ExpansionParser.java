@@ -4,7 +4,7 @@ import io.skyfallsdk.Server;
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
 import io.skyfallsdk.command.parameter.argument.CommandArgument;
 import io.skyfallsdk.expansion.Expansion;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

@@ -3,7 +3,7 @@ package io.skyfallsdk.command.defaults.expansion;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.command.options.*;
 import io.skyfallsdk.command.parameter.service.Service;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 @Command(name = "list", desc = "Lists all currently loaded Expansions.")
 @Alias(value = { "ls", "l" })

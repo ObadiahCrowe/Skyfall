@@ -1,7 +1,7 @@
 package io.skyfallsdk.command.parameter.argument.parse;
 
 import io.skyfallsdk.command.parameter.argument.ArgumentParseException;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 public class StringArrayParser implements ArgumentParser<String[]> {
 

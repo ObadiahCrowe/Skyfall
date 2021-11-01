@@ -1,14 +1,15 @@
 package io.skyfallsdk;
 
 import com.google.common.collect.Lists;
+import io.sentry.Sentry;
+import io.skyfallsdk.bossbar.BossBar;
+import io.skyfallsdk.bossbar.SkyfallBossBar;
 import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.command.ServerCommandMap;
 import io.skyfallsdk.concurrent.PoolSpec;
-import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.thread.ConsoleThread;
 import io.skyfallsdk.concurrent.tick.ServerTickRegistry;
-import io.skyfallsdk.concurrent.tick.TickRegistry;
 import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
@@ -16,23 +17,27 @@ import io.skyfallsdk.config.ServerConfig;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
+import io.skyfallsdk.inventory.SkyfallInventoryFactory;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
-import io.skyfallsdk.protocol.channel.PluginChannel;
+import io.skyfallsdk.protocol.SkyfallPluginChannelRegistry;
 import io.skyfallsdk.server.ServerState;
+import io.skyfallsdk.spectre.ServerSpectreAPI;
+import io.skyfallsdk.spectre.SpectreAPI;
+import io.skyfallsdk.util.SkyfallSentryAppender;
 import io.skyfallsdk.util.UtilGitVersion;
-import io.skyfallsdk.util.http.MojangAPI;
-import io.skyfallsdk.util.http.NetMojangAPI;
-import io.skyfallsdk.world.loader.AbstractWorldLoader;
+import io.skyfallsdk.util.http.ServerMojangAPI;
 import io.skyfallsdk.world.World;
-import io.skyfallsdk.world.WorldLoader;
+import io.skyfallsdk.world.loader.AbstractWorldLoader;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -57,22 +62,27 @@ public class SkyfallServer implements Server {
     private final Path serverIcon;
 
     private final ServerExpansionRegistry expansionRegistry;
+    private final ServerSpectreAPI spectreAPI;
+    private final SkyfallPluginChannelRegistry pluginChannelRegistry;
     private final ServerCommandMap commandMap;
     private final NetServer server;
 
-    private final NetMojangAPI mojangAPI;
+    private final ServerMojangAPI mojangAPI;
 
-    private final AbstractWorldLoader worldLoader;
+    private final AbstractWorldLoader<?, ?> worldLoader;
+    private final SkyfallInventoryFactory inventoryFactory;
 
     private final ConsoleThread consoleThread;
 
     SkyfallServer() {
+        long startTime = System.currentTimeMillis();
+
         workingDir = Paths.get(System.getProperty("user.dir"));
         logger = LogManager.getLogger(SkyfallServer.class);
         try {
             logger.info("Starting Skyfall version " + UtilGitVersion.getFromSkyfall().getPretty());
         } catch (NullPointerException e) {
-            logger.info("Starting unknown Skyfall version");
+            logger.warn("Starting unknown Skyfall version");
         }
 
         synchronized (this) {
@@ -85,6 +95,19 @@ public class SkyfallServer implements Server {
         logger.info("Loading default configs..");
         this.config = LoadableConfig.getByClass(ServerConfig.class).load();
         this.perfConfig = LoadableConfig.getByClass(PerformanceConfig.class).load();
+
+        if (this.config.getSentryConfig().isEnabled()) {
+            logger.info("Enabling Sentry support..");
+            SkyfallSentryAppender.usingSentry = true;
+            Sentry.init(opt -> {
+                opt.setDsn(this.config.getSentryConfig().getDsn());
+                opt.setTracesSampleRate(this.config.getSentryConfig().getTraceSampleRate());
+
+                opt.setDebug(this.config.isDebugEnabled());
+            });
+        } else {
+            Sentry.close();
+        }
 
         Path serverIcon = workingDir.resolve("server-icon.png");
         this.serverIcon = Files.exists(serverIcon) ? serverIcon : null;
@@ -108,9 +131,11 @@ public class SkyfallServer implements Server {
 
         logger.info("Setting up expansion support...");
         this.expansionRegistry = new ServerExpansionRegistry(this);
+        this.spectreAPI = new ServerSpectreAPI(this);
+        this.pluginChannelRegistry = new SkyfallPluginChannelRegistry();
         this.commandMap = new ServerCommandMap();
 
-        this.mojangAPI = new NetMojangAPI();
+        this.mojangAPI = new ServerMojangAPI();
 
         /*
          * Load all immediately to give them absolute control before the server initialises.
@@ -124,7 +149,7 @@ public class SkyfallServer implements Server {
             // Whilst this may come across as hacky, the idea is to allow expansions to reflectively set their WorldLoader if they so desire.
             // Normally this would be exposed via the API, but we do not wish to have WorldLoader's changed at runtime unless the developer
             // really knows what they're doing.
-            AbstractWorldLoader current = (AbstractWorldLoader) this.getClass().getDeclaredField("worldLoader").get(this);
+            AbstractWorldLoader<?, ?> current = (AbstractWorldLoader<?, ?>) this.getClass().getDeclaredField("worldLoader").get(this);
             if (current == null) {
                 logger.info("Instantiating WorldLoader with the " + this.config.getWorldFormat() + " format.");
                 this.worldLoader = this.config.getWorldFormat().getWorldLoader().getConstructor(SkyfallServer.class, Path.class).newInstance(this, workingDir);
@@ -142,13 +167,20 @@ public class SkyfallServer implements Server {
             Files.walkFileTree(this.worldLoader.getWorldDirectory(), new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    SkyfallServer.this.worldLoader.load(dir);
+                    Path levelDat = dir.resolve("level.dat");
+
+                    if (Files.exists(levelDat)) {
+                        SkyfallServer.this.worldLoader.load(dir);
+                    }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException e) {
             logger.warn(e);
         }
+
+        logger.info("Initialising inventory factory...");
+        this.inventoryFactory = new SkyfallInventoryFactory(this);
 
         this.consoleThread = new ConsoleThread(this);
         this.consoleThread.setDaemon(true);
@@ -158,6 +190,8 @@ public class SkyfallServer implements Server {
         synchronized (this) {
             state = ServerState.RUNNING;
         }
+
+        logger.info("Finished instantiation in " + ((double) (System.currentTimeMillis() - startTime) / 1000) + "s");
 
         Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownInternal, "SF-Shutdown"));
     }
@@ -170,33 +204,23 @@ public class SkyfallServer implements Server {
         try {
             logger.info("Shuttng down Netty server..");
             this.server.shutdown();
-
-            logger.info("Saving worlds..");
-            this.worldLoader.unloadAll();
-
-            logger.info("Shutting down expansions..");
-            this.expansionRegistry.unloadAllExpansions();
-
-            logger.info("Shutting down thread pools..");
-            ThreadPool.shutdownAll();
-
-            logger.info("Saving configs..");
-            this.config.save();
-
-            this.consoleThread.interrupt();
         } catch (InterruptedException e) {
-            logger.error(e);
+            Sentry.captureException(e);
         }
-    }
 
-    @Override
-    public void shutdown() {
-        System.exit(0);
-    }
+        logger.info("Saving worlds..");
+        this.worldLoader.unloadAll();
 
-    @Override
-    public ServerState getState() {
-        return state;
+        logger.info("Shutting down expansions..");
+        this.expansionRegistry.unloadAllExpansions();
+
+        logger.info("Shutting down thread pools..");
+        ThreadPool.shutdownAll();
+
+        logger.info("Saving configs..");
+        this.config.save();
+
+        this.consoleThread.interrupt();
     }
 
     public ServerConfig getConfig() {
@@ -208,68 +232,78 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public Path getPath() {
+    public void shutdown() {
+        System.exit(0);
+    }
+
+    @Override
+    public @NotNull ServerState getState() {
+        return state;
+    }
+
+    @Override
+    public @NotNull Path getPath() {
         return workingDir;
     }
 
     @Override
-    public Logger getLogger() {
+    public @NotNull Logger getLogger() {
         return logger;
     }
 
     @Override
-    public Logger getLogger(Class<? extends Expansion> expansion) {
+    public @NotNull Logger getLogger(Class<? extends Expansion> expansion) {
         return LogManager.getLogger(Expansion.class);
     }
 
     @Override
-    public Scheduler getScheduler() {
+    public @NotNull ThreadPool getScheduler() {
         return ThreadPool.createForSpec(PoolSpec.SCHEDULER);
     }
 
     @Override
-    public ServerCommandMap getCommandMap() {
+    public @NotNull ServerCommandMap getCommandMap() {
         return this.commandMap;
     }
 
     @Override
-    public Player getPlayer(String username) {
-        return null;
+    public @NotNull Optional<@Nullable Player> getPlayer(String username) {
+        return Optional.empty();
     }
 
     @Override
-    public Player getPlayer(UUID uuid) {
-        return null;
+    public @NotNull Optional<@Nullable Player> getPlayer(UUID uuid) {
+        return Optional.empty();
     }
 
     @Override
-    public List<Player> getPlayers() {
+    public @NotNull List<@NotNull Player> getPlayers() {
         return Lists.newArrayList();
     }
 
     @Override
-    public Collection<World> getWorlds() {
+    public @NotNull Collection<@NotNull World> getWorlds() {
         return this.worldLoader.getLoadedWorlds();
     }
 
     @Override
-    public CompletableFuture<Optional<World>> getWorld(String name) {
+    public @NotNull CompletableFuture<@NotNull Optional<@Nullable World>> getWorld(@NotNull String name) {
         return this.worldLoader.get(name);
     }
 
     @Override
-    public String getMotd() {
-        return this.config.getNetworkConfig().getMotd();
+    public @NotNull ChatComponent getMotd() {
+        return null;
     }
 
     @Override
-    public void setMotd(String motd) {
-        this.config.getNetworkConfig().setMotd(motd);
+    public void setMotd(@NotNull ChatComponent motd) {
+
     }
 
     @Override
-    public Path getServerIcon() {
-        return this.serverIcon;
+    public @Nullable Path getServerIcon() {
+        return null;
     }
 
     @Override
@@ -293,73 +327,77 @@ public class SkyfallServer implements Server {
     }
 
     @Override
-    public ServerExpansionRegistry getExpansionRegistry() {
+    public @NotNull ServerExpansionRegistry getExpansionRegistry() {
         return this.expansionRegistry;
     }
 
     @Override
-    public <T extends Expansion> T getExpansion(Class<T> expansionClass) {
-        return this.getExpansionRegistry().getExpansion(expansionClass);
+    public @NotNull SkyfallPluginChannelRegistry getPluginChannelRegistry() {
+        return this.pluginChannelRegistry;
     }
 
     @Override
-    public ExpansionInfo getExpansionInfo(Class<? extends Expansion> expansionClass) {
-        return this.getExpansionRegistry().getExpansionInfo(expansionClass);
+    public <T extends Expansion> @Nullable T getExpansion(@NotNull Class<T> expansionClass) {
+        return this.expansionRegistry.getExpansion(expansionClass);
     }
 
     @Override
-    public MojangAPI getMojangApi() {
+    public @Nullable ExpansionInfo getExpansionInfo(@NotNull Class<? extends Expansion> expansionClass) {
+        return this.expansionRegistry.getExpansionInfo(expansionClass);
+    }
+
+    @Override
+    public @NotNull SpectreAPI getSpectreAPI() {
+        return this.spectreAPI;
+    }
+
+    @Override
+    public @NotNull ServerMojangAPI getMojangApi() {
         return this.mojangAPI;
     }
 
     @Override
-    public List<ProtocolVersion> getSupportedVersions() {
+    public @NotNull List<@NotNull ProtocolVersion> getSupportedVersions() {
         return this.config.getSupportedVersions();
     }
 
     @Override
-    public ProtocolVersion getBaseVersion() {
+    public @NotNull ProtocolVersion getBaseVersion() {
         return this.config.getBaseVersion();
     }
 
     @Override
-    public WorldLoader getWorldLoader() {
+    public @NotNull AbstractWorldLoader getWorldLoader() {
         return this.worldLoader;
     }
 
     @Override
-    public <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(T spec) {
+    public @NotNull <T extends TickSpec<T>> ServerTickRegistry<T> getTickRegistry(@NotNull T spec) {
         return ServerTickRegistry.getTickRegistry(spec);
     }
 
     @Override
-    public PluginChannel getChannel(String name) {
-        return null;
+    public @NotNull SkyfallInventoryFactory getInventoryFactory() {
+        return this.inventoryFactory;
     }
 
     @Override
-    public PluginChannel getOrCreateChannel(String name) {
-        return null;
+    public @NotNull BossBar createNewBossBar() {
+        return new SkyfallBossBar();
     }
 
     @Override
-    public void sendMessage(ChatComponent component) {
-        logger.info(component.getText());
+    public void addPermission(@NotNull String permission) {
+
     }
 
     @Override
-    public void executeCommand(String command) {
-        this.commandMap.dispatch(this, command);
+    public void removePermission(@NotNull String permission) {
+
     }
 
     @Override
-    public void addPermission(String permission) {}
-
-    @Override
-    public void removePermission(String permission) {}
-
-    @Override
-    public boolean hasPermission(String permission) {
+    public boolean hasPermission(@NotNull String permission) {
         return true;
     }
 
@@ -370,4 +408,14 @@ public class SkyfallServer implements Server {
 
     @Override
     public void setOp(boolean op) {}
+
+    @Override
+    public void sendMessage(@NotNull ChatComponent component) {
+        logger.info(component.getText());
+    }
+
+    @Override
+    public void executeCommand(@NotNull String command) {
+        this.commandMap.dispatch(this, command);
+    }
 }

@@ -3,31 +3,26 @@ package io.skyfallsdk.world.loader;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
+import io.skyfallsdk.nbt.file.NBTFile;
 import io.skyfallsdk.nbt.stream.NBTInputStream;
 import io.skyfallsdk.nbt.stream.NBTOutputStream;
+import io.skyfallsdk.nbt.tag.type.TagCompound;
 import io.skyfallsdk.util.FileVisitorCallback;
 import io.skyfallsdk.world.Dimension;
 import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
-import io.skyfallsdk.world.WorldLoader;
 import io.skyfallsdk.world.generate.WorldGenerator;
-import io.skyfallsdk.world.loader.AbstractWorldLoader;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
-import java.util.concurrent.Callable;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 
 public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOutputStream> {
 
@@ -36,26 +31,71 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
     }
 
     @Override
-    public CompletableFuture<Optional<World>> load(Path path) throws IOException {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                FileVisitorCallback visitor = new FileVisitorCallback("level.dat");
-                Files.walkFileTree(this.worldDirectory, visitor);
+    public @NotNull CompletableFuture<@NotNull Optional<@Nullable World>> load(@NotNull Path path) throws IOException {
+        FileVisitorCallback visitor = new FileVisitorCallback("level.dat");
+        Files.walkFileTree(path, visitor);
 
-                Optional<Path> levelDat = visitor.getMatchingPath();
-                if (levelDat.isPresent()) {
-                    return Optional.ofNullable(this.loadInternal(levelDat.get()));
-                }
-            } catch (IOException e) {
-                this.server.getLogger().error(e);
+        Optional<Path> levelDat = visitor.getMatchingPath();
+        if (levelDat.isEmpty()) {
+            return CompletableFuture.completedFuture(Optional.empty());
+        }
+
+        return this.loadInternal(levelDat.get()).thenApply(world -> {
+            if (world != null) {
+                this.server.getLogger().info("Loaded world, \"" + world.getName() + "\", successfully.");
+                WORLDS.put(world.getName(), world);
             }
 
-            return Optional.empty();
-        }, ThreadPool.createForSpec(PoolSpec.WORLD));
+            return Optional.ofNullable(world);
+        });
     }
 
-    private World loadInternal(Path path) {
-        return null;
+    private CompletableFuture<SkyfallWorld> loadInternal(Path path) throws IOException {
+        if (!Files.exists(path)) {
+            throw new IllegalStateException("No level.dat found for: \"" + path.getFileName().toString() + "\". Cannot continue reading world.");
+        }
+
+        final Path parent = path.getParent();
+
+        return CompletableFuture.supplyAsync(() -> {
+            try (NBTInputStream stream = NBTFile.newInputStream(path, true)) {
+                return (TagCompound) ((TagCompound) stream.readTag()).get("Data");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }, ThreadPool.createForSpec(PoolSpec.WORLD)).thenApply(data -> {
+            if (data == null) {
+                return null;
+            }
+
+            Path uid = parent.resolve("uid.dat");
+            if (!Files.exists(uid)) {
+                try (NBTInputStream stream = NBTFile.newInputStream(parent.resolve("uid.dat"), true)) {
+                    UUID levelUuid = new UUID(stream.readLong(), stream.readLong());
+
+                    return new SkyfallWorld(parent, data, levelUuid);
+                } catch (IOException e) {
+                    this.server.getLogger().error("Failed to obtain level UUID for \"" + path.getFileName().toString() + "\", generating a new one.");
+                    return new SkyfallWorld(parent, data, UUID.randomUUID());
+                }
+            } else {
+                return new SkyfallWorld(parent, data, UUID.randomUUID());
+            }
+        }).thenApply(world -> {
+            if (this.server.getPerformanceConfig().getInitialChunkCache() <= 0) {
+                return world;
+            }
+
+            for (int x = 0; x < 5; x++) {
+                for (int z = 0; z < 5; z++) {
+                    world.getChunk(x, z);
+                }
+            }
+
+            return world;
+        });
     }
 
     @Override
@@ -70,7 +110,7 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
 
     @Override
     public CompletableFuture<Void> unload(World world) {
-        if (!WORLDS.containsKey(world.getName().toLowerCase(Locale.ROOT))) {
+        if (!WORLDS.containsKey(world.getName())) {
             throw new IllegalArgumentException("World, " + world.getName() + ", is not currently loaded!");
         }
 
@@ -92,6 +132,11 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
 
     @Override
     public CompletableFuture<World> create(String name, Dimension dimension, WorldGenerator generator) throws IOException {
+        Path worldFolder = this.worldDirectory.resolve(name);
+        if (Files.exists(worldFolder) && Files.isDirectory(worldFolder)) {
+            throw new IOException("A world with the name, \"" + name + "\" already exists.");
+        }
+
         return null;
     }
 
@@ -101,7 +146,7 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
     }
 
     @Override
-    protected NBTOutputStream serialise(SkyfallWorld world) {
+    protected NBTOutputStream serialize(SkyfallWorld world) {
         return null;
     }
 }

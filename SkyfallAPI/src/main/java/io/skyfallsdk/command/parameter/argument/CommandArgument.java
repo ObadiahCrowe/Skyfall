@@ -5,7 +5,7 @@ import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.TabCompleterMethod;
 import io.skyfallsdk.command.parameter.CommandParameter;
 import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;

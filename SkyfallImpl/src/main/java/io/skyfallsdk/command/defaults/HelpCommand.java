@@ -6,7 +6,7 @@ import io.skyfallsdk.command.options.Command;
 import io.skyfallsdk.command.options.CommandExecutor;
 import io.skyfallsdk.command.options.Sender;
 import io.skyfallsdk.command.parameter.service.Service;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 @Command(name = "help", desc = "Displays help for all commands on the server.")
 @Alias(value = { "?" })

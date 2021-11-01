@@ -1,12 +1,11 @@
 package io.skyfallsdk.config;
 
+import com.google.common.collect.Lists;
 import io.skyfallsdk.Server;
-import io.skyfallsdk.chat.ChatComponent;
-import io.skyfallsdk.chat.colour.HexColour;
 import io.skyfallsdk.config.type.YamlConfig;
 import io.skyfallsdk.protocol.ProtocolVersion;
-import io.skyfallsdk.server.Difficulty;
-import io.skyfallsdk.server.Gamemode;
+import io.skyfallsdk.world.option.Difficulty;
+import io.skyfallsdk.world.option.Gamemode;
 import io.skyfallsdk.world.WorldFormat;
 
 import java.nio.file.Path;
@@ -19,6 +18,8 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private static final ServerConfig DEFAULT_CONFIG = new ServerConfig(20, true, Gamemode.SURVIVAL, Difficulty.PEACEFUL);
 
     private ServerNetConfig server;
+    private ServerSentryConfig sentry;
+    private ServerSpectreConfig spectre;
     private boolean debugEnabled;
 
     private int maxPlayers;
@@ -44,6 +45,8 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
         super(ServerConfig.class);
 
         this.server = new ServerNetConfig("Powered by Skyfall.", "0.0.0.0", 25565);
+        this.sentry = new ServerSentryConfig(false, "", 1.0D);
+        this.spectre = new ServerSpectreConfig(false, "", Lists.newArrayList("https://spectre.skyfallsdk.io"));
         this.debugEnabled = false;
 
         this.maxPlayers = maxPlayers;
@@ -63,6 +66,14 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public ServerNetConfig getNetworkConfig() {
         return this.server;
+    }
+
+    public ServerSentryConfig getSentryConfig() {
+        return this.sentry;
+    }
+
+    public ServerSpectreConfig getSpectreConfig() {
+        return this.spectre;
     }
 
     public boolean isDebugEnabled() {
@@ -194,6 +205,78 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
               "motd='" + motd + '\'' +
               ", address='" + address + '\'' +
               ", port=" + port +
+              '}';
+        }
+    }
+
+    public static final class ServerSentryConfig {
+
+        private boolean enabled;
+        private String dsn;
+        private double traceSampleRate;
+
+        public ServerSentryConfig() {}
+
+        public ServerSentryConfig(boolean enabled, String dsn, double traceSampleRate) {
+            this.enabled = enabled;
+            this.dsn = dsn;
+            this.traceSampleRate = traceSampleRate;
+        }
+
+        public boolean isEnabled() {
+            return this.enabled;
+        }
+
+        public String getDsn() {
+            return this.dsn;
+        }
+
+        public double getTraceSampleRate() {
+            return this.traceSampleRate;
+        }
+
+        @Override
+        public String toString() {
+            return "ServerSentryConfig{" +
+              "enabled=" + enabled +
+              ", dsn='" + dsn + '\'' +
+              ", traceSampleRate=" + traceSampleRate +
+              '}';
+        }
+    }
+
+    public static final class ServerSpectreConfig {
+
+        private boolean enabled;
+        private String apiKey;
+        private List<String> repositories;
+
+        public ServerSpectreConfig() {}
+
+        public ServerSpectreConfig(boolean enabled, String apiKey, List<String> repositories) {
+            this.enabled = enabled;
+            this.apiKey = apiKey;
+            this.repositories = repositories;
+        }
+
+        public boolean isEnabled() {
+            return this.enabled;
+        }
+
+        public String getApiKey() {
+            return this.apiKey;
+        }
+
+        public List<String> getRepositories() {
+            return this.repositories;
+        }
+
+        @Override
+        public String toString() {
+            return "ServerSpectreConfig{" +
+              "enabled=" + enabled +
+              ", apiKey='" + apiKey + '\'' +
+              ", repositories=" + repositories +
               '}';
         }
     }

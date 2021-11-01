@@ -1,42 +1,48 @@
 package io.skyfallsdk.protocol.channel;
 
 import io.skyfallsdk.Server;
+import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.subscription.Subscribable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface PluginChannel extends Subscribable {
 
-    static PluginChannel getChannel(String name) {
-        return Server.get().getChannel(name);
+    static @NotNull Optional<@Nullable PluginChannel> getChannel(@NotNull String channelId) {
+        return Server.get().getChannel(channelId);
     }
 
-    static PluginChannel getOrCreate(String name) {
-        return Server.get().getOrCreateChannel(name);
+    static @NotNull PluginChannel getOrCreate(@NotNull Expansion expansion, @NotNull String channelId) {
+        return Server.get().getOrCreateChannel(expansion, channelId);
     }
 
+    @NotNull
     String getName();
 
-    void addPlayer(Player player);
+    void addPlayer(@NotNull Player player);
 
-    default void addPlayers(Player... players) {
+    default void addPlayers(@NotNull Player @NotNull... players) {
         for (Player player : players) {
             this.addPlayer(player);
         }
     }
 
-    boolean hasPlayer(Player player);
+    boolean hasPlayer(@NotNull Player player);
 
-    void removePlayer(Player player);
+    void removePlayer(@NotNull Player player);
 
-    default void removePlayers(Player... players) {
+    default void removePlayers(@NotNull Player @NotNull... players) {
         for (Player player : players) {
             this.removePlayer(player);
         }
     }
 
-    Set<Player> getPlayers();
+    @NotNull
+    Set<@NotNull Player> getPlayers();
 
     default void send(byte[] message) {
         for (Player player : this.getPlayers()) {

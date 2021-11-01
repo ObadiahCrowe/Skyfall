@@ -130,4 +130,11 @@ public class TagCompound extends NBTTag<List<NBTTag<?>>> implements Map<String, 
     public Iterator<NBTTag<?>> iterator() {
         return this.backingMap.values().iterator();
     }
+
+    @Override
+    public String toString() {
+        return "TagCompound{" +
+          "backingMap=" + backingMap +
+          '}';
+    }
 }

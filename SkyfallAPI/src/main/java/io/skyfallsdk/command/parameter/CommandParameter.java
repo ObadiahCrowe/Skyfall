@@ -14,7 +14,7 @@ import io.skyfallsdk.command.parameter.sender.SenderPlayerParameter;
 import io.skyfallsdk.command.parameter.service.Service;
 import io.skyfallsdk.command.parameter.service.ServiceParameter;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.server.CommandSender;
+import io.skyfallsdk.command.CommandSender;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
