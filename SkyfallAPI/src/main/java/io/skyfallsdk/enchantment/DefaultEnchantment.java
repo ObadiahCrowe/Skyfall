@@ -73,6 +73,6 @@ public enum DefaultEnchantment implements Enchantment {
 
     @Override
     public boolean hasEnchantment(Item item) {
-        return false;
+        return item.hasEnchantment(this);
     }
 }

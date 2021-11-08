@@ -9,6 +9,9 @@ import io.skyfallsdk.net.NetClient;
 import io.skyfallsdk.net.NetData;
 import io.skyfallsdk.net.crypto.NetCrypt;
 import io.skyfallsdk.packet.version.NetPacketIn;
+import io.skyfallsdk.player.Player;
+import io.skyfallsdk.player.PlayerProperties;
+import io.skyfallsdk.player.SkyfallPlayer;
 import io.skyfallsdk.util.http.response.ResponseNameHistory;
 
 import java.util.UUID;
@@ -39,9 +42,13 @@ public class LoginInStart extends NetPacketIn implements io.skyfallsdk.packet.lo
 
                 connection.sendPacket(new LoginOutEncryptionRequest(serverId, crypt.getKeyPair().getPublic().getEncoded(), crypt.getToken()));
             } else {
-                // TODO: 11/12/2020 Change this, this is solely test code until crypto and world loading is somewhat done
-                connection.disconnect(ChatComponent.from("» rip u «").setColour(ChatColour.RED).addExtra(ChatComponent.from(" lol")
-                  .setColour(HexColour.of(114, 152, 214))));
+                LoginOutSuccess success = new LoginOutSuccess(connection);
+
+                connection.sendPacket(success).addListener(future -> {
+                    SkyfallPlayer player = new SkyfallPlayer(connection, new PlayerProperties("textures", "", ""));
+
+                    player.spawn();
+                });
             }
         });
 

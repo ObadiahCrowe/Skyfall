@@ -1,6 +1,7 @@
 package io.skyfallsdk.world;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
@@ -9,6 +10,7 @@ import io.skyfallsdk.concurrent.tick.ServerTickRegistry;
 import io.skyfallsdk.concurrent.tick.TickRegistry;
 import io.skyfallsdk.concurrent.tick.TickStage;
 import io.skyfallsdk.entity.Entity;
+import io.skyfallsdk.entity.SkyfallEntity;
 import io.skyfallsdk.nbt.stream.NBTInputStream;
 import io.skyfallsdk.nbt.tag.type.TagCompound;
 import io.skyfallsdk.nbt.tag.type.TagString;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicLong;
@@ -52,6 +55,9 @@ public class SkyfallWorld implements World {
     private final Dimension dimension;
     private final SkyfallWorldBorder worldBorder;
     private final SkyfallWeather weather;
+
+    private final Set<SkyfallPlayer> players;
+    private final Set<SkyfallEntity> entities;
 
     private final List<GameRule> gameRules;
     private Gamemode gamemode;
@@ -85,9 +91,16 @@ public class SkyfallWorld implements World {
           (int) data.get("thunderTime").getValue()
         );
 
+        this.players = Sets.newConcurrentHashSet();
+        this.entities = Sets.newConcurrentHashSet();
+
         this.gameRules = Lists.newArrayList();
         this.gamemode = Gamemode.values()[(int) data.get("GameType").getValue()];
         this.difficulty = Difficulty.values()[(byte) data.get("Difficulty").getValue()];
+    }
+
+    public void addToWorld(@NotNull SkyfallPlayer player) {
+        //
     }
 
     @Override
@@ -189,13 +202,13 @@ public class SkyfallWorld implements World {
     }
 
     @Override
-    public @NotNull List<@NotNull Entity> getEntities() {
-        return null;
+    public @NotNull Set<@NotNull SkyfallEntity> getEntities() {
+        return this.entities;
     }
 
     @Override
-    public @NotNull List<@NotNull SkyfallPlayer> getPlayers() {
-        return null;
+    public @NotNull Set<@NotNull SkyfallPlayer> getPlayers() {
+        return this.players;
     }
 
     @Override

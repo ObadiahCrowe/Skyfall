@@ -1,22 +1,68 @@
 package io.skyfallsdk.player;
 
+import io.skyfallsdk.Server;
+import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.chat.ChatComponent;
+import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.entity.EntityType;
 import io.skyfallsdk.entity.SkyfallEntity;
+import io.skyfallsdk.inventory.SkyfallPlayerInventory;
 import io.skyfallsdk.inventory.type.entity.EntityInventory;
+import io.skyfallsdk.inventory.type.entity.PlayerInventory;
 import io.skyfallsdk.net.NetClient;
+import io.skyfallsdk.world.Position;
+import io.skyfallsdk.world.SkyfallWorld;
+import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.option.Gamemode;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class SkyfallPlayer extends SkyfallEntity implements Player {
-    @Override
-    public EntityType getType() {
-        return null;
+
+    private final NetClient client;
+    private final PlayerProperties properties;
+
+    private final SkyfallPlayerInventory inventory;
+
+    private Position position;
+
+    public SkyfallPlayer(@NotNull NetClient client, @NotNull PlayerProperties properties) {
+        this.client = client;
+        this.properties = properties;
+
+        this.inventory = new SkyfallPlayerInventory(this);
     }
 
-    @Override
-    public EntityInventory getInventory() {
-        return null;
+    public void spawn() {
+        Server.get().getWorldLoader().get("world").thenAccept(potential -> {
+            SkyfallWorld first = (SkyfallWorld) potential.orElseGet(() -> Server.get().getWorldLoader().getLoadedWorlds().toArray(World[]::new)[0]);
+            if (first == null) {
+                throw new IllegalStateException("No worlds have been loaded! Cannot spawn an entity.");
+            }
+
+            System.out.println("found first: " + first.getName());
+
+            this.position = new Position(first, this.position.getX(), this.position.getY(), this.position.getZ());
+
+            first.addToWorld(this);
+
+            int chunkX = this.position.getChunkX();
+            int chunkZ = this.position.getChunkZ();
+
+            PerformanceConfig config = ((SkyfallServer) Server.get()).getPerformanceConfig();
+
+            int radius = (int) Math.max(7, Math.sqrt(config.getInitialChunkCache()));
+
+            for (int x = chunkX - radius; x < chunkX + radius; x++) {
+                for (int z = chunkZ - radius; z < chunkZ + radius; z++) {
+                    first.getChunk(chunkX, chunkZ, true).thenApply(chunk -> {
+
+                        return chunk;
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -66,7 +112,7 @@ public class SkyfallPlayer extends SkyfallEntity implements Player {
 
     @Override
     public @NotNull NetClient getClient() {
-        return null;
+        return this.client;
     }
 
     @Override
@@ -77,6 +123,11 @@ public class SkyfallPlayer extends SkyfallEntity implements Player {
     @Override
     public @NotNull PlayerProperties getProperties() {
         return null;
+    }
+
+    @Override
+    public SkyfallPlayerInventory getInventory() {
+        return this.inventory;
     }
 
     @Override

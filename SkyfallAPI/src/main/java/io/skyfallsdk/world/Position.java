@@ -23,6 +23,14 @@ public class Position extends AbstractVector<Position> {
         this.pitch = 0.0F;
     }
 
+    public int getChunkX() {
+        return (int) this.x >> 4;
+    }
+
+    public int getChunkZ() {
+        return (int) this.z >> 4;
+    }
+
     public World getWorld() {
         return this.world;
     }

@@ -1,6 +1,9 @@
 package io.skyfallsdk.player;
 
 import io.skyfallsdk.entity.EntityLiving;
+import io.skyfallsdk.entity.EntityType;
+import io.skyfallsdk.inventory.type.entity.EntityInventory;
+import io.skyfallsdk.inventory.type.entity.PlayerInventory;
 import io.skyfallsdk.permission.PermissionHolder;
 import io.skyfallsdk.protocol.client.ClientInfo;
 import io.skyfallsdk.command.CommandSender;
@@ -20,6 +23,11 @@ public interface Player extends EntityLiving, CommandSender, PermissionHolder {
         return this.getClient().getUuid();
     }
 
+    @Override
+    default EntityType getType() {
+        return EntityType.PLAYER;
+    }
+
     @NotNull
     ClientInfo getClient();
 
@@ -28,6 +36,9 @@ public interface Player extends EntityLiving, CommandSender, PermissionHolder {
 
     @NotNull
     PlayerProperties getProperties();
+
+    @Override
+    PlayerInventory getInventory();
 
     boolean isInvulnerable();
 

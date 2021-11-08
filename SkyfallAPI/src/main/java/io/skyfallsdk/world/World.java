@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -57,10 +58,10 @@ public interface World extends Tickable<DefaultTickSpec> {
     Weather getWeather();
 
     @NotNull
-    List<@NotNull Entity> getEntities();
+    Set<? extends @NotNull Entity> getEntities();
 
     @NotNull
-    List<@NotNull ? extends Player> getPlayers();
+    Set<? extends @NotNull Player> getPlayers();
 
     @NotNull
     default CompletableFuture<@NotNull Chunk> getChunk(int x, int z) {

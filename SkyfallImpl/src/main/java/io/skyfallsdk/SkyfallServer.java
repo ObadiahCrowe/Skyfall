@@ -14,6 +14,8 @@ import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
 import io.skyfallsdk.config.ServerConfig;
+import io.skyfallsdk.enchantment.EnchantmentRegistry;
+import io.skyfallsdk.enchantment.SkyfallEnchantmentRegistry;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
@@ -71,6 +73,7 @@ public class SkyfallServer implements Server {
 
     private final AbstractWorldLoader<?, ?> worldLoader;
     private final SkyfallInventoryFactory inventoryFactory;
+    private final SkyfallEnchantmentRegistry enchantmentRegistry;
 
     private final ConsoleThread consoleThread;
 
@@ -181,6 +184,8 @@ public class SkyfallServer implements Server {
 
         logger.info("Initialising inventory factory...");
         this.inventoryFactory = new SkyfallInventoryFactory(this);
+
+        this.enchantmentRegistry = new SkyfallEnchantmentRegistry();
 
         this.consoleThread = new ConsoleThread(this);
         this.consoleThread.setDaemon(true);
@@ -379,6 +384,11 @@ public class SkyfallServer implements Server {
     @Override
     public @NotNull SkyfallInventoryFactory getInventoryFactory() {
         return this.inventoryFactory;
+    }
+
+    @Override
+    public @NotNull EnchantmentRegistry getEnchantmentRegistry() {
+        return this.enchantmentRegistry;
     }
 
     @Override

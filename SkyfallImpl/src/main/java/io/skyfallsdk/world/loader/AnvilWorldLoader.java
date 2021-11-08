@@ -95,6 +95,10 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
             }
 
             return world;
+        }).thenApply(world -> {
+
+
+            return world;
         });
     }
 

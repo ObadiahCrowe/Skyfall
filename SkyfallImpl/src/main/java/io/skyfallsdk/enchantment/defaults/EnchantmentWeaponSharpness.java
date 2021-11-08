@@ -1,6 +1,8 @@
 package io.skyfallsdk.enchantment.defaults;
 
 import io.skyfallsdk.enchantment.DefaultEnchantment;
+import io.skyfallsdk.enchantment.Enchantment;
+import io.skyfallsdk.enchantment.EnchantmentTarget;
 import io.skyfallsdk.entity.EntityLiving;
 import io.skyfallsdk.event.entity.EntityDamageEntityEvent;
 import io.skyfallsdk.item.Item;

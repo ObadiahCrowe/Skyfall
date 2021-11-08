@@ -6,6 +6,7 @@ import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.concurrent.Scheduler;
 import io.skyfallsdk.concurrent.tick.TickRegistry;
 import io.skyfallsdk.concurrent.tick.TickSpec;
+import io.skyfallsdk.enchantment.EnchantmentRegistry;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
@@ -131,6 +132,9 @@ public interface Server extends ServerCommandSender {
 
     @NotNull
     InventoryFactory getInventoryFactory();
+
+    @NotNull
+    EnchantmentRegistry getEnchantmentRegistry();
 
     @NotNull
     BossBar createNewBossBar();
