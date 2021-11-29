@@ -1,5 +1,7 @@
 package io.skyfallsdk.util.http.response;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 public class ResponseNameToUuid {
@@ -9,18 +11,25 @@ public class ResponseNameToUuid {
     private final boolean legacy;
     private final boolean demo;
 
-    public ResponseNameToUuid(UUID uuid, String name, boolean legacy, boolean demo) {
+    public ResponseNameToUuid(@NotNull UUID uuid, @NotNull String name) {
+        this.uuid = uuid;
+        this.name = name;
+        this.legacy = false;
+        this.demo = false;
+    }
+
+    public ResponseNameToUuid(@NotNull UUID uuid, @NotNull String name, boolean legacy, boolean demo) {
         this.uuid = uuid;
         this.name = name;
         this.legacy = legacy;
         this.demo = demo;
     }
 
-    public UUID getUuid() {
+    public @NotNull UUID getUuid() {
         return this.uuid;
     }
 
-    public String getName() {
+    public @NotNull String getName() {
         return this.name;
     }
 

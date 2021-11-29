@@ -1,10 +1,12 @@
 package io.skyfallsdk.util.http;
 
+import io.skyfallsdk.concurrent.ThreadSafe;
 import io.skyfallsdk.player.PlayerProperties;
 import io.skyfallsdk.util.http.response.ResponseNameHistory;
 import io.skyfallsdk.util.http.response.ResponseNameToUuid;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.concurrent.ThreadSafe;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -21,19 +23,31 @@ public interface MojangAPI {
      *
      * @return The corresponding UUID, {@return null} if the player does not exist.
      */
-    default CompletableFuture<UUID> getUuid(String username) {
+    default @NotNull CompletableFuture<@Nullable UUID> getUuid(@NotNull String username) {
         return this.getUuidAtTime(username, System.currentTimeMillis());
     }
 
-    CompletableFuture<UUID> getUuidAtTime(String username, long timestamp);
+    @NotNull CompletableFuture<@Nullable UUID> getUuidAtTime(@NotNull String username, long timestamp);
 
-    CompletableFuture<List<ResponseNameHistory>> getNameHistory(UUID uuid);
+    @NotNull CompletableFuture<@NotNull List<@NotNull ResponseNameHistory>> getNameHistory(@NotNull UUID uuid);
 
-    default CompletableFuture<List<ResponseNameToUuid>> getUuidsFromUsernames(String... usernames) {
+    default @NotNull CompletableFuture<@NotNull List<@NotNull ResponseNameToUuid>> getUuidsFromUsernames(@NotNull String @NotNull... usernames) {
         return this.getUuidsFromUsernames(Arrays.asList(usernames));
     }
 
-    CompletableFuture<List<ResponseNameToUuid>> getUuidsFromUsernames(Collection<String> usernames);
+    @NotNull CompletableFuture<@NotNull List<@NotNull ResponseNameToUuid>> getUuidsFromUsernames(@NotNull Collection<@NotNull String> usernames);
 
-    CompletableFuture<PlayerProperties> getPlayerProperties(UUID uuid);
+    default @NotNull CompletableFuture<@Nullable PlayerProperties> getPlayerProperties(@NotNull String username) {
+        return this.getUuid(username).thenComposeAsync(uuid -> {
+            if (uuid == null) {
+                return null;
+            }
+
+            return this.getPlayerProperties(uuid);
+        });
+    }
+
+    @NotNull CompletableFuture<@Nullable PlayerProperties> getPlayerProperties(@NotNull UUID uuid);
+
+    @NotNull CompletableFuture<@NotNull Boolean> checkIfBlacklisted(@NotNull String domainName);
 }
