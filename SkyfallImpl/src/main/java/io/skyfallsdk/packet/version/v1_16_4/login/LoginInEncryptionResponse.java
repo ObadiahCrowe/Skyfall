@@ -44,5 +44,7 @@ public class LoginInEncryptionResponse extends NetPacketIn implements io.skyfall
 
         int verifySize = NetData.readVarInt(buf);
         this.verifyToken = NetData.readByteArray(buf, verifySize);
+
+
     }
 }

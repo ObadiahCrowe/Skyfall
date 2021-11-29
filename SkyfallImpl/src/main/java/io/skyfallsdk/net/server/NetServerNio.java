@@ -37,10 +37,6 @@ public class NetServerNio extends NetServer {
           .option(ChannelOption.SO_BACKLOG, 128)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-        if (System.getProperty("os.name").contains("Windows")) {
-            bootstrap.option(ChannelOption.TCP_NODELAY, true);
-        }
-
         this.future = bootstrap.bind(this.getAddress(), this.getPort());
     }
 

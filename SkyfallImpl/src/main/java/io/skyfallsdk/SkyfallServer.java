@@ -141,13 +141,6 @@ public class SkyfallServer implements Server {
 
         this.mojangAPI = new ServerMojangAPI();
 
-        this.mojangAPI.getUuidsFromUsernames(Collections.singleton("obadiahio")).thenAccept(list -> {
-            System.out.println("got values");
-            for (ResponseNameToUuid resp : list) {
-                System.out.println(resp.toString());
-            }
-        });
-
         /*
          * Load all immediately to give them absolute control before the server initialises.
          */

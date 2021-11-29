@@ -38,7 +38,7 @@ public class PlayOutChunkData extends io.skyfallsdk.packet.play.PlayOutChunkData
 
     @Override
     public TagCompound getHeightMaps() {
-        return null;
+        return new TagCompound("");
     }
 
     @Override

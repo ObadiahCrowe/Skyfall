@@ -45,17 +45,12 @@ public class LoginInStart extends NetPacketIn implements io.skyfallsdk.packet.lo
                 LoginOutSuccess success = new LoginOutSuccess(connection);
 
                 connection.sendPacket(success).addListener(future -> {
-                    SkyfallPlayer player = new SkyfallPlayer(connection, new PlayerProperties("textures", "", ""));
+                    Server.get().getMojangApi().getPlayerProperties(success.getUuid()).thenAcceptAsync(properties -> {
+                        SkyfallPlayer player = new SkyfallPlayer(connection, properties == null ? new PlayerProperties("textures", "", "") : properties);
 
-                    player.spawn();
+                        player.spawn();
+                    });
                 });
-            }
-        });
-
-
-        Server.get().getMojangApi().getNameHistory(UUID.fromString("634e9b55-2a0a-4ac2-a05f-66bfe838bc84")).thenAccept(list -> {
-            for (ResponseNameHistory hist : list) {
-                System.out.println(hist.toString());
             }
         });
     }

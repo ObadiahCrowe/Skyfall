@@ -10,9 +10,11 @@ import io.skyfallsdk.inventory.SkyfallPlayerInventory;
 import io.skyfallsdk.inventory.type.entity.EntityInventory;
 import io.skyfallsdk.inventory.type.entity.PlayerInventory;
 import io.skyfallsdk.net.NetClient;
+import io.skyfallsdk.packet.play.PlayOutChunkData;
 import io.skyfallsdk.world.Position;
 import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
+import io.skyfallsdk.world.chunk.SkyfallChunk;
 import io.skyfallsdk.world.option.Gamemode;
 import org.jetbrains.annotations.NotNull;
 
@@ -57,6 +59,7 @@ public class SkyfallPlayer extends SkyfallEntity implements Player {
             for (int x = chunkX - radius; x < chunkX + radius; x++) {
                 for (int z = chunkZ - radius; z < chunkZ + radius; z++) {
                     first.getChunk(chunkX, chunkZ, true).thenApply(chunk -> {
+                        this.getClient().sendPacket(PlayOutChunkData.make(this.getClient().getVersion(), (SkyfallChunk) chunk));
 
                         return chunk;
                     });
