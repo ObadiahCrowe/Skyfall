@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThreadFactory, Thread.UncaughtExceptionHandler {
 
-    public static final PoolSpec CHUNKS = new PoolSpec("SF-Chunks", 4, false);
+    public static final PoolSpec CHUNKS = new PoolSpec("SF-Chunks", 4, true);
 
     public static final PoolSpec ENTITIES = new PoolSpec("SF-Entities", 4, true);
     public static final PoolSpec PLAYERS = new PoolSpec("SF-Players", 4, false);

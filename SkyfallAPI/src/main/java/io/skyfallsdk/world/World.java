@@ -5,6 +5,7 @@ import io.skyfallsdk.concurrent.tick.DefaultTickSpec;
 import io.skyfallsdk.concurrent.tick.Tickable;
 import io.skyfallsdk.entity.Entity;
 import io.skyfallsdk.player.Player;
+import io.skyfallsdk.world.generate.WorldGenerator;
 import io.skyfallsdk.world.option.Difficulty;
 import io.skyfallsdk.world.option.Gamemode;
 import io.skyfallsdk.world.block.Block;
@@ -14,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -32,11 +32,29 @@ public interface World extends Tickable<DefaultTickSpec> {
     Path getDirectory();
 
     @NotNull
+    WorldGenerator getGenerator();
+
+    @NotNull
+    Position getSpawnPosition();
+
+    void setSpawnPosition(@NotNull Position position);
+
+    @NotNull
     CompletableFuture<@NotNull Optional<@Nullable Block>> getBlockAt(@NotNull Position position);
 
     default @NotNull CompletableFuture<@NotNull Optional<@Nullable Block>> getBlockAt(int x, int y, int z) {
         return this.getBlockAt(new Position(this, x, y, z));
     }
+
+    @NotNull
+    CompletableFuture<@Nullable Biome> getBiomeAt(@NotNull Position position);
+
+    default @NotNull CompletableFuture<@Nullable Biome> getBiomeAt(int x, int y, int z) {
+        return this.getBiomeAt(new Position(this, x, y, z));
+    }
+
+    @NotNull
+    CompletableFuture<Void> setBiomeAt(@NotNull Position position, @NotNull Biome biome);
 
     @NotNull
     Dimension getDimension();

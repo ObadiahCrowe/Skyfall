@@ -8,6 +8,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -91,10 +92,16 @@ public interface WorldLoader {
     /**
      * @return All in-memory Worlds.
      */
-    Collection<World> getLoadedWorlds();
+    @NotNull Collection<@NotNull World> getLoadedWorlds();
 
     /**
      * @return Directory housing all world folders.
      */
-    Path getWorldDirectory();
+    @NotNull Path getWorldDirectory();
+
+    void registerWorldGenerator(@NotNull WorldGenerator generator);
+
+    void unregisterWorldGenerator(@NotNull WorldGenerator generator);
+
+    @NotNull Collection<@NotNull WorldGenerator> getWorldGenerators();
 }

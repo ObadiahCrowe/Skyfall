@@ -5,5 +5,7 @@ import io.skyfallsdk.nbt.tag.type.TagCompound;
 
 public interface ChunkSection {
 
-    Entity[] getEntities();
+    int getIndexY();
+
+    boolean isEmpty();
 }

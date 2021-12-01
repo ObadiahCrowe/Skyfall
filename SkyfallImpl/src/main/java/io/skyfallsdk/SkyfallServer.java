@@ -208,7 +208,7 @@ public class SkyfallServer implements Server {
         }
 
         try {
-            logger.info("Shuttng down Netty server..");
+            logger.info("Shutting down Netty server..");
             this.server.shutdown();
         } catch (InterruptedException e) {
             Sentry.captureException(e);

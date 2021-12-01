@@ -1,13 +1,16 @@
 package io.skyfallsdk.world.loader;
 
 import io.skyfallsdk.SkyfallServer;
+import io.skyfallsdk.util.Validator;
 import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.WorldLoader;
+import io.skyfallsdk.world.generate.WorldGenerator;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +19,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractWorldLoader<I extends InputStream, O extends OutputStream> implements WorldLoader {
 
     protected static final Reference2ReferenceMap<String, SkyfallWorld> WORLDS = new Reference2ReferenceOpenHashMap<>();
+    protected static final Reference2ReferenceMap<Class<? extends WorldGenerator>, WorldGenerator> GENERATORS = new Reference2ReferenceOpenHashMap<>();
 
     protected final SkyfallServer server;
     protected final Path worldDirectory;
@@ -41,6 +46,10 @@ public abstract class AbstractWorldLoader<I extends InputStream, O extends Outpu
         this.worldDirectory = worldDirectory;
     }
 
+    protected void registerDefaultGenerators() {
+
+    }
+
     @Override
     public Path getWorldDirectory() {
         return this.worldDirectory;
@@ -49,6 +58,29 @@ public abstract class AbstractWorldLoader<I extends InputStream, O extends Outpu
     @Override
     public Collection<World> getLoadedWorlds() {
         return Collections.unmodifiableCollection(WORLDS.values());
+    }
+
+    @Override
+    public void registerWorldGenerator(@NotNull WorldGenerator generator) {
+        Validator.notNull(generator);
+
+        GENERATORS.put(generator.getClass(), generator);
+    }
+
+    @Override
+    public void unregisterWorldGenerator(@NotNull WorldGenerator generator) {
+        Validator.notNull(generator);
+
+        GENERATORS.remove(generator.getClass(), generator);
+    }
+
+    public boolean hasGenerator(@NotNull WorldGenerator generator) {
+        return GENERATORS.containsKey(generator.getClass());
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull WorldGenerator> getWorldGenerators() {
+        return Collections.unmodifiableCollection(GENERATORS.values());
     }
 
     protected abstract SkyfallWorld deserialize(I input);

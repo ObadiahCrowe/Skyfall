@@ -1,5 +1,9 @@
 package io.skyfallsdk.world;
 
+import it.unimi.dsi.fastutil.ints.Int2ReferenceArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
+import org.jetbrains.annotations.Nullable;
+
 public enum Biome {
 
     OCEAN(0),
@@ -82,6 +86,14 @@ public enum Biome {
     WARPED_FOREST(172),
     BASALT_DELTAS(173);
 
+    private static final Int2ReferenceMap<Biome> ID_TO_BIOME = new Int2ReferenceArrayMap<>();
+
+    static {
+        for (Biome biome : Biome.values()) {
+            ID_TO_BIOME.put(biome.getId(), biome);
+        }
+    }
+
     private final int id;
 
     Biome(int id) {
@@ -90,5 +102,9 @@ public enum Biome {
 
     public int getId() {
         return this.id;
+    }
+
+    public static @Nullable Biome getById(int id) {
+        return ID_TO_BIOME.get(id);
     }
 }

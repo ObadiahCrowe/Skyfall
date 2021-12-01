@@ -1,21 +1,32 @@
 package io.skyfallsdk.world.chunk;
 
+import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
+import io.skyfallsdk.Server;
 import io.skyfallsdk.entity.Entity;
+import io.skyfallsdk.entity.SkyfallEntity;
+import io.skyfallsdk.nbt.stream.NBTSerializable;
 import io.skyfallsdk.nbt.tag.type.*;
 import io.skyfallsdk.net.NetSerializable;
+import io.skyfallsdk.world.Biome;
+import io.skyfallsdk.world.Position;
 import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
+import io.skyfallsdk.world.generate.WorldGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class SkyfallChunk implements Chunk, NetSerializable {
 
     private final SkyfallWorld world;
     private final int x;
     private final int z;
+
+    private ChunkStatus status;
+    private final int[] biomes;
 
     private final SkyfallChunkSection[] sections;
 
@@ -24,13 +35,14 @@ public class SkyfallChunk implements Chunk, NetSerializable {
         this.x = x;
         this.z = z;
 
+        this.status = ChunkStatus.EMPTY;
+        this.biomes = new int[1024];
+
         this.sections = new SkyfallChunkSection[0];
     }
 
     @SuppressWarnings("unchecked")
     public SkyfallChunk(@NotNull SkyfallWorld world, @NotNull TagCompound level) {
-        this.world = world;
-
         int xPos = (int) level.get("xPos").getValue();
         int zPos = (int) level.get("zPos").getValue();
         String rawStatus = (String) level.get("Status").getValue();
@@ -46,8 +58,25 @@ public class SkyfallChunk implements Chunk, NetSerializable {
         TagCompound structures = (TagCompound) level.get("Structures");
         boolean isLightOn = ((TagByte) level.get("isLightOn")).getValue() == 1;
 
+/*        System.out.println("Sections: " + sections.toString());
+        System.out.println("Tile Entities: " + tileEntities.toString());
+        System.out.println("Heightmap: " + heightMaps.toString());
+        System.out.println("Last Update: " + lastUpdate);
+        System.out.println("Liquid Ticks: " + liquidTicks.toString());
+        System.out.println("Inhabited time: " + inhabitedTime);
+        System.out.println("Post Processing: " + postProcessing.toString());
+        System.out.println("Tile Ticks: " + tileTicks.toString());
+        System.out.println("Structures: " + structures.toString());
+        System.out.println("Light on: " + isLightOn);*/
+
+        this.world = world;
         this.x = xPos;
         this.z = zPos;
+
+        this.status = ChunkStatus.getByRaw(rawStatus);
+        this.biomes = new int[1024];
+        System.arraycopy(biomeData, 0, this.biomes, 0, biomeData.length);
+
         this.sections = new SkyfallChunkSection[sections.size()];
 
         for (int i = 0; i < sections.size(); i++) {
@@ -55,8 +84,25 @@ public class SkyfallChunk implements Chunk, NetSerializable {
         }
     }
 
-    public void write(TagCompound compound) {
+    public @NotNull CompletableFuture<@NotNull Chunk> generate(@NotNull WorldGenerator generator) {
+        return null;
+    }
+
+    public @NotNull Biome getBiomeAt(int x, int y, int z) {
+        //Biome.getById(biomeData[0])
+        return null;
+    }
+
+    public void setBiomeAt(int x, int y, int z, @NotNull Biome biome) {
         //
+    }
+
+    public @NotNull ChunkStatus getStatus() {
+        return this.status;
+    }
+
+    public void setChunkStatus(@NotNull ChunkStatus status) {
+        this.status = status;
     }
 
     @Override
@@ -71,9 +117,7 @@ public class SkyfallChunk implements Chunk, NetSerializable {
 
     @Override
     public Entity[] getEntities() {
-        return Arrays.stream(this.sections)
-          .flatMap(section -> Arrays.stream(section.getEntities()))
-          .toArray(Entity[]::new);
+        return new SkyfallEntity[0];
     }
 
     @Override

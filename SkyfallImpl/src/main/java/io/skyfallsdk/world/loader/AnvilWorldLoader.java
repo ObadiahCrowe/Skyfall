@@ -83,20 +83,27 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
             } else {
                 return new SkyfallWorld(parent, data, UUID.randomUUID());
             }
-        }).thenApply(world -> {
+        }).thenApplyAsync(world -> {
             if (this.server.getPerformanceConfig().getInitialChunkCache() <= 0) {
                 return world;
             }
 
-            for (int x = 0; x < 5; x++) {
-                for (int z = 0; z < 5; z++) {
+            int radius = this.server.getPerformanceConfig().getInitialChunkCache() / 4;
+            int spawnChunkX = world.getSpawnPosition().getChunkX();
+            int spawnChunkZ = world.getSpawnPosition().getChunkZ();
+
+            long startTime = System.currentTimeMillis();
+            int counter = 0;
+            for (int x = spawnChunkX - radius; x < spawnChunkX + radius; x++) {
+                for (int z = spawnChunkZ - radius; z < spawnChunkZ + radius; z++) {
                     world.getChunk(x, z);
+                    counter++;
                 }
             }
 
-            return world;
-        }).thenApply(world -> {
-
+            if (this.server.getConfig().isDebugEnabled()) {
+                this.server.getLogger().debug("Successfully loaded " + counter + " chunks in " + ((double) (System.currentTimeMillis() - startTime) / 1000) + "s!");
+            }
 
             return world;
         });

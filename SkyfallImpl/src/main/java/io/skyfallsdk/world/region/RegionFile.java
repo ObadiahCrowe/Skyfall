@@ -27,8 +27,6 @@ public class RegionFile {
     // Empty sector to avoid constant instantiation
     private static final byte[] EMPTY_SECTOR = new byte[SECTOR_BYTES];
 
-    // The folder all regions are stored in within the world folder
-    private static final String REGION_FOLDER = "region";
     // The file name format for anvil format regions
     private static final String MCA_FORMAT = "r.%s.%s.mca";
 
@@ -43,16 +41,18 @@ public class RegionFile {
     private int sizeDelta;
     private long lastModified;
 
-    public RegionFile(int regionX, int regionZ, Path worldPath) throws IOException {
+    public RegionFile(int regionX, int regionZ, Path folderPath) throws IOException {
         this.regionX = regionX;
         this.regionZ = regionZ;
-        this.path = worldPath.resolve(REGION_FOLDER).resolve(String.format(MCA_FORMAT, regionX, regionZ));
+        this.path = folderPath.resolve(String.format(MCA_FORMAT, regionX, regionZ));
 
         this.sizeOffsetTable = new int[SECTOR_INTS];
         this.chunkTimestamps = new int[SECTOR_INTS];
 
         if (Files.exists(this.getPath())) {
             this.lastModified = Files.getLastModifiedTime(this.getPath()).toMillis();
+        } else {
+            Files.createFile(this.getPath());
         }
 
         this.file = new RandomAccessFile(this.getPath().toFile(), "rw");
