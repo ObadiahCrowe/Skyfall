@@ -1,7 +1,8 @@
 package io.skyfallsdk.world.block.entity.type;
 
 import io.skyfallsdk.world.block.entity.BlockEntity;
+import io.skyfallsdk.world.block.entity.meta.type.BlockEntityBrewingStandMetadata;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityCampfireMetadata;
 
-public interface BlockEntityCampfire extends BlockEntity<BlockEntityCampfireMetadata> {
+public interface BlockEntityCampfire<M extends BlockEntityCampfireMetadata<?>> extends BlockEntity<M> {
 }
