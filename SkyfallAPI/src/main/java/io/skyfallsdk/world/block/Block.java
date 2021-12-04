@@ -3,17 +3,16 @@ package io.skyfallsdk.world.block;
 import io.skyfallsdk.substance.Substance;
 import io.skyfallsdk.world.Position;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public interface Block {
 
     @NotNull
     Position getPosition();
 
-    @Nullable
+    @NotNull
     Substance getSubstance();
 
-    void setSubstance(@Nullable Substance substance);
+    void setSubstance(@NotNull Substance substance);
 
     byte getLightLevel();
 

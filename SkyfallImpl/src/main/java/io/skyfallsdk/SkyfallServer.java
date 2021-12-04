@@ -1,7 +1,6 @@
 package io.skyfallsdk;
 
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import io.sentry.Sentry;
 import io.skyfallsdk.bossbar.BossBar;
 import io.skyfallsdk.bossbar.SkyfallBossBar;
@@ -31,8 +30,6 @@ import io.skyfallsdk.spectre.SpectreAPI;
 import io.skyfallsdk.util.SkyfallSentryAppender;
 import io.skyfallsdk.util.UtilGitVersion;
 import io.skyfallsdk.util.http.ServerMojangAPI;
-import io.skyfallsdk.util.http.response.ResponseNameHistory;
-import io.skyfallsdk.util.http.response.ResponseNameToUuid;
 import io.skyfallsdk.world.World;
 import io.skyfallsdk.world.loader.AbstractWorldLoader;
 import org.apache.logging.log4j.Level;
@@ -48,9 +45,11 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class SkyfallServer implements Server {
 

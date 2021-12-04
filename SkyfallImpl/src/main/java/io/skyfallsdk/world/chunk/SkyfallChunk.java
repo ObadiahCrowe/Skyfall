@@ -58,6 +58,8 @@ public class SkyfallChunk implements Chunk, NetSerializable {
         TagCompound structures = (TagCompound) level.get("Structures");
         boolean isLightOn = ((TagByte) level.get("isLightOn")).getValue() == 1;
 
+        System.out.println(new Gson().toJson(tileEntities));
+
 /*        System.out.println("Sections: " + sections.toString());
         System.out.println("Tile Entities: " + tileEntities.toString());
         System.out.println("Heightmap: " + heightMaps.toString());

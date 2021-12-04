@@ -65,7 +65,7 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
             }
 
             return null;
-        }, ThreadPool.createForSpec(PoolSpec.WORLD)).thenApply(data -> {
+        }).thenApplyAsync(data -> {
             if (data == null) {
                 return null;
             }

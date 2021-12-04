@@ -12,12 +12,12 @@ public class SkyfallBlock implements Block {
     }
 
     @Override
-    public @Nullable Substance getSubstance() {
+    public @NotNull Substance getSubstance() {
         return null;
     }
 
     @Override
-    public void setSubstance(@Nullable Substance substance) {
+    public void setSubstance(@NotNull Substance substance) {
 
     }
 
