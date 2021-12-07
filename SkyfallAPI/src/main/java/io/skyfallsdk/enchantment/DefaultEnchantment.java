@@ -1,6 +1,14 @@
 package io.skyfallsdk.enchantment;
 
+import com.google.common.collect.Maps;
 import io.skyfallsdk.item.Item;
+import io.skyfallsdk.substance.Substance;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 public enum DefaultEnchantment implements Enchantment {
 
@@ -39,6 +47,15 @@ public enum DefaultEnchantment implements Enchantment {
     MENDING(32, "minecraft:mending", "Mending", EnchantmentTarget.TOOL, EnchantmentTarget.WEAPON),
     VANISHING_CURSE(33, "minecraft:vanishing_curse", "Curse of Vanishing", EnchantmentTarget.values());
 
+    static final Int2IntMap PROTOCOL_ID_TO_ENCHANTMENT = new Int2IntArrayMap();
+    private static final Map<String, DefaultEnchantment> NAMESPACED_ID_TO_ENCHANTMENT = Maps.newHashMap();
+
+    static {
+        for (DefaultEnchantment enchantment : DefaultEnchantment.values()) {
+            NAMESPACED_ID_TO_ENCHANTMENT.put(enchantment.getMinecraftId(), enchantment);
+        }
+    }
+
     private final int protocolId;
     private final String minecraftId;
     private final String name;
@@ -57,22 +74,35 @@ public enum DefaultEnchantment implements Enchantment {
     }
 
     @Override
-    public String getMinecraftId() {
+    public @NotNull String getMinecraftId() {
         return this.minecraftId;
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return this.name;
     }
 
     @Override
-    public EnchantmentTarget[] getTargets() {
+    public @NotNull EnchantmentTarget @NotNull[] getTargets() {
         return this.targets;
     }
 
     @Override
-    public boolean hasEnchantment(Item item) {
+    public boolean hasEnchantment(@NotNull Item item) {
         return item.hasEnchantment(this);
+    }
+
+    public static @Nullable Enchantment getById(int protocolId) {
+        int index = PROTOCOL_ID_TO_ENCHANTMENT.getOrDefault(protocolId, -1);
+        if (index == -1) {
+            return null;
+        }
+
+        return DefaultEnchantment.values()[protocolId];
+    }
+
+    public static @Nullable DefaultEnchantment getByNamespacedId(@NotNull String namespacedId) {
+        return NAMESPACED_ID_TO_ENCHANTMENT.getOrDefault(namespacedId, null);
     }
 }

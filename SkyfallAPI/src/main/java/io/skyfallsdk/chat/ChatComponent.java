@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import io.skyfallsdk.chat.colour.Colour;
 import io.skyfallsdk.chat.event.ClickEvent;
 import io.skyfallsdk.chat.event.HoverEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -274,8 +275,8 @@ public class ChatComponent implements Cloneable {
         return new ChatComponent(text);
     }
 
-    public static ChatComponent fromJson(String json) {
-        return null;
+    public static @Nullable ChatComponent fromJson(String json) {
+        return new ChatComponent("");
 
         //return new ChatComponent(GSON.fromJson(json, ChatComponent.class));
     }

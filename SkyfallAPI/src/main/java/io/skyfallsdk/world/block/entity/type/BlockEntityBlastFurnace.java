@@ -4,5 +4,5 @@ import io.skyfallsdk.world.block.entity.BlockEntity;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityBeehiveMetadata;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityBlastFurnaceMetadata;
 
-public interface BlockEntityBlastFurnace<M extends BlockEntityBlastFurnaceMetadata<?>> extends BlockEntity<M> {
+public interface BlockEntityBlastFurnace extends BlockEntity<BlockEntityBlastFurnaceMetadata> {
 }

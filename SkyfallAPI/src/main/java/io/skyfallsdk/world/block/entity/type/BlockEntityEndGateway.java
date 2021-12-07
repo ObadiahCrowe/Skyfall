@@ -4,5 +4,5 @@ import io.skyfallsdk.world.block.entity.BlockEntity;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityBrewingStandMetadata;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityEndGatewayMetadata;
 
-public interface BlockEntityEndGateway<M extends BlockEntityEndGatewayMetadata<?>> extends BlockEntity<M> {
+public interface BlockEntityEndGateway extends BlockEntity<BlockEntityEndGatewayMetadata> {
 }

@@ -12,6 +12,7 @@ import io.skyfallsdk.world.Biome;
 import io.skyfallsdk.world.Position;
 import io.skyfallsdk.world.SkyfallWorld;
 import io.skyfallsdk.world.World;
+import io.skyfallsdk.world.block.entity.AbstractBlockEntity;
 import io.skyfallsdk.world.generate.WorldGenerator;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +59,11 @@ public class SkyfallChunk implements Chunk, NetSerializable {
         TagCompound structures = (TagCompound) level.get("Structures");
         boolean isLightOn = ((TagByte) level.get("isLightOn")).getValue() == 1;
 
-        System.out.println(new Gson().toJson(tileEntities));
+        for (TagCompound tileEntity : tileEntities) {
+            AbstractBlockEntity.newInstance(tileEntity);
+        }
+
+        //System.out.println(new Gson().toJson(tileEntities));
 
 /*        System.out.println("Sections: " + sections.toString());
         System.out.println("Tile Entities: " + tileEntities.toString());

@@ -55,7 +55,7 @@ public enum BlockEntityType {
     private final String id;
     private final Class<? extends BlockEntity> entityClass;
 
-    <T extends BlockEntity<?>> BlockEntityType(@NotNull String id, @NotNull Class<T> entityClass) {
+    <T extends BlockEntity> BlockEntityType(@NotNull String id, @NotNull Class<T> entityClass) {
         this.id = id;
         this.entityClass = entityClass;
     }

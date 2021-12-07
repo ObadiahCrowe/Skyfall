@@ -4,5 +4,5 @@ import io.skyfallsdk.world.block.entity.BlockEntity;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityBrewingStandMetadata;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityLecternMetadata;
 
-public interface BlockEntityLectern<M extends BlockEntityLecternMetadata<?>> extends BlockEntity<M> {
+public interface BlockEntityLectern extends BlockEntity<BlockEntityLecternMetadata> {
 }

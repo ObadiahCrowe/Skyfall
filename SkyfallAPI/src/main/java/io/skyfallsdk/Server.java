@@ -11,6 +11,7 @@ import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ExpansionRegistry;
 import io.skyfallsdk.inventory.InventoryFactory;
+import io.skyfallsdk.item.ItemFactory;
 import io.skyfallsdk.protocol.channel.PluginChannel;
 import io.skyfallsdk.protocol.channel.PluginChannelRegistry;
 import io.skyfallsdk.server.ServerState;
@@ -129,6 +130,9 @@ public interface Server extends ServerCommandSender {
 
     @NotNull
     <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(@NotNull T spec);
+
+    @NotNull
+    ItemFactory getItemFactory();
 
     @NotNull
     InventoryFactory getInventoryFactory();

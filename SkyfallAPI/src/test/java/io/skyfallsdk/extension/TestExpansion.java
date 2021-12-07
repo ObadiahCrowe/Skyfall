@@ -25,7 +25,7 @@ public class TestExpansion implements Expansion {
         System.out.println(packet.getProtocolVersion());
     }*/
 
-    @SubscriptionInfo(priority = SubscriptionPriority.MIDDLE)
+    @Subscriber
     public void onEventReceived(Subscription<PlayerJoinEvent> subscription) {
         PlayerJoinEvent event = subscription.getSubscribable();
 

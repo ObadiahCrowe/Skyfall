@@ -4,5 +4,5 @@ import io.skyfallsdk.world.block.entity.BlockEntity;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityBrewingStandMetadata;
 import io.skyfallsdk.world.block.entity.meta.type.BlockEntityTrappedChestMetadata;
 
-public interface BlockEntityTrappedChest<M extends BlockEntityTrappedChestMetadata<?>> extends BlockEntity<M> {
+public interface BlockEntityTrappedChest extends BlockEntity<BlockEntityTrappedChestMetadata> {
 }

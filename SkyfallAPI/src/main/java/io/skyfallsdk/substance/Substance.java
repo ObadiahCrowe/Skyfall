@@ -1,6 +1,11 @@
 package io.skyfallsdk.substance;
 
-import it.unimi.dsi.fastutil.ints.*;
+import com.google.common.collect.Maps;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 public enum Substance {
 
@@ -981,10 +986,12 @@ public enum Substance {
     RESPAWN_ANCHOR(974, "minecraft:respawn_anchor");
 
     private static final Int2IntMap PROTOCOL_ID_TO_SUBSTANCE = new Int2IntArrayMap(Substance.values().length);
+    private static final Map<String, Substance> NAMESPACED_ID_TO_SUBSTANCE = Maps.newHashMap();
 
     static {
         for (Substance substance : Substance.values()) {
             PROTOCOL_ID_TO_SUBSTANCE.put(substance.getProtocolId(), substance.ordinal());
+            NAMESPACED_ID_TO_SUBSTANCE.put(substance.getMinecraftId(), substance);
         }
     }
 
@@ -1006,5 +1013,9 @@ public enum Substance {
 
     public static Substance getById(int protocolId) {
         return Substance.values()[PROTOCOL_ID_TO_SUBSTANCE.getOrDefault(protocolId, Substance.AIR.ordinal())];
+    }
+
+    public static Substance getByNamespacedId(@NotNull String namespacedId) {
+        return NAMESPACED_ID_TO_SUBSTANCE.getOrDefault(namespacedId, Substance.AIR);
     }
 }
