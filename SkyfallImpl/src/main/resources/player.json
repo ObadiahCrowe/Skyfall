@@ -1,0 +1,368 @@
+{
+  "Brain": {
+    "type": "COMPOUND",
+    "name": "Brain",
+    "value": [
+      {}
+    ]
+  },
+  "HurtByTimestamp": {
+    "type": "INT",
+    "name": "HurtByTimestamp",
+    "value": 0
+  },
+  "SleepTimer": {
+    "type": "SHORT",
+    "name": "SleepTimer",
+    "value": 0
+  },
+  "Attributes": {
+    "type": "LIST",
+    "name": "Attributes",
+    "value": [
+      {
+        "Base": {
+          "type": "DOUBLE",
+          "name": "Base",
+          "value": 0.10000000149011612
+        },
+        "Name": {
+          "type": "STRING",
+          "name": "Name",
+          "value": "minecraft:generic.movement_speed"
+        }
+      },
+      {
+        "Base": {
+          "type": "DOUBLE",
+          "name": "Base",
+          "value": 4.0
+        },
+        "Name": {
+          "type": "STRING",
+          "name": "Name",
+          "value": "minecraft:generic.attack_speed"
+        }
+      },
+      {
+        "Base": {
+          "type": "DOUBLE",
+          "name": "Base",
+          "value": 1.0
+        },
+        "Name": {
+          "type": "STRING",
+          "name": "Name",
+          "value": "minecraft:generic.attack_damage"
+        }
+      }
+    ]
+  },
+  "Invulnerable": {
+    "type": "BYTE",
+    "name": "Invulnerable",
+    "value": 0
+  },
+  "FallFlying": {
+    "type": "BYTE",
+    "name": "FallFlying",
+    "value": 0
+  },
+  "PortalCooldown": {
+    "type": "INT",
+    "name": "PortalCooldown",
+    "value": 0
+  },
+  "AbsorptionAmount": {
+    "type": "FLOAT",
+    "name": "AbsorptionAmount",
+    "value": 0.0
+  },
+  "abilities": {
+    "type": "COMPOUND",
+    "name": "abilities",
+    "value": [
+      {
+        "type": "BYTE",
+        "name": "invulnerable",
+        "value": 1
+      },
+      {
+        "type": "BYTE",
+        "name": "mayfly",
+        "value": 1
+      },
+      {
+        "type": "BYTE",
+        "name": "instabuild",
+        "value": 1
+      },
+      {
+        "type": "FLOAT",
+        "name": "walkSpeed",
+        "value": 0.1
+      },
+      {
+        "type": "BYTE",
+        "name": "mayBuild",
+        "value": 1
+      },
+      {
+        "type": "BYTE",
+        "name": "flying",
+        "value": 0
+      },
+      {
+        "type": "FLOAT",
+        "name": "flySpeed",
+        "value": 0.05
+      }
+    ]
+  },
+  "FallDistance": {
+    "type": "FLOAT",
+    "name": "FallDistance",
+    "value": 0.0
+  },
+  "recipeBook": {
+    "type": "COMPOUND",
+    "name": "recipeBook",
+    "value": [
+      {
+        "listType": "END",
+        "type": "LIST",
+        "name": "recipes",
+        "value": []
+      },
+      {
+        "type": "BYTE",
+        "name": "isBlastingFurnaceFilteringCraftable",
+        "value": 0
+      },
+      {
+        "type": "BYTE",
+        "name": "isSmokerGuiOpen",
+        "value": 0
+      },
+      {
+        "type": "BYTE",
+        "name": "isFilteringCraftable",
+        "value": 0
+      },
+      {
+        "listType": "END",
+        "type": "LIST",
+        "name": "toBeDisplayed",
+        "value": []
+      },
+      {
+        "type": "BYTE",
+        "name": "isFurnaceGuiOpen",
+        "value": 0
+      },
+      {
+        "type": "BYTE",
+        "name": "isGuiOpen",
+        "value": 0
+      },
+      {
+        "type": "BYTE",
+        "name": "isFurnaceFilteringCraftable",
+        "value": 0
+      },
+      {
+        "type": "BYTE",
+        "name": "isBlastingFurnaceGuiOpen",
+        "value": 0
+      },
+      {
+        "type": "BYTE",
+        "name": "isSmokerFilteringCraftable",
+        "value": 0
+      }
+    ]
+  },
+  "DeathTime": {
+    "type": "SHORT",
+    "name": "DeathTime",
+    "value": 0
+  },
+  "XpSeed": {
+    "type": "INT",
+    "name": "XpSeed",
+    "value": 1957555034
+  },
+  "XpTotal": {
+    "type": "INT",
+    "name": "XpTotal",
+    "value": 0
+  },
+  "UUID": {
+    "type": "INT_ARRAY",
+    "name": "UUID",
+    "value": [
+      1666095957,
+      705317570,
+      -1604360513,
+      -398934908
+    ]
+  },
+  "playerGameType": {
+    "type": "INT",
+    "name": "playerGameType",
+    "value": 1
+  },
+  "seenCredits": {
+    "type": "BYTE",
+    "name": "seenCredits",
+    "value": 0
+  },
+  "Motion": {
+    "type": "LIST",
+    "name": "Motion",
+    "value": [
+      {
+        "type": "DOUBLE",
+        "name": "List0",
+        "value": 0.0
+      },
+      {
+        "type": "DOUBLE",
+        "name": "List1",
+        "value": -0.0784000015258789
+      },
+      {
+        "type": "DOUBLE",
+        "name": "List2",
+        "value": 0.0
+      }
+    ]
+  },
+  "Health": {
+    "type": "FLOAT",
+    "name": "Health",
+    "value": 20.0
+  },
+  "foodSaturationLevel": {
+    "type": "FLOAT",
+    "name": "foodSaturationLevel",
+    "value": 2.0
+  },
+  "Air": {
+    "type": "SHORT",
+    "name": "Air",
+    "value": 300
+  },
+  "OnGround": {
+    "type": "BYTE",
+    "name": "OnGround",
+    "value": 1
+  },
+  "Dimension": {
+    "type": "STRING",
+    "name": "Dimension",
+    "value": "minecraft:overworld"
+  },
+  "Rotation": {
+    "type": "LIST",
+    "name": "Rotation",
+    "value": [
+      {
+        "type": "FLOAT",
+        "name": "List0",
+        "value": -17.852203
+      },
+      {
+        "type": "FLOAT",
+        "name": "List1",
+        "value": 3.2998276
+      }
+    ]
+  },
+  "XpLevel": {
+    "type": "INT",
+    "name": "XpLevel",
+    "value": 0
+  },
+  "Score": {
+    "type": "INT",
+    "name": "Score",
+    "value": 0
+  },
+  "Pos": {
+    "type": "LIST",
+    "name": "Pos",
+    "value": [
+      {
+        "type": "DOUBLE",
+        "name": "List0",
+        "value": -189.48342202100855
+      },
+      {
+        "type": "DOUBLE",
+        "name": "List1",
+        "value": 66.0
+      },
+      {
+        "type": "DOUBLE",
+        "name": "List2",
+        "value": 10.661019439161823
+      }
+    ]
+  },
+  "previousPlayerGameType": {
+    "type": "INT",
+    "name": "previousPlayerGameType",
+    "value": 3
+  },
+  "Fire": {
+    "type": "SHORT",
+    "name": "Fire",
+    "value": -20
+  },
+  "XpP": {
+    "type": "FLOAT",
+    "name": "XpP",
+    "value": 0.0
+  },
+  "EnderItems": {
+    "type": "LIST",
+    "name": "EnderItems",
+    "value": []
+  },
+  "DataVersion": {
+    "type": "INT",
+    "name": "DataVersion",
+    "value": 2730
+  },
+  "foodLevel": {
+    "type": "INT",
+    "name": "foodLevel",
+    "value": 20
+  },
+  "foodExhaustionLevel": {
+    "type": "FLOAT",
+    "name": "foodExhaustionLevel",
+    "value": 3.7850003
+  },
+  "HurtTime": {
+    "type": "SHORT",
+    "name": "HurtTime",
+    "value": 0
+  },
+  "SelectedItemSlot": {
+    "type": "INT",
+    "name": "SelectedItemSlot",
+    "value": 0
+  },
+  "Inventory": {
+    "type": "LIST",
+    "name": "Inventory",
+    "value": []
+  },
+  "foodTickTimer": {
+    "type": "INT",
+    "name": "foodTickTimer",
+    "value": 0
+  }
+}

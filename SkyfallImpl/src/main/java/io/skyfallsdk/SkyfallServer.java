@@ -10,6 +10,7 @@ import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.thread.ConsoleThread;
 import io.skyfallsdk.concurrent.tick.ServerTickRegistry;
+import io.skyfallsdk.concurrent.tick.TickRegistry;
 import io.skyfallsdk.concurrent.tick.TickSpec;
 import io.skyfallsdk.config.LoadableConfig;
 import io.skyfallsdk.config.PerformanceConfig;
@@ -20,6 +21,8 @@ import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.expansion.ServerExpansionRegistry;
 import io.skyfallsdk.inventory.SkyfallInventoryFactory;
+import io.skyfallsdk.item.ItemFactory;
+import io.skyfallsdk.item.SkyfallItemFactory;
 import io.skyfallsdk.net.NetServer;
 import io.skyfallsdk.player.Player;
 import io.skyfallsdk.protocol.ProtocolVersion;
@@ -72,6 +75,7 @@ public class SkyfallServer implements Server {
     private final ServerMojangAPI mojangAPI;
 
     private final AbstractWorldLoader<?, ?> worldLoader;
+    private final SkyfallItemFactory itemFactory;
     private final SkyfallInventoryFactory inventoryFactory;
     private final SkyfallEnchantmentRegistry enchantmentRegistry;
 
@@ -181,6 +185,9 @@ public class SkyfallServer implements Server {
         } catch (IOException e) {
             logger.warn(e);
         }
+
+        logger.info("Initialising item factory...");
+        this.itemFactory = new SkyfallItemFactory();
 
         logger.info("Initialising inventory factory...");
         this.inventoryFactory = new SkyfallInventoryFactory(this);
@@ -379,6 +386,16 @@ public class SkyfallServer implements Server {
     @Override
     public @NotNull <T extends TickSpec<T>> ServerTickRegistry<T> getTickRegistry(@NotNull T spec) {
         return ServerTickRegistry.getTickRegistry(spec);
+    }
+
+    @Override
+    public @NotNull Collection<@NotNull ServerTickRegistry<?>> getTickRegisteries() {
+        return ServerTickRegistry.getTickRegisteries();
+    }
+
+    @Override
+    public @NotNull ItemFactory getItemFactory() {
+        return this.itemFactory;
     }
 
     @Override

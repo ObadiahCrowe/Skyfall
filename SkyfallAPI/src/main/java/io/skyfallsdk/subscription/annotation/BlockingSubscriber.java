@@ -1,4 +1,6 @@
-package io.skyfallsdk.subscription;
+package io.skyfallsdk.subscription.annotation;
+
+import io.skyfallsdk.subscription.SubscriptionPriority;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

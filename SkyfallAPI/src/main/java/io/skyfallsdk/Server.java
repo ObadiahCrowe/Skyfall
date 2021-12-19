@@ -132,6 +132,9 @@ public interface Server extends ServerCommandSender {
     <T extends TickSpec<T>> TickRegistry<T> getTickRegistry(@NotNull T spec);
 
     @NotNull
+    Collection<? extends @NotNull TickRegistry<?>> getTickRegisteries();
+
+    @NotNull
     ItemFactory getItemFactory();
 
     @NotNull

@@ -41,7 +41,7 @@ public class PoolSpec implements ThreadFactory, ForkJoinPool.ForkJoinWorkerThrea
 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
-        Server.get().getLogger().error(e);
+        e.printStackTrace();
     }
 
     @Override

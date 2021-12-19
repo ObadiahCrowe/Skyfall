@@ -2,7 +2,9 @@ package io.skyfallsdk.expansion;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallMain;
+import io.skyfallsdk.SkyfallServer;
 
 import javax.annotation.concurrent.ThreadSafe;
 import java.io.IOException;
@@ -25,7 +27,7 @@ public class ExpansionClassLoader extends URLClassLoader {
     private final Set<Class<?>> heldClasses;
 
     public ExpansionClassLoader(Path expansion) throws MalformedURLException {
-        super(new URL[] { expansion.toUri().toURL() }, SkyfallMain.class.getClassLoader());
+        super(new URL[] { expansion.toUri().toURL() }, SkyfallServer.class.getClassLoader());
 
         this.heldClasses = Sets.newHashSet();
     }
@@ -37,7 +39,15 @@ public class ExpansionClassLoader extends URLClassLoader {
             return clazz;
         }
 
-        clazz = super.findClass(name);
+        try {
+            clazz = super.findClass(name);
+        } catch (LinkageError e) {
+            if (((SkyfallServer) Server.get()).getConfig().isDebugEnabled()) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
 
         LOADED_CLASSES.put(name, clazz);
         this.heldClasses.add(clazz);

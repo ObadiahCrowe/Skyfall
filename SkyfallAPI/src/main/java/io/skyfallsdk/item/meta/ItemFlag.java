@@ -1,0 +1,12 @@
+package io.skyfallsdk.item.meta;
+
+public enum ItemFlag {
+
+    HIDE_ATTRIBUTES,
+    HIDE_APPLICABLE_BREAKAGES,
+    HIDE_DYE,
+    HIDE_ENCHANTMENTS,
+    HIDE_APPLICABLE_PLACEMENTS,
+    HIDE_POTION_EFFECTS,
+    HIDE_UNBREAKABLE_STATUS;
+}

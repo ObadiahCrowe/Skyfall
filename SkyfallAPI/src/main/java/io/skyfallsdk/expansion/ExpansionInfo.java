@@ -18,4 +18,6 @@ public @interface ExpansionInfo {
     String[] dependencies() default {};
 
     long expansionId() default -1L;
+
+    String targetVersion() default "";
 }

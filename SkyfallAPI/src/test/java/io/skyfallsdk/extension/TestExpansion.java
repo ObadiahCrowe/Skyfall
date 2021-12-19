@@ -4,6 +4,7 @@ import io.skyfallsdk.event.player.PlayerJoinEvent;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.expansion.ExpansionInfo;
 import io.skyfallsdk.subscription.*;
+import io.skyfallsdk.subscription.annotation.Subscriber;
 
 @ExpansionInfo(name = "test", version = "${project.version}", authors = { "Obadiah Crowe" })
 public class TestExpansion implements Expansion {

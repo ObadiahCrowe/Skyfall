@@ -5,6 +5,7 @@ import io.skyfallsdk.command.Command;
 import io.skyfallsdk.command.CommandMap;
 import io.skyfallsdk.command.parameter.argument.ArgumentFactory;
 import io.skyfallsdk.command.parameter.argument.parse.ArgumentParser;
+import io.skyfallsdk.concurrent.Scheduler;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
@@ -22,6 +23,10 @@ public interface Expansion {
 
     default Server getServer() {
         return Server.get();
+    }
+
+    default Scheduler getScheduler() {
+        return this.getServer().getScheduler();
     }
 
     default Path getPath() {

@@ -28,6 +28,10 @@ public class YamlObjectRepresenter extends Representer {
             HashMap<String, Object> map = (HashMap<String, Object>) data;
 
             for (Map.Entry<String, Object> entry : map.entrySet()) {
+                if (entry.getValue() == null) {
+                    continue;
+                }
+
                 if (!entry.getValue().getClass().isEnum()) {
                     continue;
                 }

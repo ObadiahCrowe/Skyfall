@@ -6,6 +6,7 @@ import io.sentry.Sentry;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
+import io.skyfallsdk.concurrent.ThreadPool;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,11 +62,11 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
                 try {
                     ServerExpansionRegistry.this.loadExpansion(file);
                 } catch (IOException e) {
-                    this.server.getLogger().fatal(e);
+                    e.printStackTrace();
                 }
             });
         } catch (IOException e) {
-            this.server.getLogger().fatal(e);
+            e.printStackTrace();
         }
     }
 
@@ -110,7 +111,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
                     Class<?> clazz = classLoader.findClass(className);
                     classNames.add(className);
 
-                    if (clazz.isAnnotationPresent(ExpansionInfo.class)) {
+                    if (clazz != null && clazz.isAnnotationPresent(ExpansionInfo.class)) {
                         if (info != null) {
                             throw new IllegalStateException("Expansion cannot have two classes annotation with ExpansionInfo.");
                         }
@@ -141,7 +142,9 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
 
             // TODO: 07/12/2020 Check and load dependencies
             for (String className : classNames) {
-                classLoader.loadClass(className);
+                try {
+                    classLoader.loadClass(className);
+                } catch (NoClassDefFoundError ignored) {}
             }
 
             Expansion expansion = entryPoint.getConstructor().newInstance();
@@ -191,6 +194,7 @@ public class ServerExpansionRegistry implements ExpansionRegistry {
         return EXPANSION_MAIN_THREADS.computeIfAbsent(expansion.getClass(), expansionClass -> {
             Thread thread = PoolSpec.SCHEDULER.newThread(expansion::onStartup);
             thread.setName(thread.getName() + "-" + this.getExpansionInfo(expansionClass).name());
+            thread.setUncaughtExceptionHandler((t, e) -> e.printStackTrace());
 
             return thread;
         });

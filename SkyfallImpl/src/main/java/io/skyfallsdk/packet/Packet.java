@@ -1,6 +1,6 @@
 package io.skyfallsdk.packet;
 
-import io.skyfallsdk.subscription.Subscribable;
+import io.skyfallsdk.subscription.type.Subscribable;
 
 public interface Packet extends Subscribable {
 

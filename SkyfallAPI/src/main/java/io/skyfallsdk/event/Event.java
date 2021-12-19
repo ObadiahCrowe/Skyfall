@@ -1,6 +1,6 @@
 package io.skyfallsdk.event;
 
-import io.skyfallsdk.subscription.Subscribable;
+import io.skyfallsdk.subscription.type.Subscribable;
 
 import javax.annotation.concurrent.NotThreadSafe;
 

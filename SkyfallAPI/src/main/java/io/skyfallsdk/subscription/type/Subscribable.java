@@ -1,4 +1,4 @@
-package io.skyfallsdk.subscription;
+package io.skyfallsdk.subscription.type;
 
 /**
  * Wrapper interface for anything that can be subscribed to.

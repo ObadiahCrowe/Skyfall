@@ -1,9 +1,14 @@
 package io.skyfallsdk.item;
 
+import com.google.common.collect.Maps;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.chat.ChatComponent;
 import io.skyfallsdk.enchantment.DefaultEnchantment;
 import io.skyfallsdk.enchantment.Enchantment;
+import io.skyfallsdk.item.attribute.ItemAttribute;
 import io.skyfallsdk.item.meta.ItemMetadata;
+import io.skyfallsdk.nbt.tag.NBTTag;
+import io.skyfallsdk.nbt.tag.NBTTagType;
 import io.skyfallsdk.nbt.tag.type.TagByte;
 import io.skyfallsdk.nbt.tag.type.TagCompound;
 import io.skyfallsdk.nbt.tag.type.TagList;
@@ -14,6 +19,7 @@ import it.unimi.dsi.fastutil.objects.Reference2ShortArrayMap;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.concurrent.NotThreadSafe;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +31,7 @@ public class Item {
     private int damage;
 
     private final Int2ShortMap enchantments;
-    private final ItemMetadata<?> metadata;
+    private final ItemMetadata metadata;
 
     public Item(Substance substance) {
         this(substance, 1);
@@ -71,15 +77,6 @@ public class Item {
         this.metadata = Server.get().getItemFactory().getNewMetadata(this);
     }
 
-    private Item(Builder builder) {
-        this.substance = builder.substance;
-
-        this.amount = builder.amount;
-        this.enchantments = new Int2ShortArrayMap();
-
-        this.metadata = Server.get().getItemFactory().getNewMetadata(this);
-    }
-
     public Substance getSubstance() {
         return this.substance;
     }
@@ -92,25 +89,91 @@ public class Item {
         return this.enchantments.getOrDefault(enchantment.getProtocolId(), (short) -1);
     }
 
+    public @NotNull Map<@NotNull Enchantment, @NotNull Integer> getEnchantments() {
+        Map<Enchantment, Integer> enchantments = Maps.newHashMap();
+
+        for (Int2ShortMap.Entry entry : this.enchantments.int2ShortEntrySet()) {
+            enchantments.put(Server.get().getEnchantmentRegistry().getEnchantment(entry.getIntKey()), (int) entry.getShortValue());
+        }
+
+        return Collections.unmodifiableMap(enchantments);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends ItemMetadata> T getMetadata() {
+        return (T) this.metadata;
+    }
+
     @NotThreadSafe
     public static class Builder implements Cloneable {
 
-        private final Substance substance;
+        protected final Item item;
 
-        private int amount;
-
-        public Builder(Substance substance) {
-            this.substance = substance;
+        public Builder(@NotNull Substance substance) {
+            this.item = new Item(substance);
         }
 
         public Builder setAmount(int amount) {
-            this.amount = amount;
+            this.item.amount = amount;
+
+            return this;
+        }
+
+        public Builder setDamage(int damage) {
+            this.item.damage = damage;
+
+            return this;
+        }
+
+        public Builder addEnchantment(@NotNull Enchantment enchantment, int level) {
+            this.item.enchantments.put(enchantment.getProtocolId(), (short) level);
+
+            return this;
+        }
+
+        public <V, T extends ItemAttribute<V, T>> Builder setAttribute(@NotNull ItemAttribute<@NotNull V, @NotNull T> attribute, @NotNull V value) {
+            this.item.metadata.setAttribute(attribute, value);
+
+            return this;
+        }
+
+        public Builder setDisplayName(@NotNull ChatComponent displayName) {
+            this.item.metadata.setDisplayName(displayName);
+
+            return this;
+        }
+
+        public Builder setLore(@NotNull List<@NotNull ChatComponent> lines) {
+            this.item.metadata.setLore(lines);
+
+            return this;
+        }
+
+        public Builder addLoreLines(@NotNull List<@NotNull ChatComponent> lines) {
+            this.item.metadata.addLoreLines(lines);
+
+            return this;
+        }
+
+        public <T> Builder addNBTTag(@NotNull String name, T value) {
+            NBTTag<T> tag = NBTTagType.fromRawType(value.getClass()).newInstance(name, value);
 
             return this;
         }
 
         public Item build() {
-            return new Item(this.substance, this.amount);
+            return this.item;
+        }
+
+        @Override
+        public Builder clone() {
+            try {
+                return (Builder) super.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }

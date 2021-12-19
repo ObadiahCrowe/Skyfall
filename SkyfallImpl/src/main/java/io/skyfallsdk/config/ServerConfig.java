@@ -21,6 +21,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
     private ServerSentryConfig sentry;
     private ServerSpectreConfig spectre;
     private boolean debugEnabled;
+    private boolean enableVersionWarnings;
 
     private int maxPlayers;
     private boolean onlineMode;
@@ -48,6 +49,7 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
         this.sentry = new ServerSentryConfig(false, "", 1.0D);
         this.spectre = new ServerSpectreConfig(false, "", Lists.newArrayList("https://spectre.skyfallsdk.io"));
         this.debugEnabled = false;
+        this.enableVersionWarnings = true;
 
         this.maxPlayers = maxPlayers;
         this.onlineMode = onlineMode;
@@ -82,6 +84,14 @@ public class ServerConfig extends YamlConfig<ServerConfig> {
 
     public void setDebugEnabled(boolean debugEnabled) {
         this.debugEnabled = debugEnabled;
+    }
+
+    public boolean enableVersionWarnings() {
+        return this.enableVersionWarnings;
+    }
+
+    public void setEnableVersionWarnings(boolean enableVersionWarnings) {
+        this.enableVersionWarnings = enableVersionWarnings;
     }
 
     public int getMaxPlayers() {

@@ -6,9 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T> {
@@ -74,6 +72,11 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     }
 
     @Override
+    public long getLastTickLength() {
+        return 0;
+    }
+
+    @Override
     public @NotNull T getSpec() {
         return this.spec;
     }
@@ -81,5 +84,9 @@ public class ServerTickRegistry<T extends TickSpec<T>> implements TickRegistry<T
     @SuppressWarnings("unchecked")
     public static <T extends TickSpec<T>> ServerTickRegistry<T> getTickRegistry(T spec) {
         return (ServerTickRegistry<T>) TICK_REGISTRIES.computeIfAbsent(spec, ts -> new ServerTickRegistry<>(spec));
+    }
+
+    public static Collection<ServerTickRegistry<?>> getTickRegisteries() {
+        return Collections.unmodifiableCollection(TICK_REGISTRIES.values());
     }
 }

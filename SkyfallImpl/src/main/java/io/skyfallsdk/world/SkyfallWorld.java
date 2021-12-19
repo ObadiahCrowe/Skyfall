@@ -3,6 +3,7 @@ package io.skyfallsdk.world;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import io.skyfallsdk.Server;
+import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
 import io.skyfallsdk.concurrent.tick.DefaultTickSpec;
@@ -313,10 +314,10 @@ public class SkyfallWorld implements World {
     @Override
     @SuppressWarnings("unchecked")
     public @NotNull CompletableFuture<@Nullable Chunk> getChunk(int x, int z, boolean generate) {
-        return CompletableFuture.supplyAsync(() -> {
-            final int regionX = (int) Math.floor(x / 32.0D);
-            final int regionZ = (int) Math.floor(z / 32.0D);
+        final int regionX = (int) Math.floor(x / 32.0D);
+        final int regionZ = (int) Math.floor(z / 32.0D);
 
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 RegionFile file = new RegionFile(regionX, regionZ, this.regionPath);
                 InputStream stream = file.readChunk(x, z);
@@ -327,9 +328,10 @@ public class SkyfallWorld implements World {
                 try (stream; NBTInputStream chunkInputStream = new NBTInputStream(stream)) {
                     TagCompound root = (TagCompound) chunkInputStream.readTag();
                     int dataVersion = (int) root.get("DataVersion").getValue();
-                    int serverDataVersion = Server.get().getBaseVersion().getDataVersion();
+                    SkyfallServer server = ((SkyfallServer) Server.get());
+                    int serverDataVersion = server.getBaseVersion().getDataVersion();
 
-                    if (serverDataVersion != dataVersion) {
+                    if (serverDataVersion != dataVersion && server.getConfig().enableVersionWarnings()) {
                         Server.get().getLogger().warn("Chunk for world, \"" + this.name + "\" at " + x + ", " + z + " has a mismatching Data Version (" + dataVersion + "). " +
                           "This may cause issues and instability. Current Skyfall Data Version: " + serverDataVersion);
                     }
@@ -348,10 +350,7 @@ public class SkyfallWorld implements World {
             }
 
             return chunk;
-        }, ThreadPool.createForSpec(PoolSpec.CHUNKS)).thenApplyAsync(chunk -> {
-            final int regionX = (int) Math.floor(x / 32.0D);
-            final int regionZ = (int) Math.floor(z / 32.0D);
-
+        }, ThreadPool.createForSpec(PoolSpec.CHUNKS)).thenApply(chunk -> {
             try {
                 RegionFile file = new RegionFile(regionX, regionZ, this.entitiesPath);
                 InputStream stream = file.readChunk(x, z);
@@ -363,16 +362,19 @@ public class SkyfallWorld implements World {
                     TagCompound root = (TagCompound) entityInputStream.readTag();
 
                     int dataVersion = (int) root.get("DataVersion").getValue();
-                    int serverDataVersion = Server.get().getBaseVersion().getDataVersion();
+                    SkyfallServer server = (SkyfallServer) Server.get();
+                    int serverDataVersion = server.getBaseVersion().getDataVersion();
 
-                    if (serverDataVersion != dataVersion) {
+                    if (serverDataVersion != dataVersion && server.getConfig().enableVersionWarnings()) {
                         Server.get().getLogger().warn("Entities for world, \"" + this.name + "\" have a mismatching Data Version (" + dataVersion + "). " +
                           "This may cause issues and instability. Current Skyfall Data Version: " + serverDataVersion);
                     }
 
                     List<TagCompound> entities = ((TagList<TagCompound>) root.get("Entities")).getValue();
                     for (TagCompound compound : entities) {
-                        SkyfallEntity.fromTagCompound(this, compound);
+                        ThreadPool.createForSpec(PoolSpec.ENTITIES).submit(() -> {
+                            SkyfallEntity.fromTagCompound(this, compound);
+                        });
                     }
                 }
             } catch (IOException e) {
@@ -380,7 +382,7 @@ public class SkyfallWorld implements World {
             }
 
             return chunk;
-        }, ThreadPool.createForSpec(PoolSpec.ENTITIES));
+        });
     }
 
     @Override

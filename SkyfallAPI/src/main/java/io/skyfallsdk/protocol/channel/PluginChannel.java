@@ -3,7 +3,7 @@ package io.skyfallsdk.protocol.channel;
 import io.skyfallsdk.Server;
 import io.skyfallsdk.expansion.Expansion;
 import io.skyfallsdk.player.Player;
-import io.skyfallsdk.subscription.Subscribable;
+import io.skyfallsdk.subscription.type.Subscribable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

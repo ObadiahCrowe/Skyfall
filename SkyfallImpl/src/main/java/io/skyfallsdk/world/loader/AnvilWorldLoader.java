@@ -1,8 +1,10 @@
 package io.skyfallsdk.world.loader;
 
+import com.google.gson.Gson;
 import io.skyfallsdk.SkyfallServer;
 import io.skyfallsdk.concurrent.PoolSpec;
 import io.skyfallsdk.concurrent.ThreadPool;
+import io.skyfallsdk.entity.SkyfallEntity;
 import io.skyfallsdk.nbt.file.NBTFile;
 import io.skyfallsdk.nbt.stream.NBTInputStream;
 import io.skyfallsdk.nbt.stream.NBTOutputStream;
@@ -16,8 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Optional;
@@ -71,16 +76,21 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
             }
 
             Path uid = parent.resolve("uid.dat");
-            if (!Files.exists(uid)) {
+            if (Files.exists(uid)) {
                 try (NBTInputStream stream = NBTFile.newInputStream(parent.resolve("uid.dat"), true)) {
                     UUID levelUuid = new UUID(stream.readLong(), stream.readLong());
 
                     return new SkyfallWorld(parent, data, levelUuid);
                 } catch (IOException e) {
                     this.server.getLogger().error("Failed to obtain level UUID for \"" + path.getFileName().toString() + "\", generating a new one.");
-                    return new SkyfallWorld(parent, data, UUID.randomUUID());
+
+                    UUID levelUuid = UUID.randomUUID();
+                    this.writeLevelUuid(parent, levelUuid);
+
+                    return new SkyfallWorld(parent, data, levelUuid);
                 }
             } else {
+                this.server.getLogger().warn("Failed to obtain level UUID for \"" + path.getFileName().toString() + "\", generating an in-memory one.");
                 return new SkyfallWorld(parent, data, UUID.randomUUID());
             }
         }).thenApplyAsync(world -> {
@@ -106,7 +116,59 @@ public class AnvilWorldLoader extends AbstractWorldLoader<NBTInputStream, NBTOut
             }
 
             return world;
+        }).thenApply(world -> {
+            if (!this.server.getPerformanceConfig().shouldLoadPlayerDataOnStartup()) {
+                return world;
+            }
+
+            Path playerData = parent.resolve("playerdata");
+            if (!Files.exists(playerData)) {
+                try {
+                    Files.createDirectory(playerData);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                Files.walkFileTree(playerData, new SimpleFileVisitor<>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        String fileName = file.getFileName().toString();
+                        if (!fileName.endsWith(".dat")) {
+                            return FileVisitResult.CONTINUE;
+                        }
+
+                        ThreadPool.createForSpec(PoolSpec.PLAYERS).execute(() -> {
+                            try (NBTInputStream stream = NBTFile.newInputStream(file, true)) {
+                                TagCompound compound = (TagCompound) stream.readTag();
+
+                                System.out.println(new Gson().toJson(compound));
+                            } catch (IOException e) {
+                                AnvilWorldLoader.this.server.getLogger().error("Failed to load player data for \"" + fileName + "\".");
+                            }
+                        });
+
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return world;
         });
+    }
+
+    private void writeLevelUuid(@NotNull Path parentFolder, @NotNull UUID uuid) {
+        try (NBTOutputStream output = NBTFile.newOutputStream(parentFolder.resolve("uid.dat"), true)) {
+            output.writeLong(uuid.getMostSignificantBits());
+            output.writeLong(uuid.getLeastSignificantBits());
+
+            output.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -2,7 +2,6 @@ package io.skyfallsdk.enchantment;
 
 import com.google.common.collect.Maps;
 import io.skyfallsdk.item.Item;
-import io.skyfallsdk.substance.Substance;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import org.jetbrains.annotations.NotNull;

@@ -150,4 +150,8 @@ public enum NBTTagType {
 
         return VALUES[id];
     }
+
+    public static NBTTagType fromRawType(Class<?> typeClass) {
+        return null;
+    }
 }

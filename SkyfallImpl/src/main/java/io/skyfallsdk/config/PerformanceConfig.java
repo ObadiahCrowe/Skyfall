@@ -14,6 +14,7 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
     private int connectionThrottleThreshold;
 
     private int initialChunkCache;
+    private boolean loadPlayerDataOnStartup;
 
     /**
      * Represents a configuration file.
@@ -29,6 +30,7 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
         this.compressionThreshold = compressionThreshold;
         this.connectionThrottleThreshold = connectionThrottleThreshold;
         this.initialChunkCache = initialChunkCache;
+        this.loadPlayerDataOnStartup = true;
     }
 
     public int getMaxPacketSize() {
@@ -45,6 +47,10 @@ public class PerformanceConfig extends YamlConfig<PerformanceConfig> {
 
     public int getInitialChunkCache() {
         return this.initialChunkCache;
+    }
+
+    public boolean shouldLoadPlayerDataOnStartup() {
+        return this.loadPlayerDataOnStartup;
     }
 
     @Override
